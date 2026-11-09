@@ -857,6 +857,7 @@ const PATTERNS: [RegExp, (m: RegExpMatchArray) => string][] = [
   [/^(\d+) of (\d+) jobs named$/, m => `${m[1]} de ${m[2]} tareas asignadas`],
   [/^(\d+) of (\d+) done$/, m => `${m[1]} de ${m[2]} hechos`],
   [/^Team chat, (\d+) unread$/, m => `Chat del equipo, ${m[1]} sin leer`],
+  [/^(\d+) unread$/, m => `${m[1]} sin leer`],
   [/^(\d+) jobs?$/, m => `${m[1]} ${m[1] === "1" ? "tarea" : "tareas"}`],
   [/^Give (.+) to (.+)$/, m => `Dar ${m[1]} a ${m[2]}`],
   [/^(\d+) jobs? (?:has|have) no time of the shift yet, so (?:it isn't|they aren't) on the board \(Setup\)$/, m => `${m[1]} ${m[1] === "1" ? "tarea no tiene" : "tareas no tienen"} momento del turno, así que no ${m[1] === "1" ? "está" : "están"} en el tablero (Setup)`],

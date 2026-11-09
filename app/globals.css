@@ -3572,3 +3572,6 @@ span.dash-name { text-decoration:none; }
   :root:root:root:root:root:root:root .tc-send-label { display:none; }
   :root:root:root:root:root:root:root .tc-composer .tc-send { padding:0 12px; }
 }
+
+/* Side menu: Chat with its unread count (a small dark pill at the end of the row). To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .nav-count { margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:var(--c-text); color:var(--c-bg); font:600 11px/20px "IBM Plex Mono", ui-monospace, monospace; text-align:center; }
