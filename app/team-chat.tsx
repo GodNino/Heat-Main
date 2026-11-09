@@ -61,6 +61,7 @@ export function TeamChat({restaurantId, userId, isManager, onUnread}: {restauran
   const [picking, setPicking] = useState(false);
   const [query, setQuery] = useState("");
   const [acting, setActing] = useState<string | null>(null);
+  const [confirmClear, setConfirmClear] = useState(false);
   const [recording, setRecording] = useState<{started: number} | null>(null);
   const recorder = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
@@ -109,7 +110,7 @@ export function TeamChat({restaurantId, userId, isManager, onUnread}: {restauran
     void loadOverview();
   }, [restaurantId, markRead, loadOverview]);
 
-  useEffect(() => { if (open) { setMsgs([]); setPinned([]); setActing(null); setNotice(false); void loadChannel(open); } }, [open, loadChannel]);
+  useEffect(() => { if (open) { setMsgs([]); setPinned([]); setActing(null); setNotice(false); setConfirmClear(false); void loadChannel(open); } }, [open, loadChannel]);
 
   // Live: new and deleted messages; a poll covers a dropped connection.
   useEffect(() => {
@@ -209,6 +210,12 @@ export function TeamChat({restaurantId, userId, isManager, onUnread}: {restauran
     const res = await supabase!.rpc("chat_set_pinned", {message_id: m.id, on_off: on});
     if (res.error) setError(explain(res.error)); else { setActing(null); await loadChannel(m.channel); }
   }
+  // Deletes the whole direct message conversation, for both people.
+  async function clearConversation(channel: string) {
+    const res = await supabase!.from("chat_messages").delete().eq("restaurant_id", restaurantId).eq("channel", channel);
+    if (res.error) { setError(explain(res.error)); return; }
+    setConfirmClear(false); setOpen(null); await loadOverview();
+  }
   async function remove(m: Msg) {
     const res = await supabase!.from("chat_messages").delete().eq("id", m.id);
     if (res.error) setError(explain(res.error)); else { setActing(null); await loadChannel(m.channel); }
@@ -218,7 +225,8 @@ export function TeamChat({restaurantId, userId, isManager, onUnread}: {restauran
   const dms = overview.filter(o => o.channel.startsWith("dm:")).sort((a, b) => (b.last_at ?? "").localeCompare(a.last_at ?? ""));
   const preview = (o: Overview) => !o.last_at ? "No messages yet" : `${o.last_user === userId ? "You" : nameOf(o.last_user)}: ${o.last_kind === "photo" ? "Photo" : o.last_kind === "voice" ? "Voice note" : o.last_body ?? ""}`;
   const others = useMemo(() => people.filter(p => p.user_id !== userId && (!query.trim() || `${p.name} ${p.role}`.toLowerCase().includes(query.trim().toLowerCase()))), [people, userId, query]);
-  const canAct = (m: Msg) => m.user_id === userId || (isManager && !m.channel.startsWith("dm:"));
+  // Your own messages; in a direct message, any message (it's between the two of you, 065); a manager, any in a group chat.
+  const canAct = (m: Msg) => m.user_id === userId || m.channel.startsWith("dm:") || (isManager && !m.channel.startsWith("dm:"));
 
   const row = (o: Overview) => <button key={o.channel} type="button" className="tc-ch" aria-current={open === o.channel} onClick={() => { setPicking(false); setOpen(o.channel); }}>
     <span className={`tc-ico${o.channel.startsWith("dm:") ? " dm" : ""}`} data-no-translate>{o.channel.startsWith("dm:") ? title(o.channel).trim()[0]?.toUpperCase() : GROUPS[o.channel]?.short}</span>
@@ -252,7 +260,13 @@ export function TeamChat({restaurantId, userId, isManager, onUnread}: {restauran
         <button type="button" className="btn secondary tc-back" onClick={() => { setOpen(null); void loadOverview(); }}><ArrowLeft size={14} aria-hidden="true" />Chats</button>
         <span className={`tc-ico${open.startsWith("dm:") ? " dm" : ""}`} data-no-translate>{open.startsWith("dm:") ? title(open).trim()[0]?.toUpperCase() : GROUPS[open]?.short}</span>
         <span className="tc-what"><b data-no-translate={open.startsWith("dm:") || undefined}>{title(open)}</b><small>{open.startsWith("dm:") ? "Direct message" : GROUPS[open]?.who}</small></span>
+        {open.startsWith("dm:") && msgs.length > 0 && !confirmClear && <button type="button" className="icon-chip tc-clear" aria-label="Delete conversation" title="Delete conversation" onClick={() => setConfirmClear(true)}><Trash2 size={14} /></button>}
       </div>
+      {confirmClear && <div className="tc-confirm" role="alert">
+        <span>Delete this whole conversation? It goes for both of you.</span>
+        <span className="tc-actions"><button type="button" className="btn secondary" onClick={() => setConfirmClear(false)}>Keep</button>
+          <button type="button" className="btn secondary card-admin-danger" onClick={() => void clearConversation(open)}><Trash2 size={13} aria-hidden="true" />Delete conversation</button></span>
+      </div>}
       {pinned.length > 0 && <div className="tc-pins">{pinned.slice(0, 3).map(p => <p key={p.id}><Pin size={13} aria-hidden="true" /><span data-no-translate>{p.kind === "text" ? p.body : p.kind === "photo" ? (p.body || "Photo") : "Voice note"}</span></p>)}</div>}
       <div className="tc-msgs" ref={list} aria-live="polite">
         {!msgs.length && <p className="tc-empty">No messages yet. Say hello.</p>}
@@ -263,7 +277,7 @@ export function TeamChat({restaurantId, userId, isManager, onUnread}: {restauran
             {showDay && <p className="tc-day" data-no-translate>{day}</p>}
             <div className={`tc-msg${mine ? " me" : ""}`}>
               {!mine && <span className="tc-av" aria-hidden="true" data-no-translate>{nameOf(m.user_id).trim()[0]?.toUpperCase()}</span>}
-              <div className={`tc-bubble${m.is_notice ? " notice" : ""}`} onClick={() => canAct(m) || (isManager && !m.channel.startsWith("dm:")) ? setActing(a => a === m.id ? null : m.id) : undefined}>
+              <div className={`tc-bubble${m.is_notice ? " notice" : ""}${canAct(m) ? " can-act" : ""}`} title={canAct(m) ? "Tap for options" : undefined} onClick={() => canAct(m) ? setActing(a => a === m.id ? null : m.id) : undefined}>
                 {m.is_notice && <span className="tc-kind">Notice</span>}
                 {!mine && <p className="tc-from"><b data-no-translate>{nameOf(m.user_id)}</b><span data-no-translate>{roleOf(m.user_id)}</span></p>}
                 {m.kind === "photo" && (url ? <img src={url} alt="Photo" className="tc-photo" /> : <span className="tc-loading">Photo</span>)}
