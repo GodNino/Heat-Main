@@ -3575,3 +3575,10 @@ span.dash-name { text-decoration:none; }
 
 /* Side menu: Chat with its unread count (a small dark pill at the end of the row). To undo, revert the commit that added this block. */
 :root:root:root:root:root:root:root .nav-count { margin-left:auto; min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:var(--c-text); color:var(--c-bg); font:600 11px/20px "IBM Plex Mono", ui-monospace, monospace; text-align:center; }
+
+/* Team chat: delete a direct message conversation (the trash in its header, then a confirmation strip), and a
+   pointer on messages you can act on. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .tc-clear { margin-left:auto; }
+:root:root:root:root:root:root:root .tc-confirm { display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--c-line-5); background:var(--c-surface); font-size:13px; font-weight:600; }
+:root:root:root:root:root:root:root .tc-confirm .tc-actions { margin-top:0; }
+:root:root:root:root:root:root:root .tc-bubble.can-act { cursor:pointer; }

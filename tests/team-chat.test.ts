@@ -74,12 +74,21 @@ test("each person sees the chats of their position, managers see all, and direct
     await db.exec("reset role");
     assert.deepEqual((await db.query<{id: string}>("select id from public.chat_expired()")).rows.length, 1, "the old unpinned message is up for cleanup");
 
+    // Either person deletes in a direct message (065); someone else can't, not even a manager.
+    await asUser(2);
+    assert.equal((await db.query("delete from public.chat_messages where channel = $1", [dm])).affectedRows, 0);
+    await asUser(6);
+    await db.query("insert into public.chat_messages(restaurant_id,channel,body) values($1,$2,'Sí, en 5')", [rid, dm]);
+    assert.equal((await db.query<{n: number}>("select count(*)::int as n from public.chat_messages where channel = $1", [dm])).rows[0].n, 2);
+
     // Unread counts: the cook has one unread direct message until they read it.
     await asUser(6);
     const unread = async () => (await db.query<{unread: number}>("select unread from public.chat_overview($1) where channel = $2", [rid, dm])).rows[0].unread;
     assert.equal(await unread(), 1);
     await db.query("insert into public.chat_reads(restaurant_id,channel,last_read_at) values($1,$2,now())", [rid, dm]);
     assert.equal(await unread(), 0);
+    // The cook deletes the whole conversation, the server's message included.
+    assert.equal((await db.query("delete from public.chat_messages where channel = $1", [dm])).affectedRows, 2);
   } finally {
     await db.close();
   }
