@@ -62,6 +62,14 @@ export function TeamChat({restaurantId, userId, isManager, onUnread}: {restauran
   const [query, setQuery] = useState("");
   const [acting, setActing] = useState<string | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
+  // The photo open full screen, if any.
+  const [viewing, setViewing] = useState<{url: string; caption: string} | null>(null);
+  useEffect(() => {
+    if (!viewing) return;
+    const close = (e: KeyboardEvent) => { if (e.key === "Escape") setViewing(null); };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [viewing]);
   const [recording, setRecording] = useState<{started: number} | null>(null);
   const recorder = useRef<MediaRecorder | null>(null);
   const chunks = useRef<Blob[]>([]);
@@ -280,7 +288,7 @@ export function TeamChat({restaurantId, userId, isManager, onUnread}: {restauran
               <div className={`tc-bubble${m.is_notice ? " notice" : ""}${canAct(m) ? " can-act" : ""}`} title={canAct(m) ? "Tap for options" : undefined} onClick={() => canAct(m) ? setActing(a => a === m.id ? null : m.id) : undefined}>
                 {m.is_notice && <span className="tc-kind">Notice</span>}
                 {!mine && <p className="tc-from"><b data-no-translate>{nameOf(m.user_id)}</b><span data-no-translate>{roleOf(m.user_id)}</span></p>}
-                {m.kind === "photo" && (url ? <img src={url} alt="Photo" className="tc-photo" /> : <span className="tc-loading">Photo</span>)}
+                {m.kind === "photo" && (url ? <button type="button" className="tc-photo-open" aria-label="See the photo full size" onClick={e => { e.stopPropagation(); setViewing({url, caption: m.body}); }}><img src={url} alt="Photo" className="tc-photo" /></button> : <span className="tc-loading">Photo</span>)}
                 {m.kind === "voice" && (url ? <audio controls preload="none" src={url} className="tc-audio" /> : <span className="tc-loading">Voice note</span>)}
                 {m.body && <p className="tc-text" data-no-translate>{m.body}</p>}
                 <p className="tc-time">{clock(m.created_at)}{m.pinned ? " · " : ""}{m.pinned && <span>Pinned</span>}{m.kind === "voice" && m.duration_s ? ` · ${m.duration_s}s` : ""}</p>
@@ -308,5 +316,10 @@ export function TeamChat({restaurantId, userId, isManager, onUnread}: {restauran
         </>}
       </form>
     </section> : <section className="tc-chat tc-none" aria-label="No chat open"><p className="muted">Pick a chat, or start a direct message.</p></section>}
+    {viewing && <div className="tc-viewer" role="dialog" aria-modal="true" aria-label="Photo" onClick={() => setViewing(null)}>
+      <button type="button" className="tc-viewer-close" aria-label="Close the photo" autoFocus onClick={() => setViewing(null)}><X size={20} /></button>
+      <img src={viewing.url} alt={viewing.caption || "Photo"} onClick={e => e.stopPropagation()} />
+      {viewing.caption && <p className="tc-viewer-caption" data-no-translate onClick={e => e.stopPropagation()}>{viewing.caption}</p>}
+    </div>}
   </section>;
 }

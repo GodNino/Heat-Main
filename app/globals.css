@@ -3582,3 +3582,11 @@ span.dash-name { text-decoration:none; }
 :root:root:root:root:root:root:root .tc-confirm { display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid var(--c-line-5); background:var(--c-surface); font-size:13px; font-weight:600; }
 :root:root:root:root:root:root:root .tc-confirm .tc-actions { margin-top:0; }
 :root:root:root:root:root:root:root .tc-bubble.can-act { cursor:pointer; }
+
+/* Team chat: a photo opens full screen when tapped; tap outside, the X or Escape closes it.
+   To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .tc-photo-open { display:block; padding:0; border:0; background:none; cursor:zoom-in; }
+:root:root:root:root:root:root:root .tc-viewer { position:fixed; inset:0; z-index:60; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:max(20px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(20px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background:rgb(0 0 0 / .95); cursor:zoom-out; }
+:root:root:root:root:root:root:root .tc-viewer img { max-width:100%; max-height:calc(100dvh - 120px); border-radius:12px; object-fit:contain; cursor:default; }
+:root:root:root:root:root:root:root .tc-viewer-caption { max-width:640px; margin:0; color:#fff; font-size:15px; text-align:center; cursor:default; }
+:root:root:root:root:root:root:root .tc-viewer-close { position:absolute; top:max(16px, env(safe-area-inset-top, 0px)); right:max(16px, env(safe-area-inset-right, 0px)); display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:rgb(255 255 255 / .16); color:#fff; cursor:pointer; }
