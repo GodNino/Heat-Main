@@ -3497,3 +3497,78 @@ span.dash-name { text-decoration:none; }
    order, each under its bold section label. To undo, revert the commit that added this block. */
 :root:root:root:root:root:root:root .allergy-section + .allergy-section { margin-top:20px; }
 :root:root:root:root:root:root:root .allergy-section-name { margin:0 0 14px; font-size:13px; font-weight:700; color:var(--c-text); }
+
+/* Team chat (064): the chat icon in the header with its unread count, and the chat screen: the chats on the
+   left, the open chat on the right; on phones one or the other. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .header-chat { position:relative; }
+:root:root:root:root:root:root:root .header-chat.active { background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .header-chat-count { position:absolute; top:4px; right:2px; min-width:18px; height:18px; padding:0 5px; border-radius:999px; background:var(--c-fail, #D42A1C); color:#fff; font:600 11px/18px "IBM Plex Mono", ui-monospace, monospace; text-align:center; }
+:root:root:root:root:root:root:root .tc { display:grid; grid-template-columns:300px minmax(0,1fr); height:min(760px, calc(100dvh - 150px)); min-height:480px; border:1px solid var(--c-line-5); border-radius:16px; overflow:hidden; background:var(--c-bg); }
+:root:root:root:root:root:root:root .tc-list { display:flex; flex-direction:column; overflow-y:auto; border-right:1px solid var(--c-line-5); background:var(--c-surface); }
+:root:root:root:root:root:root:root .tc-list-head { display:flex; flex-wrap:wrap; gap:14px; align-items:center; justify-content:space-between; padding:16px; }
+:root:root:root:root:root:root:root .tc-list-head h1 { margin:0; font-size:24px; font-weight:700; }
+:root:root:root:root:root:root:root .tc-list-head .btn, :root:root:root:root:root:root:root .tc-composer .btn, :root:root:root:root:root:root:root .tc-actions .btn, :root:root:root:root:root:root:root .tc-back { display:inline-flex; align-items:center; gap:6px; }
+:root:root:root:root:root:root:root .tc-ch { display:grid; grid-template-columns:40px minmax(0,1fr) auto; gap:12px; align-items:center; width:100%; padding:12px 16px; border:0; border-top:1px solid var(--c-line-5); background:transparent; color:var(--c-text); text-align:left; cursor:pointer; }
+:root:root:root:root:root:root:root .tc-ch[aria-current="true"] { background:var(--c-surface-hover); }
+:root:root:root:root:root:root:root .tc-ico { display:grid; place-items:center; width:40px; height:40px; flex:none; border-radius:50%; background:var(--c-text); color:var(--c-bg); font:700 11px "IBM Plex Mono", ui-monospace, monospace; }
+:root:root:root:root:root:root:root .tc-ico.dm { background:var(--c-surface-hover); color:var(--c-text); font-size:14px; }
+:root:root:root:root:root:root:root .tc-what { min-width:0; }
+:root:root:root:root:root:root:root .tc-what b { display:block; font-size:14px; font-weight:600; }
+:root:root:root:root:root:root:root .tc-what small { display:block; overflow:hidden; font-size:12px; color:var(--c-muted); white-space:nowrap; text-overflow:ellipsis; }
+:root:root:root:root:root:root:root .tc-meta { display:grid; justify-items:end; gap:4px; font:500 11px "IBM Plex Mono", ui-monospace, monospace; color:var(--c-muted); }
+:root:root:root:root:root:root:root .tc-unread { min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:var(--c-text); color:var(--c-bg); font:600 11px/20px "IBM Plex Mono", ui-monospace, monospace; text-align:center; }
+:root:root:root:root:root:root:root .tc-sub { margin:0; padding:14px 16px 6px; border-top:1px solid var(--c-line-5); font:600 11px "IBM Plex Mono", ui-monospace, monospace; letter-spacing:.04em; text-transform:uppercase; color:var(--c-muted); }
+:root:root:root:root:root:root:root .tc-note { margin:auto 0 0; padding:14px 16px; font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .tc-error { margin:14px 16px; }
+:root:root:root:root:root:root:root .tc-chat { display:flex; flex-direction:column; min-width:0; min-height:0; }
+:root:root:root:root:root:root:root .tc-none { display:grid; place-items:center; }
+:root:root:root:root:root:root:root .tc-head { display:flex; align-items:center; gap:12px; padding:12px 16px; border-bottom:1px solid var(--c-line-5); background:var(--c-surface); }
+:root:root:root:root:root:root:root .tc-back { display:none; }
+:root:root:root:root:root:root:root .tc-pins { display:grid; gap:6px; padding:12px 16px; border-bottom:1px solid var(--c-line-5); background:var(--c-surface); font-size:13px; }
+:root:root:root:root:root:root:root .tc-pins p { display:flex; gap:8px; align-items:flex-start; margin:0; }
+:root:root:root:root:root:root:root .tc-pins svg { flex:none; margin-top:3px; }
+:root:root:root:root:root:root:root .tc-msgs { flex:1; min-height:0; overflow-y:auto; display:grid; align-content:start; gap:14px; padding:16px; }
+:root:root:root:root:root:root:root .tc-empty, :root:root:root:root:root:root:root .tc-day { justify-self:center; margin:0; font-size:12px; color:var(--c-muted); text-align:center; }
+:root:root:root:root:root:root:root .tc-day { font:600 11px "IBM Plex Mono", ui-monospace, monospace; letter-spacing:.06em; text-transform:uppercase; }
+:root:root:root:root:root:root:root .tc-msg { display:grid; grid-template-columns:32px minmax(0,1fr); gap:10px; max-width:620px; }
+:root:root:root:root:root:root:root .tc-msg.me { grid-template-columns:minmax(0,1fr); justify-self:end; margin-left:auto; }
+:root:root:root:root:root:root:root .tc-av { display:grid; place-items:center; width:32px; height:32px; border-radius:50%; background:var(--c-surface-hover); font:600 12px "IBM Plex Mono", ui-monospace, monospace; }
+:root:root:root:root:root:root:root .tc-bubble { min-width:0; padding:10px 14px; border:1px solid var(--c-line-5); border-radius:16px; background:var(--c-surface); cursor:default; }
+:root:root:root:root:root:root:root .tc-msg.me .tc-bubble { background:var(--c-text); border-color:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .tc-bubble.notice { border-color:var(--c-text); border-width:2px; }
+:root:root:root:root:root:root:root .tc-kind { display:inline-block; margin-bottom:6px; padding:2px 8px; border-radius:999px; background:var(--lime); color:var(--c-on-heat); font:600 11px "IBM Plex Mono", ui-monospace, monospace; }
+:root:root:root:root:root:root:root .tc-from { display:flex; flex-wrap:wrap; gap:6px; align-items:baseline; margin:0 0 4px; font-size:13px; }
+:root:root:root:root:root:root:root .tc-from span, :root:root:root:root:root:root:root .tc-time { font:500 11px "IBM Plex Mono", ui-monospace, monospace; color:var(--c-muted); }
+:root:root:root:root:root:root:root .tc-msg.me .tc-time { color:var(--c-bg); opacity:.7; }
+:root:root:root:root:root:root:root .tc-text { margin:0; font-size:15px; white-space:pre-wrap; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .tc-time { margin:4px 0 0; }
+:root:root:root:root:root:root:root .tc-photo { display:block; max-width:100%; max-height:320px; margin-bottom:6px; border-radius:12px; }
+:root:root:root:root:root:root:root .tc-audio { display:block; max-width:100%; height:36px; margin-bottom:4px; }
+:root:root:root:root:root:root:root .tc-loading { font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .tc-actions { display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+:root:root:root:root:root:root:root .tc-msg.me .tc-actions .btn { color:var(--c-bg); border-color:var(--c-bg); }
+:root:root:root:root:root:root:root .tc-composer { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:12px 16px; border-top:1px solid var(--c-line-5); background:var(--c-surface); }
+:root:root:root:root:root:root:root .tc-input { flex:1 1 180px; min-width:0; height:44px; padding:0 16px; border:1px solid var(--c-line-5); border-radius:999px; background:var(--c-bg); color:var(--c-text); font-size:16px; }
+:root:root:root:root:root:root:root .tc-icon { display:grid; place-items:center; width:44px; height:44px; flex:none; border:0; border-radius:50%; background:transparent; color:var(--c-text); cursor:pointer; }
+:root:root:root:root:root:root:root .tc-icon:hover { background:var(--c-surface-hover); }
+:root:root:root:root:root:root:root .tc-notice-chip { height:30px; padding:0 12px; border:1px solid var(--c-line-5); border-radius:999px; background:transparent; color:var(--c-text); font-size:12px; font-weight:600; cursor:pointer; }
+:root:root:root:root:root:root:root .tc-notice-chip[aria-pressed="true"] { background:var(--c-text); border-color:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .tc-rec { display:inline-flex; flex:1; align-items:center; gap:8px; font-size:13px; font-weight:600; }
+:root:root:root:root:root:root:root .tc-rec-dot { width:10px; height:10px; border-radius:50%; background:var(--c-fail, #D42A1C); }
+:root:root:root:root:root:root:root .tc-pick { display:grid; align-content:start; overflow-y:auto; }
+:root:root:root:root:root:root:root .tc-search { display:flex; align-items:center; gap:8px; margin:14px 16px; padding:0 16px; height:44px; border:1px solid var(--c-line-5); border-radius:999px; background:var(--c-surface); }
+:root:root:root:root:root:root:root .tc-search input { flex:1; min-width:0; border:0; outline:0; background:transparent; color:var(--c-text); font-size:16px; }
+@media (max-width: 760px) {
+  :root:root:root:root:root:root:root .tc { grid-template-columns:minmax(0,1fr); height:calc(100dvh - 120px); }
+  :root:root:root:root:root:root:root .tc.opened .tc-list { display:none; }
+  :root:root:root:root:root:root:root .tc:not(.opened) .tc-chat { display:none; }
+  :root:root:root:root:root:root:root .tc-back { display:inline-flex; }
+}
+@media (prefers-reduced-motion: no-preference) { :root:root:root:root:root:root:root .tc-rec-dot { animation:tc-blink 1s infinite; } }
+@keyframes tc-blink { 50% { opacity:.3; } }
+@media (max-width: 760px) {
+  :root:root:root:root:root:root:root .tc-composer { flex-wrap:nowrap; gap:4px; padding:12px; }
+  :root:root:root:root:root:root:root .tc-icon { width:40px; height:40px; }
+  :root:root:root:root:root:root:root .tc-send-label { display:none; }
+  :root:root:root:root:root:root:root .tc-composer .tc-send { padding:0 12px; }
+}
