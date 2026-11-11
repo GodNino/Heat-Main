@@ -145,8 +145,8 @@ test("no one outside a restaurant can read or change its rows, in any table", as
       const upd = await as(who, () => db.query(`update public.${t} set ${t === "restaurants" ? "name=name" : cols.find(c => c.table === t)!.col + "=" + cols.find(c => c.table === t)!.col} where ${scope}`));
       const del = await as(who, () => db.query(`delete from public.${t} where ${scope}`));
       const s = sel instanceof Error ? "deny" : sel.rows[0].n;
-      const u = upd instanceof Error ? "deny" : upd.affectedRows;
-      const d = del instanceof Error ? "deny" : del.affectedRows;
+      const u = upd instanceof Error ? "deny" : upd.affectedRows ?? 0;
+      const d = del instanceof Error ? "deny" : del.affectedRows ?? 0;
       if ((s !== "deny" && s > 0) || (u !== "deny" && u > 0) || (d !== "deny" && d > 0))
         log(`- LEAK as ${who}: ${t} (A rows ${total}${ridTables.includes(t) ? "" : ", table has no restaurant_id"}) select=${s} update=${u} delete=${d}`);
     }
