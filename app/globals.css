@@ -3716,3 +3716,85 @@ span.dash-name { text-decoration:none; }
 /* Side menu: an icon never shrinks away beside a long label ("Employee of the month").
    To undo, revert the commit that added this block. */
 :root:root:root:root:root:root:root .nav-item > svg { flex:none; }
+
+/* Landing after the hero (docs/mockups/landing.html): one night shown two ways, the lime band of
+   what HEAT replaces, the product tour, the dark AI tutor band, the role switcher and the joined
+   steps. Dark bands reuse the hero's fixed dark panel (.brand-aside). To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .lp2-night { display:grid; gap:20px; }
+:root:root:root:root:root:root:root .lp2-night-head { display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:20px; }
+:root:root:root:root:root:root:root .lp2-toggle { display:inline-flex; gap:4px; padding:4px; border:1px solid var(--c-line-5); border-radius:999px; background:var(--c-surface); }
+:root:root:root:root:root:root:root .lp2-toggle button { min-height:36px; padding:0 16px; border:0; border-radius:999px; background:transparent; color:var(--c-muted); font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+:root:root:root:root:root:root:root .lp2-toggle button[aria-pressed="true"] { background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .lp2-toggle button.heat[aria-pressed="true"] { background:var(--lime); color:#1b1c1a; }
+:root:root:root:root:root:root:root .lp2-timeline { position:relative; display:grid; gap:14px; margin:0; padding:0 0 0 28px; list-style:none; }
+:root:root:root:root:root:root:root .lp2-timeline::before { content:""; position:absolute; left:9px; top:0; bottom:0; width:2px; background:var(--c-line-5); }
+:root:root:root:root:root:root:root .lp2-moment { position:relative; display:grid; gap:8px; align-content:start; }
+:root:root:root:root:root:root:root .lp2-time { position:relative; justify-self:start; display:inline-flex; align-items:center; min-height:30px; padding:0 12px; border:1px solid var(--c-line-5); border-radius:999px; background:var(--c-bg); font-family:var(--font-mono); font-size:12px; font-weight:600; font-variant-numeric:tabular-nums; }
+:root:root:root:root:root:root:root .lp2-time::before { content:""; position:absolute; left:-24px; top:10px; width:10px; height:10px; border-radius:50%; background:var(--c-text); }
+:root:root:root:root:root:root:root .lp2-timeline.heat .lp2-time { background:var(--c-text); color:var(--c-bg); border-color:var(--c-text); }
+:root:root:root:root:root:root:root .lp2-what { font-size:13px; font-weight:700; }
+:root:root:root:root:root:root:root .lp2-moment-card { padding:16px; border:1px solid var(--c-line-5); border-radius:16px; background:var(--c-surface); font-size:14px; }
+:root:root:root:root:root:root:root .lp2-moment-card p { margin:8px 0 0; }
+:root:root:root:root:root:root:root .lp2-timeline.today .lp2-moment-card { color:var(--c-muted); }
+:root:root:root:root:root:root:root .lp2-timeline.heat .lp2-moment-card { border-color:var(--c-text); }
+:root:root:root:root:root:root:root .lp2-moment-tag { display:inline-flex; padding:2px 8px; border-radius:999px; background:var(--c-raised-2); color:var(--c-muted); font-family:var(--font-mono); font-size:11px; font-weight:600; }
+:root:root:root:root:root:root:root .lp2-timeline.heat .lp2-moment-tag { background:var(--lime); color:#1b1c1a; }
+@media (min-width: 900px) {
+  :root:root:root:root:root:root:root .lp2-timeline { grid-template-columns:repeat(6, minmax(0, 1fr)); padding:0; }
+  :root:root:root:root:root:root:root .lp2-timeline::before { left:0; right:0; top:15px; bottom:auto; width:auto; height:2px; }
+  :root:root:root:root:root:root:root .lp2-time::before { display:none; }
+  :root:root:root:root:root:root:root .lp2-moment-card { min-height:140px; }
+}
+:root:root:root:root:root:root:root .lp2-lime { padding:64px 0; background:var(--lime); color:#1b1c1a; }
+:root:root:root:root:root:root:root .lp2-replace { display:grid; gap:20px; align-items:center; }
+@media (min-width: 900px) { :root:root:root:root:root:root:root .lp2-replace { grid-template-columns:minmax(0, 1.1fr) minmax(0, .9fr); gap:40px; } }
+:root:root:root:root:root:root:root .lp2-lime-eyebrow { margin:0; font-family:var(--font-mono); font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; }
+:root:root:root:root:root:root:root .lp2-lime-title { margin:14px 0 0; font-size:clamp(1.9rem, 4.6vw, 3.4rem); line-height:1.04; letter-spacing:-.035em; font-weight:700; text-wrap:balance; }
+:root:root:root:root:root:root:root .lp2-gone { display:flex; flex-wrap:wrap; gap:8px; margin:0; padding:0; list-style:none; }
+:root:root:root:root:root:root:root .lp2-gone li { display:inline-flex; align-items:center; min-height:40px; padding:0 16px; border:1px solid #1b1c1a; border-radius:999px; font-size:15px; font-weight:600; text-decoration:line-through; text-decoration-thickness:2px; }
+:root:root:root:root:root:root:root .lp2-gone li.keep { text-decoration:none; background:#1b1c1a; color:var(--lime); }
+:root:root:root:root:root:root:root .lp2-tour { display:grid; gap:20px; margin-top:40px; align-items:start; }
+@media (min-width: 900px) { :root:root:root:root:root:root:root .lp2-tour { grid-template-columns:minmax(0, 1fr) minmax(0, 1.1fr); gap:56px; } :root:root:root:root:root:root:root .lp2-tour-visual { position:sticky; top:96px; } }
+@media (max-width: 899px) { :root:root:root:root:root:root:root .lp2-tour-visual { display:none; } }
+@media (min-width: 900px) { :root:root:root:root:root:root:root .lp2-stop-visual { display:none; } }
+:root:root:root:root:root:root:root .lp2-stop-visual { display:block; grid-column:1 / -1; margin-top:8px; min-width:0; max-width:100%; overflow:hidden; }
+:root:root:root:root:root:root:root .lp2-stop { width:100%; min-width:0; }
+:root:root:root:root:root:root:root .lp2-stops { display:grid; border-top:1px solid var(--c-line-5); }
+:root:root:root:root:root:root:root .lp2-stop { position:relative; display:grid; grid-template-columns:40px minmax(0, 1fr); gap:14px; padding:16px 0; border:0; border-bottom:1px solid var(--c-line-5); background:transparent; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+:root:root:root:root:root:root:root .lp2-stop-num { padding-top:4px; font-family:var(--font-mono); font-size:12px; font-weight:600; color:var(--c-muted); }
+:root:root:root:root:root:root:root .lp2-stop-body { display:grid; gap:8px; min-width:0; }
+:root:root:root:root:root:root:root .lp2-stop-title { font-size:1.3rem; font-weight:600; letter-spacing:-.02em; color:var(--c-muted); }
+:root:root:root:root:root:root:root .lp2-stop[aria-selected="true"] .lp2-stop-title, :root:root:root:root:root:root:root .lp2-stop[aria-selected="true"] .lp2-stop-num { color:var(--c-text); }
+:root:root:root:root:root:root:root .lp2-stop-text { color:var(--c-muted); }
+:root:root:root:root:root:root:root .lp2-stop-points { display:grid; gap:8px; font-size:14px; }
+:root:root:root:root:root:root:root .lp2-stop-points span { display:flex; gap:8px; align-items:flex-start; }
+:root:root:root:root:root:root:root .lp2-stop-points svg { flex:none; margin-top:2px; padding:2px; width:18px; height:18px; border-radius:50%; background:var(--lime); color:#1b1c1a; }
+:root:root:root:root:root:root:root .lp2-stop-progress { position:absolute; left:0; bottom:-1px; height:2px; width:0; background:var(--c-text); animation:lp2-fill 6.5s linear forwards; }
+@keyframes lp2-fill { to { width:100%; } }
+@media (prefers-reduced-motion: reduce) { :root:root:root:root:root:root:root .lp2-stop-progress { display:none; } }
+:root:root:root:root:root:root:root .lp2-spot { color:#f3f3f0; }
+:root:root:root:root:root:root:root .lp2-spot-grid { display:grid; gap:40px; align-items:center; }
+@media (min-width: 900px) { :root:root:root:root:root:root:root .lp2-spot-grid { grid-template-columns:minmax(0, .9fr) minmax(0, 1.1fr); gap:56px; } }
+:root:root:root:root:root:root:root .lp2-spot-title { margin:0; font-size:clamp(1.9rem, 4.4vw, 3.2rem); line-height:1.06; letter-spacing:-.03em; font-weight:700; text-wrap:balance; }
+:root:root:root:root:root:root:root .lp2-spot-text { margin:16px 0 0; max-width:34rem; font-size:1.1rem; color:rgb(243 243 240 / .75); }
+:root:root:root:root:root:root:root .lp2-spot-facts { display:grid; margin:28px 0 0; border-top:1px solid rgb(243 243 240 / .18); }
+:root:root:root:root:root:root:root .lp2-spot-facts div { display:grid; grid-template-columns:110px minmax(0, 1fr); gap:14px; padding:14px 0; border-bottom:1px solid rgb(243 243 240 / .18); }
+:root:root:root:root:root:root:root .lp2-spot-facts dt { color:var(--lime); font-family:var(--font-mono); font-size:13px; font-weight:600; }
+:root:root:root:root:root:root:root .lp2-spot-facts dd { margin:0; color:rgb(243 243 240 / .75); font-size:14px; }
+:root:root:root:root:root:root:root .lp2-roles { display:grid; gap:20px; margin-top:28px; }
+:root:root:root:root:root:root:root .lp2-role-chips { display:flex; flex-wrap:wrap; gap:8px; }
+:root:root:root:root:root:root:root .lp2-role-chips button { min-height:30px; padding:0 14px; border:1px solid var(--c-text); border-radius:999px; background:transparent; color:var(--c-text); font:inherit; font-size:12px; font-weight:600; cursor:pointer; }
+:root:root:root:root:root:root:root .lp2-role-chips button[aria-pressed="true"] { background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .lp2-role-panel { display:grid; gap:14px; }
+@media (min-width: 860px) { :root:root:root:root:root:root:root .lp2-role-panel { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+:root:root:root:root:root:root:root .lp2-role-big { display:grid; gap:16px; align-content:space-between; min-height:220px; padding:28px; border-radius:24px; color:#f3f3f0; }
+:root:root:root:root:root:root:root .lp2-role-big p { margin:0; font-size:clamp(1.4rem, 2.6vw, 1.9rem); line-height:1.2; font-weight:600; letter-spacing:-.02em; }
+:root:root:root:root:root:root:root .lp2-role-big small { font-family:var(--font-mono); font-size:12px; font-weight:600; color:rgb(243 243 240 / .65); }
+:root:root:root:root:root:root:root .lp2-role-list { display:grid; gap:14px; margin:0; padding:0; list-style:none; }
+:root:root:root:root:root:root:root .lp2-role-list li { display:flex; gap:14px; align-items:flex-start; padding:16px 20px; border:1px solid var(--c-line-5); border-radius:20px; background:var(--c-surface); }
+:root:root:root:root:root:root:root .lp2-role-list svg { flex:none; padding:3px; width:22px; height:22px; border-radius:50%; background:var(--lime); color:#1b1c1a; }
+@media (min-width: 760px) {
+  :root:root:root:root:root:root:root .lp2-steps { position:relative; }
+  :root:root:root:root:root:root:root .lp2-steps::before { content:""; position:absolute; left:24px; right:24px; top:44px; height:2px; background:var(--c-text); z-index:0; }
+  :root:root:root:root:root:root:root .lp2-steps > li { position:relative; z-index:1; }
+}
