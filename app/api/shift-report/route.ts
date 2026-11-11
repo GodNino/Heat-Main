@@ -9,6 +9,7 @@
 // on a domain verified in Resend (for example heatplatform.io).
 import { createClient } from "@supabase/supabase-js";
 import { reportEmail, type ShiftReport } from "@/lib/shift-report";
+import { claimRequest } from "@/lib/request-limit";
 
 export async function POST(request: Request) {
   const apiKey = process.env.RESEND_API_KEY;
@@ -31,9 +32,14 @@ export async function POST(request: Request) {
     db.from("restaurants").select("name").eq("id", report.restaurant_id).maybeSingle(),
     db.rpc("shift_report_recipients", {report_id: reportId}),
   ]);
-  if (people.error) return Response.json({error: people.error.message}, {status: 403});
+  if (people.error) return Response.json({error: "That report isn't available to you."}, {status: 403});
   const to = ((people.data ?? []) as {email: string}[]).map(row => row.email);
   if (!to.length) return Response.json({sent: 0, configured: true});
+  // Demo kitchens never email, and the same report isn't emailed twice within a few minutes (066).
+  if (!(await claimRequest(db, "report_email", reportId))) {
+    const visitor = (await db.rpc("is_anonymous")).data === true;
+    return Response.json({sent: 0, configured: true, error: visitor ? "The demo kitchen doesn't send email" : "It was emailed a few minutes ago"}, {status: 429});
+  }
 
   const origin = new URL(request.url).origin;
   const mail = reportEmail(report, (place.data?.name as string | undefined) ?? "Your restaurant", `${origin}/app`);

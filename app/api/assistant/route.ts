@@ -15,6 +15,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { replyLanguage } from "@/lib/reply-language";
 import { createClient } from "@supabase/supabase-js";
+import { claimRequest, LIMIT_MESSAGES } from "@/lib/request-limit";
 import { assistantSystem, checkProposal, checkRange, hoursView, localDay, reportsView, scheduleView, type MenuEntry, type Proposal, type Report, type Shift, type TeamMember } from "@/lib/assistant";
 import { cleanConversation } from "@/lib/tutor";
 
@@ -75,6 +76,7 @@ export async function POST(request: Request) {
   const owner = place.data.owner_id === me;
   const access = owner ? ["team", "preshift", "library", "schedule_foh", "schedule_boh"] : ((membership.data?.access ?? []) as string[]);
   if (!owner && !access.length) return Response.json({error: "The assistant is for managers."}, {status: 403});
+  if (!(await claimRequest(db, "assistant"))) return Response.json({error: LIMIT_MESSAGES.assistant}, {status: 429});
 
   const team = (teamRows.data ?? []) as TeamMember[];
   const menu = (menuRows.data ?? []) as MenuEntry[];
