@@ -3643,3 +3643,72 @@ span.dash-name { text-decoration:none; }
 :root:root:root:root:root:root:root .eotm-home { display:grid; gap:14px; justify-items:start; padding:16px; margin-bottom:14px; }
 :root:root:root:root:root:root:root .eotm-home-title { font-size:20px; line-height:1.2; }
 :root:root:root:root:root:root:root .eotm-card > .btn { justify-self:start; }
+
+/* Events and BEO (068): event list, facts, menu rows (36 px / 13 px), the lime allergy box with
+   codes, run of show, team, and the edit form rows. Tokens only. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .ev { display:grid; gap:14px; }
+:root:root:root:root:root:root:root .ev .section-chip { margin:0; }
+:root:root:root:root:root:root:root .ev-card { display:grid; gap:14px; padding:16px; min-width:0; }
+:root:root:root:root:root:root:root .ev-label { margin:0; font-size:13px; font-weight:700; }
+:root:root:root:root:root:root:root .ev-label-row { display:flex; align-items:baseline; justify-content:space-between; gap:14px; }
+:root:root:root:root:root:root:root .ev-label-row small { font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .ev-start { justify-self:start; }
+:root:root:root:root:root:root:root .ev-actions { display:flex; flex-wrap:wrap; align-items:center; gap:14px; }
+:root:root:root:root:root:root:root .ev-chips { display:flex; flex-wrap:wrap; gap:8px; }
+:root:root:root:root:root:root:root .ev-list { display:grid; border:1px solid var(--c-line-5); border-radius:16px; overflow:hidden; background:var(--c-surface); }
+:root:root:root:root:root:root:root .ev-item { display:grid; grid-template-columns:52px minmax(0, 1fr) auto; gap:14px; align-items:center; padding:14px 16px; border:0; border-top:1px solid var(--c-line-5); background:transparent; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+:root:root:root:root:root:root:root .ev-item:first-child { border-top:0; }
+:root:root:root:root:root:root:root .ev-date { display:grid; justify-items:center; padding:4px 0; border:1px solid var(--c-line-5); border-radius:12px; }
+:root:root:root:root:root:root:root .ev-date small { font-size:11px; font-weight:700; text-transform:uppercase; color:var(--c-muted); }
+:root:root:root:root:root:root:root .ev-date b { font-size:20px; line-height:1.1; }
+:root:root:root:root:root:root:root .ev-item-text { min-width:0; }
+:root:root:root:root:root:root:root .ev-item-text b { display:block; font-size:14px; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .ev-item-text small { display:block; font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .ev-status { display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border:1px solid var(--c-text); border-radius:999px; font-size:11px; font-weight:700; white-space:nowrap; }
+:root:root:root:root:root:root:root .ev-status.ok { background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .ev-facts { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:14px; }
+:root:root:root:root:root:root:root .ev-facts span { display:block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--c-muted); }
+:root:root:root:root:root:root:root .ev-facts b { display:block; font-size:15px; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .ev-columns { display:grid; gap:14px; grid-template-columns:minmax(0, 1fr); }
+@media (min-width: 900px) { :root:root:root:root:root:root:root .ev-columns { grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr); align-items:start; } }
+:root:root:root:root:root:root:root .ev-stack { display:grid; gap:14px; min-width:0; }
+:root:root:root:root:root:root:root .ev-rows { display:grid; }
+:root:root:root:root:root:root:root .ev-row { display:flex; justify-content:space-between; align-items:center; gap:14px; min-height:36px; padding:6px 0; border-top:1px solid var(--c-line-5); font-size:13px; }
+:root:root:root:root:root:root:root .ev-rows > .ev-row:first-child, :root:root:root:root:root:root:root .ev-course + .ev-row { border-top:0; }
+:root:root:root:root:root:root:root .ev-row > span { min-width:0; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .ev-row small { display:block; font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .ev-row > b { white-space:nowrap; font-weight:700; }
+:root:root:root:root:root:root:root .ev-course { margin:0; padding-top:8px; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--c-muted); }
+:root:root:root:root:root:root:root .ev-allergy { display:grid; gap:14px; padding:16px; border-radius:16px; background:var(--lime); color:#1b1c1a; }
+:root:root:root:root:root:root:root .ev-allergy .ev-label-row small, :root:root:root:root:root:root:root .ev-allergy .ev-row small { color:#1b1c1a; opacity:.75; }
+:root:root:root:root:root:root:root .ev-allergy .ev-row { border-top-color:rgb(27 28 26 / .25); }
+:root:root:root:root:root:root:root .ev-codes { display:flex; flex-wrap:wrap; gap:8px; }
+:root:root:root:root:root:root:root .ev-codes span { padding:2px 8px; border:1px solid #1b1c1a; border-radius:999px; font-family:var(--font-mono, ui-monospace, monospace); font-size:11px; font-weight:600; }
+:root:root:root:root:root:root:root .ev-kitchen-line { margin:0; font-size:12px; font-weight:600; }
+:root:root:root:root:root:root:root .ev-timeline { display:grid; }
+:root:root:root:root:root:root:root .ev-timeline div { display:grid; grid-template-columns:72px minmax(0, 1fr); gap:14px; min-height:36px; align-items:center; border-top:1px solid var(--c-line-5); font-size:13px; }
+:root:root:root:root:root:root:root .ev-timeline div:first-child { border-top:0; }
+:root:root:root:root:root:root:root .ev-people { display:flex; flex-wrap:wrap; gap:8px; }
+:root:root:root:root:root:root:root .ev-people span { display:inline-flex; align-items:center; gap:8px; min-height:30px; padding:0 12px 0 4px; border:1px solid var(--c-line-5); border-radius:999px; font-size:12px; font-weight:600; }
+:root:root:root:root:root:root:root .ev-people span.me { border-color:var(--c-text); }
+:root:root:root:root:root:root:root .ev-people i { display:grid; place-items:center; width:22px; height:22px; border-radius:50%; background:var(--c-raised-2); font-size:10px; font-style:normal; font-weight:700; }
+:root:root:root:root:root:root:root .ev-people svg { color:var(--c-pass, var(--c-ok)); }
+:root:root:root:root:root:root:root .ev-changed { border-color:var(--c-text); }
+:root:root:root:root:root:root:root .ev-confirm { display:grid; gap:14px; padding:16px; border:1px solid var(--c-line-5); border-radius:16px; font-size:13px; font-weight:600; }
+:root:root:root:root:root:root:root .ev-grid2 { display:grid; gap:14px; grid-template-columns:minmax(0, 1fr); }
+@media (min-width: 640px) { :root:root:root:root:root:root:root .ev-grid2 { grid-template-columns:repeat(2, minmax(0, 1fr)); } }
+:root:root:root:root:root:root:root .ev-grid2 .field { margin:0; }
+:root:root:root:root:root:root:root .ev-course-edit { display:grid; gap:14px; padding-bottom:14px; border-bottom:1px solid var(--c-line-5); }
+:root:root:root:root:root:root:root .ev-dish-edit, :root:root:root:root:root:root:root .ev-moment-edit { display:grid; grid-template-columns:minmax(0, 1fr) 80px 44px; gap:8px; align-items:center; }
+:root:root:root:root:root:root:root .ev-moment-edit { grid-template-columns:96px minmax(0, 1fr) 44px; }
+:root:root:root:root:root:root:root .ev-allergy-edit { display:grid; grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) 44px; gap:8px; align-items:center; }
+:root:root:root:root:root:root:root .ev-allergy-edit input:nth-child(3) { grid-column:1 / 3; }
+:root:root:root:root:root:root:root .ev-allergy-edit .ev-icon { grid-row:1; grid-column:3; }
+:root:root:root:root:root:root:root .ev-qty { min-width:0; }
+:root:root:root:root:root:root:root .ev-icon { display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:transparent; color:var(--c-muted); cursor:pointer; }
+:root:root:root:root:root:root:root .ev-people-pick { display:flex; flex-wrap:wrap; gap:8px; }
+:root:root:root:root:root:root:root .ev-home { display:grid; gap:14px; justify-items:start; padding:16px; margin-bottom:14px; }
+:root:root:root:root:root:root:root .ev-home-title { font-size:20px; line-height:1.2; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .ev-chip { display:inline-flex; align-items:center; min-height:30px; padding:0 14px; border:1px solid var(--c-text); border-radius:999px; background:transparent; color:var(--c-text); font:inherit; font-size:12px; font-weight:600; cursor:pointer; }
+:root:root:root:root:root:root:root .ev-chip[aria-pressed="true"] { background:var(--c-text); color:var(--c-bg); }
+
