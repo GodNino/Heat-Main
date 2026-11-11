@@ -3712,3 +3712,7 @@ span.dash-name { text-decoration:none; }
 :root:root:root:root:root:root:root .ev-chip { display:inline-flex; align-items:center; min-height:30px; padding:0 14px; border:1px solid var(--c-text); border-radius:999px; background:transparent; color:var(--c-text); font:inherit; font-size:12px; font-weight:600; cursor:pointer; }
 :root:root:root:root:root:root:root .ev-chip[aria-pressed="true"] { background:var(--c-text); color:var(--c-bg); }
 
+
+/* Side menu: an icon never shrinks away beside a long label ("Employee of the month").
+   To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .nav-item > svg { flex:none; }
