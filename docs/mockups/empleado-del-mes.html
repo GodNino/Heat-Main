@@ -1,0 +1,273 @@
+<title>Empleado del mes HEAT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: a phone-width HEAT screen on the left, notes on the right; on a phone the notes go below.
+   "Ver como" switches between the manager and an employee; the steps switch the screen. HEAT tokens only. */
+:root {
+  --lime: #C7F23A; --on-lime: #1B1C1A; --c-bg: #F1F1EC; --c-surface: #FBFBF8; --c-text: #1B1C1A; --c-muted: #62645D;
+  --c-line-5: #b7b8b0; --c-soft: #e6e6df; --c-on-dark: #F1F1EC; --c-pass: #17803F; --c-fail: #D42A1C;
+  --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --c-bg: #121311; --c-surface: #1b1d1a; --c-text: #eef0e8; --c-muted: #9a9e92; --c-line-5: #4b4e47; --c-soft: #2e312b; --c-on-dark: #121311; --c-pass: #4cc274; color-scheme: dark } }
+:root[data-theme="dark"] { --c-bg: #121311; --c-surface: #1b1d1a; --c-text: #eef0e8; --c-muted: #9a9e92; --c-line-5: #4b4e47; --c-soft: #2e312b; --c-on-dark: #121311; --c-pass: #4cc274; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--c-bg); color: var(--c-text); font: 16px/1.4 var(--sans); padding-block: 20px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+button, input, textarea { font: inherit; color: inherit }
+button { cursor: pointer }
+:focus-visible { outline: 2px solid var(--c-text); outline-offset: 2px }
+.wrap { max-width: 1000px; margin: 0 auto; display: grid; gap: 14px }
+.note { font-size: 13px; color: var(--c-muted); border: 1px solid var(--c-line-5); border-radius: 16px; padding: 14px 16px; background: var(--c-surface) }
+.note b { color: var(--c-text) }
+.row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center }
+.label { font-size: 12px; color: var(--c-muted); font-weight: 600 }
+.chip { height: 30px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--c-text); background: transparent; font-size: 12px; font-weight: 600 }
+.chip[aria-pressed="true"] { background: var(--c-text); color: var(--c-on-dark) }
+.stage { display: grid; grid-template-columns: 390px minmax(0, 1fr); gap: 20px; align-items: start }
+
+/* Phone */
+.phone { border: 1px solid var(--c-line-5); border-radius: 24px; overflow: hidden; background: var(--c-bg); max-width: 100% }
+.top { display: flex; align-items: center; gap: 14px; height: 56px; padding: 0 16px; background: var(--c-surface); border-bottom: 1px solid var(--c-line-5) }
+.back { height: 30px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--c-text); background: transparent; font-size: 12px; font-weight: 600 }
+.logo { font-weight: 700; font-size: 20px; letter-spacing: -.02em; flex: 1 }
+.screen { padding: 16px; display: grid; gap: 14px; min-height: 640px; align-content: start }
+h1 { font-size: 24px; margin: 0; text-wrap: balance }
+.sub { font-size: 13px; color: var(--c-muted); margin: -8px 0 0 }
+.section-chip { justify-self: start; display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border-radius: 99px; background: var(--c-text); color: var(--c-on-dark); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase }
+.card { background: var(--c-surface); border: 1px solid var(--c-line-5); border-radius: 16px; padding: 16px; display: grid; gap: 12px }
+.card-label { font-size: 13px; font-weight: 700 }
+.btn { height: 30px; padding: 0 16px; border-radius: 99px; border: 1px solid var(--c-text); background: transparent; font-size: 12px; font-weight: 600; justify-self: start }
+.btn.primary { background: var(--lime); color: var(--on-lime); border-color: var(--on-lime) }
+.btn[disabled] { opacity: .45; cursor: default }
+.btns { display: flex; flex-wrap: wrap; gap: 8px }
+.field { display: grid; gap: 6px }
+.field input, .field textarea { height: 44px; padding: 0 16px; border: 1px solid var(--c-line-5); border-radius: 99px; background: var(--c-bg); font-size: 16px; width: 100% }
+.field textarea { height: 64px; padding: 10px 16px; border-radius: 22px; resize: none }
+
+/* People rows */
+.people { display: grid; border: 1px solid var(--c-line-5); border-radius: 16px; overflow: hidden; background: var(--c-surface) }
+.person { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; gap: 12px; align-items: center; min-height: 52px; padding: 8px 14px; border: 0; border-top: 1px solid var(--c-line-5); background: transparent; text-align: left; width: 100% }
+.person:first-child { border-top: 0 }
+.person[aria-pressed="true"], .person[aria-checked="true"] { background: var(--c-soft) }
+.av { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--c-soft); font: 600 12px var(--mono) }
+.person[aria-pressed="true"] .av, .person[aria-checked="true"] .av { background: var(--c-text); color: var(--c-on-dark) }
+.person b { display: block; font-size: 13px }
+.person small { display: block; font: 600 11px var(--mono); color: var(--c-muted) }
+.tick { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--c-line-5); display: grid; place-items: center; font-size: 13px }
+.person[aria-pressed="true"] .tick, .person[aria-checked="true"] .tick { background: var(--lime); border-color: var(--on-lime); color: var(--on-lime) }
+.person[disabled] { opacity: .5; cursor: default }
+.count { font: 600 12px var(--mono); color: var(--c-muted) }
+
+/* Progress and results */
+.bar { height: 8px; border-radius: 99px; background: var(--c-soft); overflow: hidden }
+.bar span { display: block; height: 100%; background: var(--c-text) }
+.bar.win span { background: var(--lime) }
+.result { display: grid; gap: 6px }
+.result-head { display: flex; justify-content: space-between; gap: 12px; font-size: 13px }
+.result-head b { font-weight: 700 }
+.result-head span { font: 600 12px var(--mono); color: var(--c-muted); font-variant-numeric: tabular-nums }
+.quote { font-size: 13px; padding-left: 12px; border-left: 1px solid var(--c-line-5); color: var(--c-muted) }
+.winner { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; align-items: center }
+.winner .av { width: 56px; height: 56px; font-size: 16px; background: var(--lime); color: var(--on-lime) }
+.winner b { display: block; font-size: 20px }
+.winner small { display: block; font: 600 11px var(--mono); color: var(--c-muted) }
+.pill { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%); display: inline-flex; gap: 8px; align-items: center; height: 36px; padding: 0 16px; border-radius: 99px; background: var(--c-pass); color: #fff; font-size: 13px; font-weight: 600; white-space: nowrap }
+.phone-wrap { position: relative }
+.home-card { display: grid; gap: 12px }
+.home-card .meta { font-size: 13px; color: var(--c-muted) }
+.fame { display: grid; gap: 0; border-top: 1px solid var(--c-line-5) }
+.fame div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--c-line-5); font-size: 13px }
+.fame span { font: 600 11px var(--mono); color: var(--c-muted) }
+
+.ideas { display: grid; gap: 14px }
+.idea { background: var(--c-surface); border: 1px solid var(--c-line-5); border-radius: 16px; padding: 16px; font-size: 13px; color: var(--c-muted) }
+.idea b { display: block; color: var(--c-text); font-size: 14px; margin-bottom: 4px }
+
+@media (max-width: 820px) { .stage { grid-template-columns: minmax(0, 1fr) } .phone { max-width: 420px; width: 100%; justify-self: center } }
+</style>
+
+<div class="wrap">
+  <div class="note"><b>Mockup para revisar con Gaby.</b> Nombres de ejemplo. Cambia entre manager y empleado, y toca los pasos para ver cada pantalla. Todo se puede tocar: elige nominados, vota, cierra y anuncia.</div>
+
+  <div class="row" role="group" aria-label="Ver como">
+    <span class="label">Ver como:</span>
+    <button class="chip" type="button" data-role="manager" aria-pressed="true">Manager</button>
+    <button class="chip" type="button" data-role="employee" aria-pressed="false">Empleado</button>
+  </div>
+  <div class="row" role="group" aria-label="Paso" id="steps"></div>
+
+  <div class="stage">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="top"><button class="back" type="button" id="backBtn">Back</button><span class="logo">heat</span></div>
+        <div class="screen" id="screen" aria-live="polite"></div>
+      </div>
+      <div class="pill" id="pill" hidden>✓ <span id="pillText"></span></div>
+    </div>
+
+    <div class="ideas" id="ideas"></div>
+  </div>
+</div>
+
+<script>
+const FOH = [
+  {id: "an", name: "Andrea Ruiz", pos: "Server"}, {id: "ca", name: "Carlos Méndez", pos: "Bartender"},
+  {id: "lu", name: "Luisa Torres", pos: "S.A."}, {id: "mi", name: "Miguel Paz", pos: "Host"},
+  {id: "va", name: "Valeria Gómez", pos: "Server"}, {id: "da", name: "Daniel Soto", pos: "Runner"},
+];
+const BOH = [
+  {id: "jo", name: "Jorge Rivas", pos: "Line cook"}, {id: "ro", name: "Rosa Díaz", pos: "Prep cook"},
+  {id: "ke", name: "Kenji Arai", pos: "Sushi chef"}, {id: "pe", name: "Pedro León", pos: "Dishwasher"},
+  {id: "fe", name: "Fernanda Cruz", pos: "Line cook"},
+];
+const ME = "va"; // the employee viewing, to show "you can't vote for yourself"
+const RESULTS = {foh: {an: 14, ca: 9, lu: 6}, boh: {jo: 11, ke: 15, ro: 3}};
+const QUOTES = {an: ["Siempre ayuda a cerrar aunque no le toque.", "Cubrió mi turno el sábado sin pensarlo."], ke: ["El que más enseña a los nuevos en la barra de sushi.", "Nunca se le ha ido un plato mal."]};
+
+const state = {role: "manager", step: 0, nominees: {foh: ["an", "ca", "lu"], boh: ["jo", "ke", "ro"]}, vote: {foh: null, boh: null}, why: "", announced: false};
+const initials = n => n.split(" ").map(w => w[0]).join("").slice(0, 2);
+const byId = id => [...FOH, ...BOH].find(p => p.id === id);
+
+const STEPS = {
+  manager: ["Crear votación", "Votación abierta", "Resultados", "Anunciado"],
+  employee: ["Tarjeta en Inicio", "Votar", "Ya votaste", "Ganadores"],
+};
+const IDEAS = {
+  manager: [
+    ["Tú eliges a los nominados", "Escoges de tu equipo, con foto y posición. FOH y BOH por separado, hasta 4 por área."],
+    ["Solo votan los empleados", "Los managers crean, cierran y anuncian, pero no votan. Cada empleado vota una vez en FOH y una vez en BOH, y no puede votar por sí mismo."],
+    ["Mientras está abierta", "Ves cuántos votaron, pero no quién va ganando, para que nadie se adelante. Al publicarla, el equipo recibe una notificación y sale un aviso fijado en el chat."],
+    ["Al anunciar", "Los ganadores salen en el Inicio de todos por una semana, con las frases que escribieron sus compañeros, y quedan en la lista de ganadores de cada mes."],
+  ],
+  employee: [
+    ["Le aparece en Inicio", "Una tarjeta con la fecha de cierre. Si no ha votado, también le llega un recordatorio el día antes de cerrar."],
+    ["Dos votos, uno por área", "Elige uno de FOH y uno de BOH. Si está nominado, su nombre aparece pero no lo puede elegir."],
+    ["Voto anónimo", "Nadie del equipo ve por quién votó. El manager solo ve el total y las frases, sin nombre de quién las escribió."],
+    ["Ganadores para todos", "El día del anuncio todos ven a los ganadores en Inicio, y abajo la lista de los meses anteriores."],
+  ],
+};
+
+function render() {
+  document.querySelectorAll("[data-role]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.role === state.role)));
+  const steps = document.getElementById("steps");
+  steps.innerHTML = '<span class="label">Paso:</span>' + STEPS[state.role].map((s, i) => `<button class="chip" type="button" data-step="${i}" aria-pressed="${i === state.step}">${i + 1}. ${s}</button>`).join("");
+  document.getElementById("ideas").innerHTML = IDEAS[state.role].map(([t, d]) => `<div class="idea"><b>${t}</b>${d}</div>`).join("");
+  document.getElementById("backBtn").hidden = state.role === "employee" && state.step === 0;
+  document.getElementById("screen").innerHTML = (state.role === "manager" ? managerScreen : employeeScreen)();
+}
+
+function personRow(p, {pressed, attr = "aria-pressed", disabled = false, note = "", data = ""}) {
+  return `<button class="person" type="button" ${attr}="${pressed}" ${disabled ? "disabled" : ""} ${data}>
+    <span class="av">${initials(p.name)}</span><span><b>${p.name}</b><small>${p.pos}${note}</small></span><span class="tick">${pressed ? "✓" : ""}</span></button>`;
+}
+
+function managerScreen() {
+  const s = state.step;
+  if (s === 0) {
+    const pick = (area, list) => `<div class="row" style="justify-content:space-between"><span class="section-chip">${area.toUpperCase()}</span><span class="count">${state.nominees[area].length} de 4</span></div>
+      <div class="people">${list.map(p => personRow(p, {pressed: state.nominees[area].includes(p.id), data: `data-nom="${area}:${p.id}"`})).join("")}</div>`;
+    const ok = state.nominees.foh.length >= 2 && state.nominees.boh.length >= 2;
+    return `<h1>Empleado del mes</h1><p class="sub">Noviembre 2026. Elige de 2 a 4 nominados por área.</p>
+      ${pick("foh", FOH)}${pick("boh", BOH)}
+      <div class="field"><label class="card-label" for="close">Cierra el</label><input id="close" value="Domingo 30 de noviembre, 11:00 PM"></div>
+      <button class="btn primary" type="button" data-go="1" ${ok ? "" : "disabled"}>Publicar votación</button>`;
+  }
+  if (s === 1) {
+    return `<h1>Empleado del mes</h1><p class="sub">Noviembre 2026 · Abierta hasta el domingo 30, 11:00 PM</p>
+      <div class="card"><span class="card-label">Votaron</span>
+        <div class="result"><div class="result-head"><b>23 de 34 empleados</b><span>68%</span></div><div class="bar"><span style="width:68%"></span></div></div>
+        <span class="sub" style="margin:0">Los resultados se ven cuando cierres la votación.</span>
+        <div class="btns"><button class="btn" type="button" data-pill="Recordatorio enviado a 11 personas">Recordar a quien no ha votado</button></div></div>
+      <span class="section-chip">FOH</span><div class="people">${state.nominees.foh.map(id => personRow(byId(id), {pressed: false})).join("")}</div>
+      <span class="section-chip">BOH</span><div class="people">${state.nominees.boh.map(id => personRow(byId(id), {pressed: false})).join("")}</div>
+      <button class="btn" type="button" data-go="2">Cerrar votación ahora</button>`;
+  }
+  if (s === 2) {
+    const block = area => {
+      const r = RESULTS[area], total = Object.values(r).reduce((a, b) => a + b, 0), max = Math.max(...Object.values(r));
+      return `<div class="card"><span class="section-chip">${area.toUpperCase()}</span>
+        ${Object.entries(r).sort((a, b) => b[1] - a[1]).map(([id, n]) => `<div class="result"><div class="result-head"><b>${byId(id).name}${n === max ? " · Gana" : ""}</b><span>${n} votos</span></div><div class="bar ${n === max ? "win" : ""}"><span style="width:${Math.round(n / total * 100)}%"></span></div></div>`).join("")}
+        ${(QUOTES[Object.entries(r).find(([, n]) => n === max)[0]] || []).map(q => `<p class="quote">“${q}”</p>`).join("")}</div>`;
+    };
+    return `<h1>Resultados</h1><p class="sub">Noviembre 2026 · 29 de 34 votaron. Solo los managers ven esto.</p>
+      ${block("foh")}${block("boh")}
+      <button class="btn primary" type="button" data-go="3">Anunciar ganadores</button>`;
+  }
+  return winnersScreen(true);
+}
+
+function employeeScreen() {
+  const s = state.step;
+  if (s === 0) {
+    return `<h1>Hola, Valeria</h1>
+      <div class="card home-card"><span class="section-chip">Empleado del mes</span>
+        <b style="font-size:20px">Vota por el empleado del mes de noviembre</b>
+        <span class="meta">Elige uno de FOH y uno de BOH. Cierra el domingo 30.</span>
+        <button class="btn primary" type="button" data-go="1">Votar</button></div>
+      <div class="card"><span class="card-label">My shift</span><span class="sub" style="margin:0">Hoy 5:00 PM · Server · Sección 3</span></div>`;
+  }
+  if (s === 1) {
+    const pick = (area) => `<span class="section-chip">${area.toUpperCase()}</span>
+      <div class="people" role="radiogroup" aria-label="${area}">${state.nominees[area].map(id => {
+        const p = byId(id), me = id === ME;
+        return personRow(p, {pressed: state.vote[area] === id, attr: "aria-checked", disabled: me, note: me ? " · Eres tú" : "", data: `role="radio" data-vote="${area}:${id}"`});
+      }).join("")}</div>`;
+    if (!state.nominees.foh.includes(ME)) state.nominees.foh = [...state.nominees.foh.slice(0, 3), ME];
+    const ok = state.vote.foh && state.vote.boh;
+    return `<h1>Empleado del mes</h1><p class="sub">Noviembre 2026 · Tu voto es anónimo.</p>
+      ${pick("foh")}${pick("boh")}
+      <div class="field"><label class="card-label" for="why">¿Por qué? (opcional)</label><textarea id="why" placeholder="Una frase para tus compañeros">${state.why}</textarea></div>
+      <button class="btn primary" type="button" data-go="2" ${ok ? "" : "disabled"}>Enviar voto</button>`;
+  }
+  if (s === 2) {
+    const f = byId(state.vote.foh || "an"), b = byId(state.vote.boh || "ke");
+    return `<h1>Empleado del mes</h1>
+      <div class="card"><span class="card-label">Ya votaste</span>
+        <span class="sub" style="margin:0">FOH: ${f.name} · BOH: ${b.name}</span>
+        <span class="sub" style="margin:0">Los ganadores se anuncian después del domingo 30. Te avisamos.</span></div>`;
+  }
+  return winnersScreen(false);
+}
+
+function winnersScreen(isManager) {
+  const w = (area, id) => { const p = byId(id); return `<div class="card"><span class="section-chip">${area}</span>
+    <div class="winner"><span class="av">${initials(p.name)}</span><span><b>${p.name}</b><small>${p.pos}</small></span></div>
+    ${(QUOTES[id] || []).map(q => `<p class="quote">“${q}”</p>`).join("")}</div>`; };
+  return `<h1>Empleados del mes</h1><p class="sub">Noviembre 2026${isManager ? " · Anunciado a todo el equipo" : ""}</p>
+    ${w("FOH", "an")}${w("BOH", "ke")}
+    <div class="card"><span class="card-label">Meses anteriores</span><div class="fame">
+      <div>Octubre<span>Carlos Méndez · Rosa Díaz</span></div>
+      <div>Septiembre<span>Luisa Torres · Jorge Rivas</span></div>
+      <div>Agosto<span>Andrea Ruiz · Pedro León</span></div></div></div>`;
+}
+
+let pillTimer;
+function pill(text) {
+  const el = document.getElementById("pill"); document.getElementById("pillText").textContent = text; el.hidden = false;
+  clearTimeout(pillTimer); pillTimer = setTimeout(() => { el.hidden = true; }, 3000);
+}
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("button"); if (!t || t.disabled) return;
+  if (t.dataset.role) { state.role = t.dataset.role; state.step = 0; return render(); }
+  if (t.dataset.step) { state.step = Number(t.dataset.step); return render(); }
+  if (t.id === "backBtn") { state.step = Math.max(0, state.step - 1); return render(); }
+  if (t.dataset.pill) return pill(t.dataset.pill);
+  if (t.dataset.nom) {
+    const [area, id] = t.dataset.nom.split(":"), list = state.nominees[area];
+    if (list.includes(id)) state.nominees[area] = list.filter(x => x !== id);
+    else if (list.length < 4) list.push(id);
+    else return pill("Máximo 4 nominados por área");
+    return render();
+  }
+  if (t.dataset.vote) { const [area, id] = t.dataset.vote.split(":"); state.vote[area] = id; return render(); }
+  if (t.dataset.go) {
+    const why = document.getElementById("why"); if (why) state.why = why.value;
+    const go = Number(t.dataset.go);
+    const msg = {manager: ["", "Votación publicada. Le avisamos al equipo.", "Votación cerrada", "Ganadores anunciados"], employee: ["", "", "Voto enviado", ""]}[state.role][go];
+    state.step = go; render(); if (msg) pill(msg);
+  }
+});
+render();
+</script>
