@@ -15,6 +15,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { replyLanguage } from "@/lib/reply-language";
 import { createClient } from "@supabase/supabase-js";
+import { claimRequest, LIMIT_MESSAGES } from "@/lib/request-limit";
 import type { CardFieldRow } from "@/lib/card-fields";
 import { cleanConversation, historyText, knowledge, parsePractice, tutorSystem, type PracticeRow, type TutorItem, type TutorStandard, type TutorStory, type TutorWord } from "@/lib/tutor";
 import { TUTOR_EXAMPLES, TUTOR_MANUAL } from "@/lib/tutor-manual";
@@ -58,6 +59,7 @@ export async function POST(request: Request) {
   const rid = body.restaurantId;
   const me = (await db.auth.getUser(token)).data.user?.id;
   if (!me) return Response.json({error: "Please sign in again."}, {status: 401});
+  if (!(await claimRequest(db, "tutor"))) return Response.json({error: LIMIT_MESSAGES.tutor}, {status: 429});
   const [place, items, cardRows, story, standards, words, practice] = await Promise.all([
     db.from("restaurants").select("name").eq("id", rid).maybeSingle(),
     db.from("menu_items").select("id, name, description, ingredients, allergens, category, content_type, price_label, table_setting, observations, details").eq("restaurant_id", rid),

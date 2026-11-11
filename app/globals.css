@@ -3590,3 +3590,11 @@ span.dash-name { text-decoration:none; }
 :root:root:root:root:root:root:root .tc-viewer img { max-width:100%; max-height:calc(100dvh - 120px); border-radius:12px; object-fit:contain; cursor:default; }
 :root:root:root:root:root:root:root .tc-viewer-caption { max-width:640px; margin:0; color:#fff; font-size:15px; text-align:center; cursor:default; }
 :root:root:root:root:root:root:root .tc-viewer-close { position:absolute; top:max(16px, env(safe-area-inset-top, 0px)); right:max(16px, env(safe-area-inset-right, 0px)); display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:rgb(255 255 255 / .16); color:#fff; cursor:pointer; }
+
+/* Header on phones: the four icons (chat, allergy check, search, sign out) beside the logo were
+   wider than a 375 px screen, so Sign out was cut off (QA audit). Below 480 px the icons sit
+   together with a 40 px tap area each. To undo, revert the commit that added this block. */
+@media (max-width: 479px) {
+  :root:root:root:root:root:root:root .app-header-actions { gap:0; flex:none; }
+  :root:root:root:root:root:root:root .app-header-actions > button { padding:10px; }
+}

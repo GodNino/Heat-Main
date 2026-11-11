@@ -9,6 +9,7 @@
 import { createClient } from "@supabase/supabase-js";
 import webpush from "web-push";
 import { PUSH_EVENTS, pushMessage, type PushEvent } from "@/lib/push-messages";
+import { claimRequest } from "@/lib/request-limit";
 
 export async function POST(request: Request) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -27,9 +28,14 @@ export async function POST(request: Request) {
     global: {headers: {Authorization: `Bearer ${token}`}},
   });
   const who = await asCaller.rpc("push_audience", {event, ref, target: target ?? null});
-  if (who.error) return Response.json({error: who.error.message}, {status: 403});
+  // Our own refusals are 42501 with a plain sentence; anything else (a malformed id) is the request's fault.
+  if (who.error) return who.error.code === "42501"
+    ? Response.json({error: who.error.message}, {status: 403})
+    : Response.json({error: "That can't be announced."}, {status: 400});
   const row = (who.data as {restaurant_name: string; user_ids: string[]}[] | null)?.[0];
   if (!row?.user_ids.length) return Response.json({sent: 0, configured: true});
+  // The same announcement can't be sent again within a minute, and each person has a daily limit (066).
+  if (!(await claimRequest(asCaller, "notify", `${event}:${ref}:${target ?? ""}`))) return Response.json({sent: 0, configured: true, limited: true}, {status: 429});
 
   const server = createClient(url, serviceKey, {auth: {persistSession: false, autoRefreshToken: false}});
   const devices = await server.from("push_subscriptions").select("id,endpoint,p256dh,auth,lang").in("user_id", row.user_ids);
