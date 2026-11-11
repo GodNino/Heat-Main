@@ -3598,3 +3598,48 @@ span.dash-name { text-decoration:none; }
   :root:root:root:root:root:root:root .app-header-actions { gap:0; flex:none; }
   :root:root:root:root:root:root:root .app-header-actions > button { padding:10px; }
 }
+
+/* Employee of the month (067): nominee rows (36 px look, 44 px tap), the turnout and results bars,
+   the winners card and the Home card. Tokens only. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .eotm { display:grid; gap:14px; }
+:root:root:root:root:root:root:root .eotm-card { display:grid; gap:14px; padding:16px; }
+:root:root:root:root:root:root:root .eotm-card.compact { gap:14px; }
+:root:root:root:root:root:root:root .eotm-label { margin:0; font-size:13px; font-weight:700; }
+:root:root:root:root:root:root:root .eotm-area { display:grid; gap:14px; }
+:root:root:root:root:root:root:root .eotm-area .section-chip, :root:root:root:root:root:root:root .eotm-winner-area .section-chip, :root:root:root:root:root:root:root .eotm-past > .section-chip, :root:root:root:root:root:root:root .eotm-home .section-chip { margin:0; }
+:root:root:root:root:root:root:root .eotm-area-head { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+:root:root:root:root:root:root:root .eotm-count { font-size:12px; font-weight:600; color:var(--c-muted); }
+:root:root:root:root:root:root:root .eotm-people { display:grid; border:1px solid var(--c-line-5); border-radius:16px; overflow:hidden; }
+:root:root:root:root:root:root:root .eotm-person { display:grid; grid-template-columns:36px minmax(0, 1fr) 22px; gap:14px; align-items:center; min-height:44px; padding:4px 16px; border:0; border-top:1px solid var(--c-line-5); background:transparent; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+:root:root:root:root:root:root:root .eotm-person:first-child { border-top:0; }
+:root:root:root:root:root:root:root .eotm-person[aria-pressed="true"], :root:root:root:root:root:root:root .eotm-person[aria-checked="true"] { background:var(--c-raised); }
+:root:root:root:root:root:root:root .eotm-person:disabled { cursor:default; }
+:root:root:root:root:root:root:root .eotm-person:disabled:not([aria-pressed="true"]):not([aria-checked="true"]) .eotm-who { opacity:.6; }
+:root:root:root:root:root:root:root .eotm-avatar { display:grid; place-items:center; width:36px; height:36px; border-radius:50%; background:var(--c-raised-2); font-size:12px; font-weight:700; }
+:root:root:root:root:root:root:root .eotm-person[aria-pressed="true"] .eotm-avatar, :root:root:root:root:root:root:root .eotm-person[aria-checked="true"] .eotm-avatar { background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .eotm-avatar.big { width:56px; height:56px; font-size:16px; background:var(--lime); color:#1b1c1a; }
+:root:root:root:root:root:root:root .eotm-who { min-width:0; }
+:root:root:root:root:root:root:root .eotm-who b { display:block; font-size:13px; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .eotm-who small { display:block; font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .eotm-tick { display:grid; place-items:center; width:22px; height:22px; border-radius:50%; border:1px solid var(--c-line-5); }
+:root:root:root:root:root:root:root .eotm-person[aria-pressed="true"] .eotm-tick, :root:root:root:root:root:root:root .eotm-person[aria-checked="true"] .eotm-tick { background:var(--lime); border-color:#1b1c1a; color:#1b1c1a; }
+:root:root:root:root:root:root:root .eotm-turnout, :root:root:root:root:root:root:root .eotm-result { display:grid; gap:14px; }
+:root:root:root:root:root:root:root .eotm-turnout-head { display:flex; justify-content:space-between; gap:14px; font-size:13px; }
+:root:root:root:root:root:root:root .eotm-turnout-head span { color:var(--c-muted); font-weight:600; white-space:nowrap; }
+:root:root:root:root:root:root:root .eotm-bar { height:8px; border-radius:999px; background:var(--c-raised-2); overflow:hidden; }
+:root:root:root:root:root:root:root .eotm-bar span { display:block; height:100%; background:var(--c-text); }
+:root:root:root:root:root:root:root .eotm-bar.win span { background:var(--lime); }
+:root:root:root:root:root:root:root .eotm-quote { margin:0; padding-left:14px; border-left:1px solid var(--c-line-5); font-size:13px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .eotm-winner-area { display:grid; gap:14px; }
+:root:root:root:root:root:root:root .eotm-winner { display:grid; grid-template-columns:56px minmax(0, 1fr); gap:14px; align-items:center; }
+:root:root:root:root:root:root:root .eotm-winner .eotm-quote { grid-column:1 / -1; }
+:root:root:root:root:root:root:root .eotm-winner b { display:block; font-size:20px; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .eotm-winner small { display:block; font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .eotm-card.compact .eotm-winner { grid-template-columns:36px minmax(0, 1fr); }
+:root:root:root:root:root:root:root .eotm-card.compact .eotm-avatar.big { width:36px; height:36px; font-size:12px; }
+:root:root:root:root:root:root:root .eotm-card.compact .eotm-winner b { font-size:13px; }
+:root:root:root:root:root:root:root .eotm-actions { display:flex; flex-wrap:wrap; gap:14px; }
+:root:root:root:root:root:root:root .eotm-past { display:grid; gap:14px; }
+:root:root:root:root:root:root:root .eotm-home { display:grid; gap:14px; justify-items:start; padding:16px; margin-bottom:14px; }
+:root:root:root:root:root:root:root .eotm-home-title { font-size:20px; line-height:1.2; }
+:root:root:root:root:root:root:root .eotm-card > .btn { justify-self:start; }
