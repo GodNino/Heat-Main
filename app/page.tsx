@@ -2,12 +2,12 @@
 // Same colours, type and pieces as the app, so moving from here into it feels like one product.
 // Every picture on this page is the app's own screens drawn in HTML, not a screenshot: they stay
 // sharp, follow light and dark, and translate with the rest of the page.
-import type { ReactNode } from "react";
-import { ArrowRight, Bell, BookOpen, CalendarDays, CalendarOff, Check, ChefHat, Crown, FileText, Globe, Languages, ListChecks, MapPin, Store, Users, UtensilsCrossed, X } from "lucide-react";
+import { ArrowRight, Bell, BookOpen, CalendarDays, CalendarOff, Check, FileText, Globe, Languages, ListChecks, MapPin, Store, Users } from "lucide-react";
 import { HeatLogo } from "./heat-logo";
 import { AuthForward } from "./auth-forward";
 import { LanguageSwitch } from "./language";
 import { Reveal } from "./landing-motion";
+import { NightTimeline, ProductTour, RoleSwitch, type Role } from "./landing-sections";
 
 const FACTS = [
   ["AI tutor", "that knows your menu"],
@@ -16,24 +16,14 @@ const FACTS = [
   ["14 days free", "no card needed"],
 ];
 
-// The same night, twice: how it runs today, and how it runs on HEAT.
-const BEFORE_AFTER = [
-  ["The schedule lives in a group chat", "The week is published to every phone, and changes wait for a manager"],
-  ["Swaps by text; overtime found on payroll", "A released shift only reaches people who can cover it without overtime"],
-  ["The menu binder nobody opens", "Every dish on a card, with a quiz that grades itself"],
-  ["Allergy questions answered from memory", "Pick the allergies, see what to avoid and what to confirm with the kitchen"],
-  ["86s shouted across the pass", "Tonight's 86 list on the phone of everyone working today"],
-  ["The night's story leaves with the closing manager", "An end-of-shift report the owners can read, and a dashboard that remembers"],
-  ["Training means reading the binder alone", "A tutor that quizzes, corrects and practises selling with every server"],
-  ["Side work on a whiteboard, the same names every night", "Side work and sections given out in a few taps, on everyone's phone"],
-  ["Answers buried in texts, schedules and reports", "Ask the assistant: who's near overtime, who needs to study, what the reports say"],
-];
+// What a restaurant puts away when it runs on HEAT.
+const REPLACES = ["WhatsApp group", "Menu binder", "Side work whiteboard", "Schedule app", "Swaps by text", "Paper shift report"];
 
-const ROLES = [
-  {icon: Crown, title: "Owners and GMs", text: "Labor and service for the week, every location side by side, and an alert the moment a report is urgent."},
-  {icon: CalendarDays, title: "Floor managers", text: "Build the front of house, post pre-shift, send tonight's side work and approve swaps with the hours in front of you, or simply ask the assistant."},
-  {icon: ChefHat, title: "Head chefs and sous chefs", text: "Build the kitchen schedule, 86 what's out, and keep the line's time off in your own hands."},
-  {icon: UtensilsCrossed, title: "Servers, bartenders and cooks", text: "Your shifts, tonight's board, your side work and a tutor that helps you study and sell, on your phone. Release or swap a shift without a single text."},
+const ROLE_VIEWS: Role[] = [
+  {key: "owner", label: "Owner or GM", line: "Know how last night went before you get to the restaurant.", who: "Owners and GMs", items: ["Labor and sales for the week, every location side by side", "Urgent reports reach your phone the moment they're sent", "Ask the assistant what the reports keep saying"]},
+  {key: "floor", label: "Floor manager", line: "Pre-shift, side work and sections are out before 5.", who: "Floor managers", items: ["Build the front of house and publish it to every phone", "Send tonight's side work and sections in a few taps", "Approve swaps with the hours in front of you"]},
+  {key: "chef", label: "Chef", line: "The line's schedule and the 86 list stay in your hands.", who: "Head chefs and sous chefs", items: ["Build the kitchen schedule on your own", "86 what's out and the floor sees it right away", "A kitchen chat, separate from the floor"]},
+  {key: "team", label: "Server or bartender", line: "Study the new menu on the bus, not in the binder.", who: "Servers, bartenders and cooks", items: ["Your shifts, side work and section on your phone", "A tutor that helps you study and sell", "Release or swap a shift without a single text"]},
 ];
 
 const MORE = [
@@ -105,63 +95,52 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── Before and after ── */}
+      {/* ── One night, two ways ── */}
       <section className="site-section">
-        <div className="site-wrap">
-          <div className="reveal lp-center">
-            <p className="eyebrow muted">Sound familiar?</p>
-            <h2 className="site-heading lp-big">Most restaurants run on group chats, binders and memory.</h2>
-            <p className="muted mt-4">HEAT puts the whole shift in one place, from the first quiz to the last report.</p>
-          </div>
-          <div className="lp-compare reveal" role="table" aria-label="Before and with HEAT">
-            <div className="lp-compare-head" role="row"><span role="columnheader">Today</span><span role="columnheader">With HEAT</span></div>
-            {BEFORE_AFTER.map(([before, after]) => <div key={before} className="lp-compare-row" role="row">
-              <span role="cell" className="lp-before"><X size={16} aria-hidden="true" />{before}</span>
-              <span role="cell" className="lp-after"><Check size={16} aria-hidden="true" />{after}</span>
-            </div>)}
-          </div>
+        <div className="site-wrap reveal"><NightTimeline /></div>
+      </section>
+
+      {/* ── What HEAT replaces ── */}
+      <section className="lp2-lime" aria-label="What HEAT replaces">
+        <div className="site-wrap lp2-replace">
+          <div><p className="lp2-lime-eyebrow">One app, one login</p><h2 className="lp2-lime-title">Put away the group chat, the binder and the whiteboard.</h2></div>
+          <ul className="lp2-gone">{REPLACES.map(r => <li key={r}>{r}</li>)}<li className="keep">HEAT</li></ul>
         </div>
       </section>
 
-      {/* ── Product scenes ── */}
+      {/* ── Product tour ── */}
       <section id="product" className="site-section site-sunken">
         <div className="site-wrap">
-          <div className="reveal lp-center">
+          <div className="reveal">
             <p className="eyebrow muted">The product</p>
-            <h2 className="site-heading lp-big">From the first quiz to the last report</h2>
+            <h2 className="site-heading lp-big">Everything the shift needs, on one phone.</h2>
           </div>
+          <div id="schedule" className="reveal"><ProductTour stops={[
+            {title: "Know the menu", text: "Your team learns the menu on their phones, not in the binder.", points: ["Every dish, cocktail and wine on a card, in your menu's own sections", "Quizzes write and grade themselves", "Assign what to study and see who's done it"], visual: <MenuVisual />},
+            {title: "Allergy check", text: "Answer the allergy question with the whole menu in front of you.", points: ["See what to avoid and what to confirm, by menu section", "Cross-contamination flagged dish by dish", "It never calls a dish safe"], visual: <AllergyVisual />},
+            {title: "Schedule", text: "Build the week in minutes. Publish it to every phone.", points: ["Overtime and time off flagged before you publish", "Swaps reach only people who can cover them", "Floor and kitchen each build their own side"], visual: <ScheduleVisual />},
+            {title: "Side work and sections", text: "Tonight's side work and sections, in a few taps.", points: ["Tap a name, then a job", "Draw the sections on your own floor map", "Each person sees theirs on their phone"], visual: <SideworkVisual />},
+            {title: "Pre-shift", text: "Tonight's board, on the phone of everyone working tonight.", points: ["The 86 list, the dishes to push and a note", "Sent only to who's on today's schedule"], visual: <PreshiftVisual />},
+            {title: "End of shift", text: "Know how the night went, even when you weren't there.", points: ["Covers, sales, issues and what to order", "Urgent reports reach the owners right away"], visual: <DashboardVisual />},
+            {title: "Manager assistant", text: "Ask your restaurant a question. Get the answer from your own data.", points: ["Who's close to overtime, who needs to study", "This week's reports in a few lines", "Nothing changes until you confirm"], visual: <AssistantVisual />},
+          ]} /></div>
+        </div>
+      </section>
 
-          <Scene eyebrow="Know the menu" title="Your team learns the menu on their phones, not in the binder"
-            points={["Every dish, cocktail and wine on a card, in your menu's own sections", "Quizzes write and grade themselves; 80% means they know it", "Assign what to study and see who's done it"]}
-            visual={<MenuVisual />} />
-
-          <Scene id="tutor" flip eyebrow="AI tutor" title="A tutor that studies with every server, before every shift"
-            points={["They chat about any dish and it asks, corrects and explains from your own cards", "Close answers get only what was missing; allergens are never left out", "Practise selling: it plays the guest, then coaches what would sell even better", "It remembers what each person missed and starts there next time"]}
-            visual={<TutorVisual />} />
-
-          <Scene eyebrow="Allergy check" title="Answer the allergy question with the whole menu in front of you"
-            points={["Pick a guest's allergies and see what to avoid and what to confirm", "Cross-contamination flagged dish by dish", "Print the sheet for the pass. It never calls a dish safe."]}
-            visual={<AllergyVisual />} />
-
-          <Scene id="schedule" flip eyebrow="Schedule" title="Build the week in minutes. Publish it to every phone."
-            points={["Drag shifts between days and people; copy last week", "Overtime, double-booking and time off flagged before you publish", "Releases and swaps reach only people who can cover them, and a manager always approves", "The floor manager builds front of house; the head chef builds the kitchen"]}
-            visual={<ScheduleVisual />} />
-
-          <Scene eyebrow="Side work" title="Tonight's side work and sections, in a few taps"
-            points={["Everyone on tonight's schedule, servers and S.A.s, next to the jobs", "Tap a name, then a job: opening, during the shift and closing", "Draw the sections on your own floor map and print it for the floor", "Send it and each person sees theirs on their phone"]}
-            visual={<SideworkVisual />} />
-
-          <Scene flip eyebrow="Pre-shift" title="Tonight's board, on the phone of everyone working tonight"
-            points={["The 86 list, the dishes to push and a note", "Send it to everyone, or only to who's on today's schedule", "Edit it after posting and the team sees what changed"]}
-            visual={<PreshiftVisual />} />
-
-          <Scene eyebrow="End of shift" title="Know how the night went, even when you weren't there"
-            points={["Covers, sales, issues and what to order, with the 86 list and checklists filled in", "Urgent reports reach the owners' phones right away", "Labor and service next to the same days last week"]}
-            visual={<DashboardVisual />} />
-
-          <Scene id="assistant" flip eyebrow="Manager assistant" title="Ask your restaurant a question. Get the answer from your own data."
-            points={["Who's close to overtime, who's off, what's waiting for approval", "Who needs to study, and what they keep missing", "This week's shift reports in a few lines: what's urgent and what keeps coming up", "It proposes giving study to the right people; nothing changes until you confirm"]}
-            visual={<AssistantVisual />} />
+      {/* ── AI tutor spotlight ── */}
+      <section id="tutor" className="site-section brand-aside lp2-spot">
+        <div className="site-wrap lp2-spot-grid">
+          <div className="reveal">
+            <p className="lp-kicker"><span className="lp-dot" aria-hidden="true" />AI tutor</p>
+            <h2 className="lp2-spot-title">A tutor that studies with every server, <span className="lp-lime">before every shift.</span></h2>
+            <p className="lp2-spot-text">It quizzes, corrects and practises selling, using only your own menu cards. When a card doesn't say, it tells them to ask the kitchen.</p>
+            <dl className="lp2-spot-facts">
+              <div><dt>Quiz me</dt><dd>Questions from your menu, graded on the spot</dd></div>
+              <div><dt>Sell it</dt><dd>It plays the guest, then coaches the pitch</dd></div>
+              <div><dt>Remembers</dt><dd>Starts next time where each person missed</dd></div>
+            </dl>
+          </div>
+          <div className="reveal" aria-hidden="true"><TutorVisual /></div>
         </div>
       </section>
 
@@ -170,15 +149,9 @@ export default function Landing() {
         <div className="site-wrap">
           <div className="reveal lp-center">
             <p className="eyebrow muted">For your team</p>
-            <h2 className="site-heading lp-big">Made for every role, front and back of house</h2>
+            <h2 className="site-heading lp-big">What changes for you</h2>
           </div>
-          <div className="lp-roles">
-            {ROLES.map(({icon: Icon, title, text}) => <article key={title} className="panel lp-role reveal">
-              <span className="lp-icon"><Icon size={20} aria-hidden="true" /></span>
-              <h3 className="mt-4 text-lg font-semibold">{title}</h3>
-              <p className="muted mt-2 text-sm">{text}</p>
-            </article>)}
-          </div>
+          <div className="reveal"><RoleSwitch roles={ROLE_VIEWS} /></div>
         </div>
       </section>
 
@@ -205,7 +178,7 @@ export default function Landing() {
             <p className="eyebrow muted">How it works</p>
             <h2 className="site-heading lp-big">Ready for service this week</h2>
           </div>
-          <ol className="site-steps lp-steps">
+          <ol className="site-steps lp-steps lp2-steps">
             {[
               ["Create your restaurant", "Start a free trial and name it. Each location gets a workspace of its own."],
               ["Add your menu", "Dishes, cocktails and wine, with photos, ingredients, allergens, prices and fire times."],
@@ -261,17 +234,6 @@ export default function Landing() {
         <a href="/app" className="muted ml-auto text-xs underline underline-offset-4">Sign in</a>
       </div>
     </footer>
-  </div>;
-}
-
-function Scene({id, eyebrow, title, points, visual, flip}: {id?: string; eyebrow: string; title: string; points: string[]; visual: ReactNode; flip?: boolean}) {
-  return <div id={id} className={`lp-scene${flip ? " flip" : ""}`}>
-    <div className="lp-scene-text reveal">
-      <p className="lp-tag">{eyebrow}</p>
-      <h3 className="lp-scene-title">{title}</h3>
-      <ul className="lp-points">{points.map(point => <li key={point}><Check size={16} aria-hidden="true" />{point}</li>)}</ul>
-    </div>
-    <div className="lp-scene-visual reveal" aria-hidden="true">{visual}</div>
   </div>;
 }
 
