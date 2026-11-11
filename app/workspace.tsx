@@ -2043,7 +2043,7 @@ function Workspace({
             <button className="nav-toggle rounded-lg p-2 hover:bg-raised md:hidden" aria-label="Toggle navigation" aria-expanded={navOpen} aria-controls="workspace-navigation" onClick={event => {const header = event.currentTarget.closest("header"); if (header) document.documentElement.style.setProperty("--header-h", `${Math.round(header.getBoundingClientRect().bottom)}px`); setNavOpen(!navOpen);}}><Menu size={22} /></button>
             {restaurant && !isManager ? <div className="flex items-center gap-3"><button type="button" className="header-home" aria-label="Go to Home" onClick={() => navigate("home")}><HeatIcon /></button><div><p className="text-sm font-semibold">{learnerName}</p><p className="muted text-xs uppercase tracking-widest">{restaurant.name}</p></div></div> : <button type="button" className="header-home" aria-label="Go to Home" onClick={() => navigate("home")}><Brand /></button>}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="app-header-actions flex items-center gap-2">
             <span className="muted hidden max-w-56 truncate text-sm md:inline">
               {user.email}
             </span>
