@@ -1,0 +1,296 @@
+<title>Eventos BEO HEAT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: HEAT's app frame. "Ver como" picks manager, kitchen or server; the steps pick the screen.
+   The BEO is one page of labeled blocks that reads top to bottom on a phone and in two columns on desktop. HEAT tokens only. */
+:root {
+  --lime: #C7F23A; --on-lime: #1B1C1A; --c-bg: #F1F1EC; --c-surface: #FBFBF8; --c-text: #1B1C1A; --c-muted: #62645D;
+  --c-line-5: #b7b8b0; --c-soft: #e6e6df; --c-on-dark: #F1F1EC; --c-pass: #17803F; --c-fail: #D42A1C;
+  --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --c-bg: #121311; --c-surface: #1b1d1a; --c-text: #eef0e8; --c-muted: #9a9e92; --c-line-5: #4b4e47; --c-soft: #2e312b; --c-on-dark: #121311; --c-pass: #4cc274; color-scheme: dark } }
+:root[data-theme="dark"] { --c-bg: #121311; --c-surface: #1b1d1a; --c-text: #eef0e8; --c-muted: #9a9e92; --c-line-5: #4b4e47; --c-soft: #2e312b; --c-on-dark: #121311; --c-pass: #4cc274; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--c-bg); color: var(--c-text); font: 16px/1.4 var(--sans); padding-block: 20px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+button, input { font: inherit; color: inherit }
+button { cursor: pointer }
+:focus-visible { outline: 2px solid var(--c-text); outline-offset: 2px }
+h1, h2 { margin: 0; text-wrap: balance }
+p { margin: 0 }
+.wrap { max-width: 1080px; margin: 0 auto; display: grid; gap: 14px }
+.note { font-size: 13px; color: var(--c-muted); border: 1px solid var(--c-line-5); border-radius: 16px; padding: 14px 16px; background: var(--c-surface) }
+.note b { color: var(--c-text) }
+.row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center }
+.label { font-size: 12px; color: var(--c-muted); font-weight: 600 }
+.chip { height: 30px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--c-text); background: transparent; font-size: 12px; font-weight: 600 }
+.chip[aria-pressed="true"] { background: var(--c-text); color: var(--c-on-dark) }
+
+.app { border: 1px solid var(--c-line-5); border-radius: 16px; overflow: hidden; background: var(--c-bg) }
+.top { display: flex; align-items: center; gap: 14px; height: 56px; padding: 0 16px; background: var(--c-surface); border-bottom: 1px solid var(--c-line-5) }
+.back { height: 30px; padding: 0 12px; border-radius: 99px; border: 1px solid var(--c-text); background: transparent; font-size: 12px; font-weight: 600 }
+.logo { font-weight: 700; font-size: 20px; letter-spacing: -.02em; flex: 1 }
+.screen { padding: 16px; display: grid; gap: 14px; min-height: 620px; align-content: start }
+@media (min-width: 760px) { .screen { padding: 20px } }
+h1 { font-size: 24px }
+.sub { font-size: 13px; color: var(--c-muted) }
+.head { display: flex; flex-wrap: wrap; gap: 14px; align-items: end; justify-content: space-between }
+.section-chip { justify-self: start; display: inline-flex; align-items: center; height: 26px; padding: 0 12px; border-radius: 99px; background: var(--c-text); color: var(--c-on-dark); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase }
+.card { background: var(--c-surface); border: 1px solid var(--c-line-5); border-radius: 16px; padding: 16px; display: grid; gap: 12px; align-content: start; min-width: 0 }
+.card-label { font-size: 13px; font-weight: 700; display: flex; justify-content: space-between; gap: 10px; align-items: center }
+.card-label small { font: 600 11px var(--mono); color: var(--c-muted) }
+.btn { height: 30px; padding: 0 16px; border-radius: 99px; border: 1px solid var(--c-text); background: transparent; font-size: 12px; font-weight: 600; white-space: nowrap }
+.btn.primary { background: var(--lime); color: var(--on-lime); border-color: var(--on-lime) }
+.btns { display: flex; flex-wrap: wrap; gap: 8px }
+.grid2 { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr) }
+@media (min-width: 860px) { .grid2 { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr) } }
+.stack { display: grid; gap: 14px; align-content: start; min-width: 0 }
+
+/* Facts */
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px }
+.fact { display: grid; gap: 2px }
+.fact span { font: 600 11px var(--mono); color: var(--c-muted); text-transform: uppercase; letter-spacing: .04em }
+.fact b { font-size: 15px }
+.status { display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 99px; font: 600 11px var(--mono); border: 1px solid var(--c-text) }
+.status.ok { background: var(--c-text); color: var(--c-on-dark) }
+
+/* Rows (36 px, 13 px) */
+.rows { display: grid }
+.r { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 36px; padding: 6px 0; border-top: 1px solid var(--c-line-5); font-size: 13px }
+.r:first-child { border-top: 0 }
+.r .v { font: 600 12px var(--mono); color: var(--c-muted); white-space: nowrap; font-variant-numeric: tabular-nums }
+.r .v.strong { color: var(--c-text) }
+.r small { display: block; font-size: 12px; color: var(--c-muted) }
+.course { font: 700 11px var(--mono); color: var(--c-muted); text-transform: uppercase; letter-spacing: .06em; padding-top: 8px }
+
+/* Allergens: always lime, codes, kitchen line */
+.allergy { background: var(--lime); color: var(--on-lime); border-radius: 16px; padding: 16px; display: grid; gap: 10px }
+.allergy .card-label small { color: var(--on-lime); opacity: .75 }
+.allergy .r { border-top-color: rgba(27,28,26,.25) }
+.allergy .r .v { color: var(--on-lime) }
+.codes { display: flex; flex-wrap: wrap; gap: 6px }
+.codes span { font: 600 11px var(--mono); padding: 3px 8px; border-radius: 99px; border: 1px solid var(--on-lime) }
+.allergy .kitchen { font-size: 12px; font-weight: 600 }
+
+/* Timeline */
+.tl { display: grid; position: relative; padding-left: 18px }
+.tl::before { content: ""; position: absolute; left: 4px; top: 10px; bottom: 10px; width: 1px; background: var(--c-line-5) }
+.tl .r { border-top: 0; position: relative; justify-content: flex-start; gap: 14px }
+.tl .r::before { content: ""; position: absolute; left: -18px; top: 15px; width: 9px; height: 9px; border-radius: 50%; background: var(--c-surface); border: 1px solid var(--c-text) }
+.tl .r.now::before { background: var(--lime); border-color: var(--on-lime) }
+.tl .r .v { width: 64px; flex: none; color: var(--c-text) }
+
+/* People */
+.people { display: flex; flex-wrap: wrap; gap: 6px }
+.people span { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px 0 4px; border-radius: 99px; border: 1px solid var(--c-line-5); font-size: 12px; font-weight: 600 }
+.people i { width: 22px; height: 22px; border-radius: 50%; background: var(--c-soft); display: grid; place-items: center; font: 600 10px var(--mono); font-style: normal }
+.people span.me { border-color: var(--c-text) }
+.people span.me i { background: var(--c-text); color: var(--c-on-dark) }
+.people span.open { color: var(--c-muted) }
+
+/* Events list */
+.events { display: grid; border: 1px solid var(--c-line-5); border-radius: 16px; overflow: hidden; background: var(--c-surface) }
+.ev { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 16px; border: 0; border-top: 1px solid var(--c-line-5); background: transparent; text-align: left; width: 100% }
+.ev:first-child { border-top: 0 }
+.date { display: grid; justify-items: center; border-radius: 12px; border: 1px solid var(--c-line-5); padding: 4px 0 }
+.date small { font: 600 10px var(--mono); color: var(--c-muted); text-transform: uppercase }
+.date b { font-size: 20px; line-height: 1.1 }
+.ev b.t { display: block; font-size: 14px }
+.ev small { display: block; font-size: 12px; color: var(--c-muted) }
+
+/* Changes */
+.chg { display: grid; gap: 4px; padding: 10px 12px; border-radius: 12px; background: var(--c-soft); font-size: 13px }
+.chg .was { text-decoration: line-through; color: var(--c-muted) }
+.sign { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: center; min-height: 36px; font-size: 13px; border-top: 1px solid var(--c-line-5); padding-top: 6px }
+.sign:first-of-type { border-top: 0 }
+.ok { color: var(--c-pass); font: 600 12px var(--mono) }
+.wait { color: var(--c-muted); font: 600 12px var(--mono) }
+
+.pill { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: inline-flex; gap: 8px; align-items: center; height: 36px; padding: 0 16px; border-radius: 99px; background: var(--c-pass); color: #fff; font-size: 13px; font-weight: 600; white-space: nowrap; z-index: 5 }
+
+.ideas { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) }
+.idea { background: var(--c-surface); border: 1px solid var(--c-line-5); border-radius: 16px; padding: 16px; font-size: 13px; color: var(--c-muted) }
+.idea b { display: block; color: var(--c-text); font-size: 14px; margin-bottom: 4px }
+</style>
+
+<div class="wrap">
+  <div class="note"><b>Mockup para revisar con Gaby.</b> Evento, cliente y nombres de ejemplo. Cambia entre manager, cocina y server para ver qué parte del BEO le toca a cada uno.</div>
+  <div class="row" role="group" aria-label="Ver como">
+    <span class="label">Ver como:</span>
+    <button class="chip" type="button" data-role="manager" aria-pressed="true">Manager</button>
+    <button class="chip" type="button" data-role="kitchen" aria-pressed="false">Cocina</button>
+    <button class="chip" type="button" data-role="staff" aria-pressed="false">Server o bartender</button>
+  </div>
+  <div class="row" role="group" aria-label="Pantalla" id="steps"></div>
+
+  <div class="app">
+    <div class="top"><button class="back" type="button" id="backBtn">Back</button><span class="logo">heat</span></div>
+    <div class="screen" id="screen" aria-live="polite"></div>
+  </div>
+
+  <div class="ideas" id="ideas"></div>
+</div>
+<div class="pill" id="pill" hidden>✓ <span id="pillText"></span></div>
+
+<script>
+const EV = {name: "Cena de empresa · Grupo Altamar", date: "Sábado 6 de diciembre", room: "Salón privado + terraza", guests: 45, was: 40, style: "Menú fijo, 4 tiempos", contact: "Mariana Ortiz · Coordinadora", deposit: "$1,500 pagado", min: "$6,500", grat: "20% incluida"};
+const TIMELINE = [["3:00 PM", "Montaje del salón y la terraza"], ["5:15 PM", "Pre-shift del evento con todo el equipo"], ["6:00 PM", "Llegan los invitados · pasabocas y bar"], ["7:00 PM", "Brindis del cliente (micrófono listo)"], ["7:15 PM", "Primer tiempo a la mesa"], ["9:30 PM", "Postre y café"], ["10:30 PM", "Termina el evento · desmontaje"]];
+const MENU = [
+  ["Pasabocas · 6:00 PM", [["Salmon Tartare Cones", "90 piezas", "SLM · SES"], ["Edamame Truffle", "6 bandejas", "SOY"]]],
+  ["Primero · 7:15 PM", [["Yellowtail Tiradito", "45", "FSH · SOY · GLU · SES cc"]]],
+  ["Segundo · 7:50 PM", [["Miso Black Cod", "38", "FSH · SOY"], ["Wagyu Tataki", "7", "SOY · GLU"]]],
+  ["Postre · 9:30 PM", [["Matcha Cheesecake", "45", "MLK · EGG · GLU"]]],
+];
+const ALLERGY = [["Mesa 2 · Silla 4", "Mariscos (SHL)", "Cambiar pasabocas"], ["Mesa 3 · Silla 1", "Gluten (GLU)", "Tiradito sin soya · tamari"], ["Mesa 5 · Silla 6", "Ajonjolí (SES)", "Cuidado contaminación cruzada"], ["3 invitados", "Vegetarianos", "Plato vegetal en el segundo"]];
+const STAFF = {servers: ["Ana", "Luis", "Sofía", "Valeria"], bar: ["Carlos"], sa: ["Leo", "Mia"], kitchen: ["Kenji", "Jorge", "Rosa"], manager: ["Daniel"]};
+const initials = n => n.slice(0, 2).toUpperCase();
+
+const STEPS = {manager: ["Eventos", "BEO del evento", "Cambios y firmas"], kitchen: ["Hoja de cocina"], staff: ["Mi evento"]};
+const IDEAS = {
+  manager: [
+    ["Todo el evento en una hoja", "Cliente, horarios, menú con cantidades, alergias de los invitados, bar, montaje, equipo y pagos. Los platos salen de la biblioteca, así que traen sus alérgenos."],
+    ["El equipo sale del horario", "Al asignar gente, HEAT avisa si alguien pasa a overtime o pidió el día libre. El evento aparece en el horario de cada persona."],
+    ["Cada uno ve su parte", "La cocina ve cantidades, tiempos y alergias. Los servers ven el horario, su mesa y qué estudiar. Los pagos los ven solo los managers."],
+    ["Cambios que nadie se pierde", "Si cambia el número de invitados o el menú, se marca qué cambió y se pide que cocina y piso lo vuelvan a confirmar."],
+  ],
+  kitchen: [
+    ["Solo lo que la cocina necesita", "Cantidades por plato, a qué hora sale cada tiempo y las alergias por mesa y silla. Sin datos de pago."],
+    ["Confirmar con un toque", "El chef confirma que leyó el BEO. Si después cambia algo, se le vuelve a pedir."],
+    ["Se imprime para el pase", "La hoja de cocina sale en PDF limpio, como las hojas de alérgenos de hoy."],
+  ],
+  staff: [
+    ["Le llega como un turno más", "El evento aparece en su horario y en Inicio, con notificación."],
+    ["Llega preparado", "El horario del evento, su mesa, y los platos del menú para estudiar con el tutor antes de llegar."],
+    ["Alergias a la vista", "Las alergias por mesa y silla, siempre en lima y con la línea de confirmar con la cocina."],
+  ],
+};
+
+const state = {role: "manager", step: 0};
+
+function allergyBox() {
+  return `<div class="allergy"><div class="card-label">Alergias y dietas de los invitados<small>${ALLERGY.length} avisos</small></div>
+    <div class="rows">${ALLERGY.map(([who, what, plan]) => `<div class="r"><span><b>${who}</b><small>${plan}</small></span><span class="v">${what}</span></div>`).join("")}</div>
+    <div class="codes"><span>SHL</span><span>GLU</span><span>SES</span><span>VEG</span></div>
+    <p class="kitchen">Confirma siempre con la cocina antes de servir.</p></div>`;
+}
+function menuCard(showAllergens = true) {
+  return `<div class="card"><div class="card-label">Menú<small>${EV.style}</small></div><div class="rows">
+    ${MENU.map(([course, dishes]) => `<p class="course">${course}</p>${dishes.map(([d, q, a]) => `<div class="r"><span>${d}${showAllergens ? `<small>${a}</small>` : ""}</span><span class="v strong">${q}</span></div>`).join("")}`).join("")}
+    </div></div>`;
+}
+function timelineCard(nowIdx = -1) {
+  return `<div class="card"><div class="card-label">Horario del evento</div><div class="tl">${TIMELINE.map(([t, w], i) => `<div class="r ${i === nowIdx ? "now" : ""}"><span class="v">${t}</span><span>${w}</span></div>`).join("")}</div></div>`;
+}
+function peopleCard(me) {
+  const g = (label, list, open = 0) => `<div><p class="course" style="padding-top:0;margin-bottom:6px">${label}</p><div class="people">${list.map(n => `<span class="${n === me ? "me" : ""}"><i>${initials(n)}</i>${n}</span>`).join("")}${Array(open).fill('<span class="open"><i>+</i>Falta 1</span>').join("")}</div></div>`;
+  return `<div class="card"><div class="card-label">Equipo<small>Del horario del sábado</small></div>
+    ${g("Servers", STAFF.servers, 1)}${g("Bar", STAFF.bar)}${g("S.A.", STAFF.sa)}${g("Cocina", STAFF.kitchen)}${g("Manager del evento", STAFF.manager)}</div>`;
+}
+
+function render() {
+  document.querySelectorAll("[data-role]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.role === state.role)));
+  document.getElementById("steps").innerHTML = '<span class="label">Pantalla:</span>' + STEPS[state.role].map((s, i) => `<button class="chip" type="button" data-step="${i}" aria-pressed="${i === state.step}">${s}</button>`).join("");
+  document.getElementById("ideas").innerHTML = IDEAS[state.role].map(([t, d]) => `<div class="idea"><b>${t}</b>${d}</div>`).join("");
+  document.getElementById("backBtn").hidden = state.step === 0;
+  document.getElementById("screen").innerHTML = ({manager: [eventsList, beo, changes], kitchen: [kitchenSheet], staff: [myEvent]})[state.role][state.step]();
+}
+
+function eventsList() {
+  const ev = (m, d, t, s, st, ok, go) => `<button class="ev" type="button" ${go ? 'data-step="1"' : ""}><span class="date"><small>${m}</small><b>${d}</b></span><span><b class="t">${t}</b><small>${s}</small></span><span class="status ${ok ? "ok" : ""}">${st}</span></button>`;
+  return `<div class="head"><div><h1>Eventos</h1><p class="sub">Eventos privados y grupos grandes, con su BEO.</p></div><button class="btn primary" type="button" data-pill="Evento nuevo creado">Nuevo evento</button></div>
+    <span class="section-chip">Próximos</span>
+    <div class="events">
+      ${ev("Dic", "6", EV.name, "45 invitados · Salón privado + terraza · 6:00 PM", "Cambió · falta firma", false, true)}
+      ${ev("Dic", "12", "Cumpleaños 50 · Familia Restrepo", "22 invitados · Terraza · 8:00 PM", "Confirmado", true)}
+      ${ev("Dic", "19", "Fiesta de fin de año · Clínica Brisas", "80 invitados · Todo el restaurante · 7:30 PM", "Borrador", false)}
+    </div>
+    <span class="section-chip">Este mes</span>
+    <div class="card"><div class="facts">
+      <div class="fact"><span>Eventos</span><b>3</b></div><div class="fact"><span>Invitados</span><b>147</b></div>
+      <div class="fact"><span>Mínimos</span><b>$21,400</b></div><div class="fact"><span>Depósitos</span><b>2 de 3</b></div></div></div>`;
+}
+
+function beo() {
+  return `<div class="head"><div><p class="sub">BEO #0142 · versión 3</p><h1>${EV.name}</h1></div>
+      <div class="btns"><button class="btn" type="button" data-pill="PDF listo">Imprimir</button><button class="btn primary" type="button" data-pill="Enviado a 13 personas del evento">Enviar al equipo</button></div></div>
+    <div class="card"><div class="facts">
+      <div class="fact"><span>Fecha</span><b>${EV.date}</b></div><div class="fact"><span>Horario</span><b>6:00 – 10:30 PM</b></div>
+      <div class="fact"><span>Invitados</span><b>${EV.guests} garantizados</b></div><div class="fact"><span>Lugar</span><b>${EV.room}</b></div>
+      <div class="fact"><span>Contacto</span><b>${EV.contact}</b></div><div class="fact"><span>Estado</span><b><span class="status">Falta firma de cocina</span></b></div></div></div>
+    <div class="grid2">
+      <div class="stack">${menuCard()}
+        <div class="card"><div class="card-label">Bar</div><div class="rows">
+          <div class="r"><span>Paquete premium · 4 horas</span><span class="v strong">45 pax</span></div>
+          <div class="r"><span>Brindis con prosecco · 7:00 PM</span><span class="v strong">8 botellas</span></div>
+          <div class="r"><span>Cóctel de la casa: Yuzu Spritz</span><span class="v">Batch 3 L</span></div></div></div>
+        <div class="card"><div class="card-label">Montaje</div><div class="rows">
+          <div class="r"><span>5 mesas redondas de 9 · mantel negro</span><span class="v">Salón</span></div>
+          <div class="r"><span>Pasabocas de pie y bar móvil</span><span class="v">Terraza</span></div>
+          <div class="r"><span>Micrófono y pantalla para el brindis</span><span class="v">Cliente</span></div>
+          <div class="r"><span>Tarjetas con nombre en cada puesto</span><span class="v">Cliente las trae</span></div></div></div>
+      </div>
+      <div class="stack">${allergyBox()}${timelineCard()}${peopleCard()}
+        <div class="card"><div class="card-label">Pagos<small>Solo managers</small></div><div class="rows">
+          <div class="r"><span>Mínimo de consumo</span><span class="v strong">${EV.min}</span></div>
+          <div class="r"><span>Depósito</span><span class="v strong">${EV.deposit}</span></div>
+          <div class="r"><span>Propina</span><span class="v">${EV.grat}</span></div>
+          <div class="r"><span>Cuenta final</span><span class="v">Al cierre del evento</span></div></div></div>
+      </div>
+    </div>`;
+}
+
+function changes() {
+  return `<div class="head"><div><p class="sub">BEO #0142</p><h1>Cambios y firmas</h1></div></div>
+    <div class="grid2">
+      <div class="card"><div class="card-label">Versión 3 · hoy 11:20 AM<small>Daniel</small></div>
+        <div class="chg"><b>Invitados</b><span><span class="was">${EV.was}</span> → ${EV.guests} garantizados</span></div>
+        <div class="chg"><b>Segundo tiempo</b><span><span class="was">Miso Black Cod × 40</span> → Miso Black Cod × 38 y Wagyu Tataki × 7</span></div>
+        <div class="chg"><b>Alergias</b><span>Nueva: Mesa 5 · Silla 6 · Ajonjolí</span></div>
+        <p class="sub">La cocina y el piso tienen que volver a confirmar porque cambió el menú y el número de invitados.</p></div>
+      <div class="card"><div class="card-label">Confirmado por</div>
+        <div class="sign"><span><b>Kenji</b> · Chef</span><span class="wait">Pendiente · v3</span></div>
+        <div class="sign"><span><b>Daniel</b> · Manager del evento</span><span class="ok">✓ v3</span></div>
+        <div class="sign"><span><b>Carlos</b> · Bar</span><span class="ok">✓ v3</span></div>
+        <div class="sign"><span><b>Ana, Luis, Sofía, Valeria</b> · Servers</span><span class="wait">3 de 4 vieron</span></div>
+        <div class="btns"><button class="btn" type="button" data-pill="Recordatorio enviado a Kenji">Recordar al chef</button></div></div>
+    </div>
+    <div class="card"><div class="card-label">Versiones anteriores</div><div class="rows">
+      <div class="r"><span>Versión 2 · 28 nov · Bar cambió a paquete premium</span><span class="v">Ver</span></div>
+      <div class="r"><span>Versión 1 · 20 nov · BEO creado</span><span class="v">Ver</span></div></div></div>`;
+}
+
+function kitchenSheet() {
+  return `<div class="head"><div><p class="sub">Sábado 6 dic · ${EV.guests} invitados · BEO v3</p><h1>Hoja de cocina</h1></div>
+      <div class="btns"><button class="btn" type="button" data-pill="PDF listo">Imprimir</button><button class="btn primary" type="button" data-pill="Confirmaste la versión 3">Confirmar BEO</button></div></div>
+    <div class="card" style="border-color:var(--c-text)"><div class="card-label">Cambió desde la última vez</div><p class="sub" style="color:var(--c-text)">Invitados 40 → 45 · Segundo: 38 black cod y 7 wagyu · Nueva alergia: ajonjolí, mesa 5.</p></div>
+    <div class="grid2"><div class="stack">${menuCard()}</div><div class="stack">${allergyBox()}
+      <div class="card"><div class="card-label">Tiempos de salida</div><div class="tl">
+        <div class="r"><span class="v">6:00 PM</span><span>Pasabocas, en rondas cada 15 min</span></div>
+        <div class="r"><span class="v">7:15 PM</span><span>Primero · 45 platos</span></div>
+        <div class="r"><span class="v">7:50 PM</span><span>Segundo · 38 + 7</span></div>
+        <div class="r"><span class="v">9:30 PM</span><span>Postre · 45</span></div></div></div>
+      ${peopleCard("Kenji")}</div></div>`;
+}
+
+function myEvent() {
+  return `<div class="head"><div><p class="sub">Tu turno · Sábado 6 dic · 4:30 – 11:00 PM</p><h1>${EV.name}</h1></div></div>
+    <div class="card"><div class="facts">
+      <div class="fact"><span>Llega a las</span><b>4:30 PM</b></div><div class="fact"><span>Tu lugar</span><b>Mesas 1 y 2 · Salón</b></div>
+      <div class="fact"><span>Invitados</span><b>45</b></div><div class="fact"><span>Uniforme</span><b>Todo negro</b></div></div></div>
+    <div class="grid2"><div class="stack">${timelineCard(1)}${menuCard()}
+      <div class="card"><div class="card-label">Estudia antes del evento</div><p class="sub">3 platos del menú que todavía no has pasado en el quiz.</p><div class="btns"><button class="btn primary" type="button" data-pill="Abriendo el tutor">Estudiar con el tutor</button></div></div></div>
+      <div class="stack">${allergyBox()}${peopleCard("Ana")}</div></div>`;
+}
+
+let pillTimer;
+function pill(t) { const el = document.getElementById("pill"); document.getElementById("pillText").textContent = t; el.hidden = false; clearTimeout(pillTimer); pillTimer = setTimeout(() => el.hidden = true, 3000); }
+document.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.role) { state.role = b.dataset.role; state.step = 0; return render(); }
+  if (b.dataset.step) { state.step = Number(b.dataset.step); return render(); }
+  if (b.id === "backBtn") { state.step = Math.max(0, state.step - 1); return render(); }
+  if (b.dataset.pill) pill(b.dataset.pill);
+});
+render();
+</script>

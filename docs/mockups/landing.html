@@ -1,0 +1,443 @@
+<title>HEAT Landing Propuesta</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: the real hero stays as it is; after it the page changes rhythm every section:
+   light timeline → lime band → sticky product tour → dark tutor spotlight → role switcher → proof → steps → final.
+   HEAT tokens only (lime, page, surface, text, muted, line, the hero's near-black). */
+:root {
+  --lime: #C7F23A; --on-lime: #1B1C1A; --ink: #141414; --on-ink: #f3f3f0; --ink-muted: #a9aba3; --ink-line: #2c2e2a;
+  --c-bg: #F1F1EC; --c-surface: #FBFBF8; --c-sunken: #e8e8e1; --c-text: #1B1C1A; --c-muted: #62645D; --c-line-5: #c9cac2;
+  --c-pass: #17803F; --c-fail: #D42A1C;
+  --sans: "IBM Plex Sans", system-ui, sans-serif; --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --c-bg: #121311; --c-surface: #1b1d1a; --c-sunken: #171916; --c-text: #eef0e8; --c-muted: #9a9e92; --c-line-5: #3a3d37; --c-pass: #4cc274; color-scheme: dark } }
+:root[data-theme="dark"] { --c-bg: #121311; --c-surface: #1b1d1a; --c-sunken: #171916; --c-text: #eef0e8; --c-muted: #9a9e92; --c-line-5: #3a3d37; --c-pass: #4cc274; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--c-bg); color: var(--c-text); font: 16px/1.5 var(--sans); padding-block: 0 }
+button { font: inherit; color: inherit; cursor: pointer }
+:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px }
+h1, h2, h3 { text-wrap: balance; margin: 0 }
+p { margin: 0 }
+.wrap { max-width: 1160px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.band { padding-block: 72px }
+@media (min-width: 900px) { .band { padding-block: 104px } }
+.eyebrow { font: 600 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--c-muted) }
+.h2 { font-size: clamp(30px, 4.4vw, 52px); line-height: 1.06; letter-spacing: -.03em; font-weight: 700; margin-top: 14px }
+.lead { font-size: 18px; color: var(--c-muted); max-width: 560px; margin-top: 16px }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 16px; border-radius: 99px; border: 1px solid currentColor; background: transparent; font-size: 12px; font-weight: 600; text-decoration: none; color: inherit }
+.btn.big { height: 44px; padding: 0 22px; font-size: 14px }
+.btn.lime { background: var(--lime); color: var(--on-lime); border-color: var(--on-lime) }
+.chip { height: 30px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--c-text); background: transparent; font-size: 12px; font-weight: 600 }
+.chip[aria-pressed="true"] { background: var(--c-text); color: var(--c-bg) }
+
+/* Review notes (Spanish, only for Gaby and Diego) */
+.review { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--c-surface); border-bottom: 1px solid var(--c-line-5) }
+.review .wrap { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding-block: 10px; font-size: 13px; color: var(--c-muted) }
+.review b { color: var(--c-text) }
+.review .chip { margin-left: auto }
+.anno { display: flex; gap: 10px; align-items: flex-start; max-width: 760px; margin-bottom: 28px; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--c-line-5); background: var(--c-surface); color: var(--c-muted); font-size: 13px }
+.anno b { color: var(--c-text) }
+.anno .n { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--lime); color: var(--on-lime); display: grid; place-items: center; font: 700 11px var(--mono) }
+.on-ink .anno { background: #1f211e; border-color: var(--ink-line); color: var(--ink-muted) }
+.on-ink .anno b { color: var(--on-ink) }
+.hide-notes .anno { display: none }
+
+/* Dark hero, unchanged in spirit (short version) */
+.ink { background: var(--ink); color: var(--on-ink) }
+.on-ink .eyebrow, .on-ink .lead { color: var(--ink-muted) }
+.nav { display: flex; align-items: center; gap: 20px; height: 64px }
+.logo { font-weight: 700; font-size: 22px; letter-spacing: -.03em }
+.logo i { font-style: normal; color: var(--lime) }
+.nav nav { display: flex; gap: 20px; font-size: 13px; color: var(--ink-muted); margin-left: 20px }
+.nav .sp { flex: 1 }
+.hero { position: relative; overflow: hidden; padding-block: 56px 88px }
+.glow { position: absolute; width: 720px; height: 720px; right: -220px; top: -260px; border-radius: 50%; background: radial-gradient(circle, rgba(199,242,58,.20), rgba(199,242,58,0) 65%); pointer-events: none }
+.kicker { display: inline-flex; gap: 8px; align-items: center; padding: 5px 12px; border-radius: 99px; border: 1px solid rgba(199,242,58,.45); color: #e6f7b0; font: 600 12px var(--sans); letter-spacing: .06em; text-transform: uppercase }
+.kicker::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--lime) }
+.hero h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.02; letter-spacing: -.035em; margin-top: 22px; max-width: 760px }
+.lime-t { color: var(--lime) }
+.hero .lead { color: #c9cbc3 }
+.hero .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px }
+@media (max-width: 760px) { .nav nav { display: none } }
+
+/* 1 · A night at your restaurant */
+.night-head { display: flex; flex-wrap: wrap; gap: 20px; align-items: end; justify-content: space-between }
+.toggle { display: inline-flex; padding: 4px; border-radius: 99px; border: 1px solid var(--c-line-5); background: var(--c-surface); gap: 4px }
+.toggle button { height: 36px; padding: 0 18px; border-radius: 99px; border: 0; background: transparent; font-size: 13px; font-weight: 600; color: var(--c-muted) }
+.toggle button[aria-pressed="true"] { background: var(--c-text); color: var(--c-bg) }
+.toggle button.heat[aria-pressed="true"] { background: var(--lime); color: var(--on-lime) }
+.timeline { position: relative; margin-top: 48px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 14px }
+.timeline::before { content: ""; position: absolute; left: 0; right: 0; top: 15px; height: 2px; background: var(--c-line-5) }
+.moment { position: relative; display: grid; gap: 12px; align-content: start }
+.moment .t { justify-self: start; position: relative; height: 32px; padding: 0 12px; border-radius: 99px; background: var(--c-bg); border: 1px solid var(--c-line-5); display: inline-flex; align-items: center; font: 600 12px var(--mono); font-variant-numeric: tabular-nums }
+.with .moment .t { background: var(--c-text); color: var(--c-bg); border-color: var(--c-text) }
+.moment .what { font-size: 13px; font-weight: 700 }
+.moment .card { border-radius: 16px; padding: 16px; border: 1px solid var(--c-line-5); background: var(--c-surface); font-size: 14px; min-height: 120px; transition: background .25s, border-color .25s }
+.today .moment .card { color: var(--c-muted) }
+.with .moment .card { border-color: var(--c-text) }
+.moment .tag { display: inline-flex; margin-bottom: 8px; font: 600 11px var(--mono); padding: 2px 8px; border-radius: 99px; background: var(--c-sunken); color: var(--c-muted) }
+.with .moment .tag { background: var(--lime); color: var(--on-lime) }
+@media (max-width: 900px) {
+  .timeline { grid-template-columns: minmax(0, 1fr); gap: 14px; padding-left: 28px }
+  .timeline::before { left: 9px; right: auto; top: 0; bottom: 0; width: 2px; height: auto }
+  .moment { grid-template-columns: minmax(0, 1fr) }
+  .moment .t::before { content: ""; position: absolute; left: -24px; top: 11px; width: 10px; height: 10px; border-radius: 50%; background: var(--c-text) }
+  .moment .card { min-height: 0 }
+}
+
+/* 2 · Lime band: what HEAT replaces */
+.limeband { background: var(--lime); color: var(--on-lime); padding-block: 64px }
+.limeband .eyebrow { color: #3c4a10 }
+.replace { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 40px; align-items: center }
+.replace h2 { font-size: clamp(30px, 4.6vw, 56px); line-height: 1.02; letter-spacing: -.035em }
+.gone { display: flex; flex-wrap: wrap; gap: 10px }
+.gone span { display: inline-flex; align-items: center; height: 40px; padding: 0 16px; border-radius: 99px; border: 1px solid var(--on-lime); font-size: 15px; font-weight: 600; text-decoration: line-through; text-decoration-thickness: 2px }
+.gone span.keep { text-decoration: none; background: var(--on-lime); color: var(--lime) }
+@media (max-width: 860px) { .replace { grid-template-columns: minmax(0, 1fr) } }
+
+/* 3 · Product tour: sticky phone, list of modules */
+.tour { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 56px; margin-top: 48px; align-items: start }
+.mods { display: grid; border-top: 1px solid var(--c-line-5) }
+.mod { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 16px; padding: 20px 0; border: 0; border-bottom: 1px solid var(--c-line-5); background: transparent; text-align: left; width: 100%; position: relative }
+.mod .num { font: 600 12px var(--mono); color: var(--c-muted); padding-top: 5px }
+.mod h3 { font-size: 22px; letter-spacing: -.02em; color: var(--c-muted); transition: color .2s }
+.mod p { display: none; margin-top: 8px; color: var(--c-muted); font-size: 15px; max-width: 520px }
+.mod[aria-selected="true"] h3 { color: var(--c-text) }
+.mod[aria-selected="true"] p { display: block }
+.mod[aria-selected="true"] .num { color: var(--c-text) }
+.mod .prog { position: absolute; left: 0; bottom: -1px; height: 2px; width: 0; background: var(--c-text) }
+.mod[aria-selected="true"] .prog { animation: fill 6s linear forwards }
+.paused .mod .prog { animation: none; width: 0 }
+@keyframes fill { to { width: 100% } }
+.stick { position: sticky; top: 96px }
+.ph { width: 100%; max-width: 360px; margin: 0 auto; border-radius: 40px; background: var(--ink); padding: 12px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.45) }
+.ph-in { border-radius: 30px; background: var(--c-bg); color: var(--c-text); min-height: 560px; padding: 18px 16px; display: grid; gap: 12px; align-content: start; overflow: hidden }
+.ph-top { display: flex; justify-content: space-between; align-items: center; font: 600 11px var(--mono); color: var(--c-muted) }
+.ph-title { font-size: 20px; font-weight: 700; letter-spacing: -.02em }
+.pc { border-radius: 16px; background: var(--c-surface); border: 1px solid var(--c-line-5); padding: 14px; display: grid; gap: 8px; font-size: 13px }
+.pc .lbl { font: 600 11px var(--mono); color: var(--c-muted); text-transform: uppercase; letter-spacing: .06em }
+.pc b { font-size: 15px }
+.alg { display: flex; flex-wrap: wrap; gap: 6px }
+.alg span { font: 600 11px var(--mono); padding: 3px 8px; border-radius: 99px; background: var(--lime); color: var(--on-lime) }
+.pills { display: flex; flex-wrap: wrap; gap: 6px }
+.pills span { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--c-line-5) }
+.pills span.on { background: var(--c-text); color: var(--c-bg); border-color: var(--c-text) }
+.pills span.out { background: var(--c-fail); color: #fff; border-color: var(--c-fail) }
+.bub { padding: 9px 12px; border-radius: 14px; font-size: 13px; max-width: 88% }
+.bub.ai { background: var(--c-surface); border: 1px solid var(--c-line-5) }
+.bub.me { background: var(--c-text); color: var(--c-bg); justify-self: end }
+.r { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; padding: 6px 0; border-top: 1px solid var(--c-line-5) }
+.r:first-of-type { border-top: 0 }
+.r span:last-child { font: 600 12px var(--mono); color: var(--c-muted); white-space: nowrap }
+.r .bad { color: var(--c-fail) }
+.sched { display: grid; grid-template-columns: 54px repeat(4, minmax(0, 1fr)); gap: 4px; font-size: 10px }
+.sched .d { font: 600 10px var(--mono); color: var(--c-muted); text-align: center }
+.sched .n { font-weight: 700; font-size: 11px; align-self: center }
+.sched .s { border-radius: 8px; background: var(--c-sunken); padding: 6px 2px; text-align: center; font: 600 10px var(--mono) }
+.sched .s.ot { background: var(--c-fail); color: #fff }
+.floor { position: relative; height: 170px; border-radius: 12px; background: var(--c-bg); border: 1px solid var(--c-line-5) }
+.floor i { position: absolute; width: 26px; height: 26px; border-radius: 6px; background: var(--c-surface); border: 1px solid var(--c-text); font: 600 9px/24px var(--mono); text-align: center; font-style: normal }
+.floor i.rd { border-radius: 50% }
+.floor .zone { position: absolute; border: 2px solid var(--c-text); border-radius: 14px }
+.floor .zone b { position: absolute; top: -10px; left: 8px; font: 700 10px var(--mono); background: var(--c-text); color: var(--c-bg); padding: 1px 6px; border-radius: 99px }
+.floor .zone.l { border-color: var(--lime); background: rgba(199,242,58,.15) }
+.floor .zone.l b { background: var(--lime); color: var(--on-lime) }
+@media (max-width: 900px) {
+  .tour { grid-template-columns: minmax(0, 1fr); gap: 28px }
+  .stick { position: static; order: -1 }
+  .ph-in { min-height: 480px }
+}
+
+/* 4 · Tutor spotlight */
+.spot { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 56px; align-items: center }
+.spot .h2 { color: var(--on-ink) }
+.convo { display: grid; gap: 12px; padding: 24px; border-radius: 28px; background: #1c1e1b; border: 1px solid var(--ink-line) }
+.convo .bub.ai { background: #262824; border-color: var(--ink-line); color: var(--on-ink) }
+.convo .bub.me { background: var(--on-ink); color: var(--ink) }
+.convo .bub.coach { background: var(--lime); color: var(--on-lime); border: 0 }
+.convo .who { font: 600 11px var(--mono); color: var(--ink-muted) }
+.modes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px }
+.modes span { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 99px; border: 1px solid var(--ink-line); color: var(--ink-muted) }
+.modes span.on { background: var(--lime); color: var(--on-lime); border-color: var(--lime) }
+.facts3 { display: grid; gap: 0; margin-top: 28px; border-top: 1px solid var(--ink-line) }
+.facts3 div { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--ink-line); font-size: 14px; color: var(--ink-muted) }
+.facts3 b { color: var(--lime); font: 600 13px var(--mono) }
+@media (max-width: 900px) { .spot { grid-template-columns: minmax(0, 1fr); gap: 32px } }
+
+/* 5 · Roles */
+.roles-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px }
+.role-panel { margin-top: 28px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px }
+.role-big { border-radius: 24px; background: var(--ink); color: var(--on-ink); padding: 32px; display: grid; gap: 16px; align-content: space-between; min-height: 280px }
+.role-big q { font-size: clamp(22px, 2.6vw, 30px); line-height: 1.2; letter-spacing: -.02em; font-weight: 600; quotes: none }
+.role-big small { font: 600 12px var(--mono); color: var(--ink-muted) }
+.role-list { display: grid; gap: 14px }
+.role-item { border-radius: 20px; border: 1px solid var(--c-line-5); background: var(--c-surface); padding: 16px 20px; display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 12px; font-size: 15px }
+.role-item .ck { width: 24px; height: 24px; border-radius: 50%; background: var(--lime); color: var(--on-lime); display: grid; place-items: center; font-size: 13px; font-weight: 700 }
+@media (max-width: 860px) { .role-panel { grid-template-columns: minmax(0, 1fr) } .role-big { min-height: 0 } }
+
+/* 6 · Proof */
+.proof { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); gap: 14px }
+.quote-card { border-radius: 24px; border: 1px solid var(--c-line-5); background: var(--c-surface); padding: 32px; display: grid; gap: 20px }
+.quote-card p { font-size: clamp(20px, 2.4vw, 28px); line-height: 1.25; letter-spacing: -.02em; font-weight: 600 }
+.quote-card .by { display: flex; gap: 12px; align-items: center; font-size: 14px; color: var(--c-muted) }
+.quote-card .by i { width: 40px; height: 40px; border-radius: 50%; background: var(--c-sunken); display: grid; place-items: center; font: 700 12px var(--mono); font-style: normal; color: var(--c-text) }
+.stats { display: grid; gap: 14px }
+.stat { border-radius: 20px; background: var(--c-sunken); padding: 20px; display: grid; gap: 4px }
+.stat b { font-size: 40px; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums }
+.stat span { font-size: 14px; color: var(--c-muted) }
+.todo { font: 600 11px var(--mono); color: var(--c-fail) }
+@media (max-width: 860px) { .proof { grid-template-columns: minmax(0, 1fr) } }
+
+/* 7 · Steps */
+.steps { list-style: none; padding: 0; margin: 48px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; position: relative }
+.steps::before { content: ""; position: absolute; left: 24px; right: 24px; top: 24px; height: 2px; background: var(--c-text) }
+.steps li { position: relative; display: grid; gap: 10px }
+.steps .dot { width: 48px; height: 48px; border-radius: 50%; background: var(--c-bg); border: 2px solid var(--c-text); display: grid; place-items: center; font: 700 16px var(--mono) }
+.steps li:last-child .dot { background: var(--lime); border-color: var(--on-lime); color: var(--on-lime) }
+.steps h3 { font-size: 20px; margin-top: 8px }
+.steps p { color: var(--c-muted); font-size: 15px; max-width: 300px }
+.steps small { font: 600 12px var(--mono); color: var(--c-muted) }
+@media (max-width: 760px) { .steps { grid-template-columns: minmax(0, 1fr) } .steps::before { left: 23px; right: auto; top: 24px; bottom: 24px; width: 2px; height: auto } .steps li { grid-template-columns: 48px minmax(0, 1fr); column-gap: 16px } .steps li > :not(.dot) { grid-column: 2 } .steps .dot { grid-row: 1 / span 3 } .steps h3 { margin-top: 10px } }
+
+/* 8 · Final */
+.final { position: relative; overflow: hidden; border-radius: 32px; padding: 56px 32px; background: var(--ink); color: var(--on-ink); display: grid; gap: 20px; justify-items: start }
+.final h2 { font-size: clamp(34px, 5.4vw, 64px); line-height: 1.02; letter-spacing: -.035em }
+.final .ctas { display: flex; flex-wrap: wrap; gap: 12px }
+.final small { font-size: 12px; color: var(--ink-muted) }
+@media (min-width: 900px) { .final { padding: 88px 72px } }
+.foot { padding-block: 28px; font-size: 12px; color: var(--c-muted) }
+
+@media (prefers-reduced-motion: reduce) { .mod[aria-selected="true"] .prog { animation: none; width: 100% } .moment .card { transition: none } }
+</style>
+
+<div class="review">
+  <div class="wrap"><span><b>Propuesta para revisar con Gaby.</b> El hero queda igual. Desde abajo, cada sección cambia de ritmo. Los números en lima explican cada cambio.</span>
+    <button class="chip" type="button" id="notesBtn" aria-pressed="true">Notas visibles</button></div>
+</div>
+
+<div id="page">
+<!-- Hero (as today, shortened) -->
+<header class="ink on-ink">
+  <div class="wrap nav"><span class="logo">heat<i>.</i></span><nav><span>Product</span><span>AI tutor</span><span>Schedule</span><span>For your team</span><span>FAQ</span></nav><span class="sp"></span><a class="btn" href="#final">Sign in</a><a class="btn lime" href="#final">Start free trial</a></div>
+  <section class="hero">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="wrap" style="position:relative">
+      <span class="kicker">Built inside a working restaurant</span>
+      <h1>Great service starts with <span class="lime-t">knowing the menu.</span></h1>
+      <p class="lead">One app for what your team needs to know and what your managers need to run.</p>
+      <div class="ctas"><a class="btn big lime" href="#final">Start free trial →</a><a class="btn big" href="#final">Try the demo kitchen</a></div>
+    </div>
+  </section>
+</header>
+
+<!-- 1 · A night at your restaurant -->
+<section class="band" id="night">
+  <div class="wrap">
+    <div class="anno"><span class="n">1</span><span><b>"Sound familiar?" pasa a ser una noche de servicio.</b> En vez de la tabla de 9 filas, una línea de tiempo de 2 PM a cierre. El botón cambia entre cómo es hoy y cómo es con HEAT. Cuenta una historia en lugar de una lista.</span></div>
+    <div class="night-head">
+      <div><p class="eyebrow">One Friday night</p><h2 class="h2">Same restaurant.<br>Two different nights.</h2></div>
+      <div class="toggle" role="group" aria-label="Show the night"><button type="button" data-night="today" aria-pressed="false">Today</button><button type="button" class="heat" data-night="with" aria-pressed="true">With HEAT</button></div>
+    </div>
+    <div class="timeline with" id="timeline"></div>
+  </div>
+</section>
+
+<!-- 2 · Lime band -->
+<section class="limeband">
+  <div class="wrap">
+    <div class="anno" style="background:rgba(255,255,255,.35);border-color:var(--on-lime);color:var(--on-lime)"><span class="n" style="background:var(--on-lime);color:var(--lime)">2</span><span><b>Una banda lima que corta la página.</b> Un mensaje corto y fácil de recordar: lo que HEAT reemplaza. Da color justo después de la primera sección clara.</span></div>
+    <div class="replace">
+      <div><p class="eyebrow">One app, one login</p><h2 style="margin-top:14px">Put away the group chat, the binder and the whiteboard.</h2></div>
+      <div class="gone"><span>WhatsApp group</span><span>Menu binder</span><span>Side work whiteboard</span><span>Schedule app</span><span>Swaps by text</span><span>Paper shift report</span><span class="keep">heat.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · Product tour -->
+<section class="band" id="product" style="background:var(--c-sunken)">
+  <div class="wrap">
+    <div class="anno"><span class="n">3</span><span><b>Las 8 escenas iguales pasan a ser un recorrido.</b> Hoy son 8 bloques de texto e imagen alternados, que se sienten repetidos. Ahora es un teléfono fijo y una lista que avanza sola. Toca cualquiera. Ocupa una pantalla en vez de ocho.</span></div>
+    <p class="eyebrow">The product</p>
+    <h2 class="h2">Everything the shift needs, on one phone.</h2>
+    <div class="tour" id="tour">
+      <div class="mods" role="tablist" aria-label="Product" id="mods"></div>
+      <div class="stick"><div class="ph"><div class="ph-in" id="phone" role="tabpanel" aria-live="polite"></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 · Tutor spotlight -->
+<section class="band ink on-ink" id="tutor">
+  <div class="wrap">
+    <div class="anno"><span class="n">4</span><span><b>El tutor tiene su propia banda oscura.</b> Es lo que nadie más tiene, así que merece un momento grande: una conversación real a pantalla grande, con el coaching en lima.</span></div>
+    <div class="spot">
+      <div>
+        <p class="eyebrow">AI tutor</p>
+        <h2 class="h2">A tutor that studies with every server, <span class="lime-t">before every shift.</span></h2>
+        <p class="lead">It quizzes, corrects and practises selling, using only your own menu cards. When a card doesn't say, it tells them to ask the kitchen.</p>
+        <div class="facts3">
+          <div><b>Quiz me</b><span>Questions from your menu, graded on the spot</span></div>
+          <div><b>Sell it</b><span>It plays the guest, then coaches the pitch</span></div>
+          <div><b>Remembers</b><span>Starts next time where each person missed</span></div>
+        </div>
+      </div>
+      <div class="convo" aria-label="Example conversation">
+        <span class="who">Tutor · Raw bar</span>
+        <p class="bub ai">The Yellowtail Tiradito: what's in it, and its allergens?</p>
+        <p class="bub me">Yellowtail, citrus soy, chili, cilantro. Fish and soy.</p>
+        <p class="bub ai">Almost. Add gluten from the soy, and sesame as cross-contamination. Now sell it to a table in 15 seconds.</p>
+        <p class="bub me">It's our lightest starter: thin yellowtail with citrus soy and a little heat. Perfect before the omakase.</p>
+        <span class="who">Coach</span>
+        <p class="bub coach">Great opener. Next time, name the chili so the guest can picture it, and offer it for the table.</p>
+        <div class="modes"><span>Quiz me</span><span>Explain it</span><span class="on">Practise selling</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · Roles -->
+<section class="band" id="roles">
+  <div class="wrap">
+    <div class="anno"><span class="n">5</span><span><b>Los roles pasan a un selector.</b> Antes eran 4 tarjetas iguales. Ahora cada quien toca su puesto y ve una frase grande y lo que HEAT le resuelve. Se siente personal.</span></div>
+    <p class="eyebrow">For your team</p>
+    <h2 class="h2">What changes for you.</h2>
+    <div class="roles-row" role="group" aria-label="Role" id="rolesRow"></div>
+    <div class="role-panel" id="rolePanel" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- 6 · Proof -->
+<section class="band" style="background:var(--c-sunken)">
+  <div class="wrap">
+    <div class="anno"><span class="n">6</span><span><b>Prueba real, que hoy falta.</b> Una cita de alguien de Osaka y 3 números medidos. Lo que está en rojo es un espacio por llenar: no publicamos números inventados.</span></div>
+    <div class="proof">
+      <div class="quote-card">
+        <p>“[Real quote from an Osaka Miami manager about the first weeks with HEAT.]”</p>
+        <div class="by"><i>OM</i><span>[Name], [Position] · Osaka Miami</span></div>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>[__] days</b><span>for a new server to pass the menu</span><span class="todo">Por medir en Osaka</span></div>
+        <div class="stat"><b>[__] %</b><span>of the team studied this month</span><span class="todo">Por medir en Osaka</span></div>
+        <div class="stat"><b>[__] h</b><span>a week saved building the schedule</span><span class="todo">Por medir en Osaka</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · Steps -->
+<section class="band">
+  <div class="wrap">
+    <div class="anno"><span class="n">7</span><span><b>Los 3 pasos, conectados.</b> Una línea que une los pasos y termina en lima, para que se lea como un camino corto.</span></div>
+    <p class="eyebrow">How it works</p>
+    <h2 class="h2">Ready for service this week.</h2>
+    <ol class="steps">
+      <li><span class="dot">1</span><small>About 5 minutes</small><h3>Create your restaurant</h3><p>Start the free trial and name it. Each location gets its own workspace.</p></li>
+      <li><span class="dot">2</span><small>An afternoon</small><h3>Add your menu</h3><p>Dishes, cocktails and wine, with ingredients, allergens and photos.</p></li>
+      <li><span class="dot">3</span><small>One link</small><h3>Invite and publish</h3><p>Send the link, pick each person's position and publish the week.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 8 · Final -->
+<section class="band" style="padding-top:0" id="final">
+  <div class="wrap">
+    <div class="final">
+      <div class="glow" aria-hidden="true"></div>
+      <span class="kicker" style="position:relative">See it for yourself</span>
+      <h2 style="position:relative">Your next service <span class="lime-t">can start here.</span></h2>
+      <div class="ctas" style="position:relative"><a class="btn big lime" href="#final">Start free trial →</a><a class="btn big" href="#final">Try the demo kitchen</a></div>
+      <small style="position:relative">14 days free · No card needed · The demo needs no account</small>
+    </div>
+    <p class="foot">The FAQ stays as it is today, between steps 7 and 8.</p>
+  </div>
+</section>
+</div>
+
+<script>
+const NIGHT = [
+  {t: "2:00 PM", what: "The schedule", today: "Someone asks in the group chat who's working tonight. Nobody answers.", with: "Everyone already has their shifts on their phone. Changes wait for a manager.", tag: "Schedule"},
+  {t: "4:30 PM", what: "Side work", today: "The same names on the whiteboard as last week.", with: "Side work and sections sent in a few taps. Each person sees theirs.", tag: "Side work"},
+  {t: "5:00 PM", what: "Pre-shift", today: "Half the team hears the 86 list. The other half arrives late.", with: "Tonight's board on the phone of everyone working today.", tag: "Pre-shift"},
+  {t: "7:45 PM", what: "Allergy question", today: "\"I think it has no sesame.\" The server runs to the kitchen.", with: "Pick the allergies, see what to avoid and what to confirm.", tag: "Allergies"},
+  {t: "9:30 PM", what: "A new server", today: "Day three, still reading the binder between tables.", with: "Studied the raw bar with the tutor before the shift.", tag: "AI tutor"},
+  {t: "11:30 PM", what: "Close", today: "The night's story leaves with the closing manager.", with: "A shift report the owners read from home, urgent ones first.", tag: "Report"},
+];
+function renderNight(mode) {
+  const tl = document.getElementById("timeline");
+  tl.className = "timeline " + mode;
+  tl.innerHTML = NIGHT.map(m => `<div class="moment"><span class="t">${m.t}</span><span class="what">${m.what}</span><div class="card">${mode === "with" ? `<span class="tag">${m.tag}</span><br>` : `<span class="tag">Today</span><br>`}${m[mode]}</div></div>`).join("");
+  document.querySelectorAll("[data-night]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.night === mode)));
+}
+
+const MODS = [
+  {h: "Know the menu", p: "Every dish, cocktail and wine on a card, in your menu's own sections. Quizzes write and grade themselves.",
+   ph: `<div class="ph-top"><span>Library · Raw bar</span><span>$24</span></div><div class="ph-title">Yellowtail Tiradito</div>
+        <div class="pc"><span>Thin-sliced yellowtail, citrus soy, sliced chili, cilantro, toasted sesame.</span><span class="lbl">Allergens</span><div class="alg"><span>FSH</span><span>SOY</span><span>GLU</span><span>SES · CC</span></div><span style="font-size:11px;color:var(--c-muted)">Always confirm with the kitchen.</span></div>
+        <div class="pc"><span class="lbl">Quiz · 5 of 6</span><b>Which garnish finishes the tiradito?</b><div class="pills"><span>Shiso</span><span class="on">Cilantro ✓</span><span>Scallion</span></div></div>`},
+  {h: "Allergy check", p: "Pick a guest's allergies and see, by menu section, what to avoid and what to confirm with the kitchen.",
+   ph: `<div class="ph-top"><span>Allergies</span><span>Table 12</span></div><div class="ph-title">Shellfish · Sesame</div>
+        <div class="pc"><span class="lbl">Raw bar</span><div class="r"><span>Yellowtail Tiradito</span><span class="bad">Confirm</span></div><div class="r"><span>Scallop Crudo</span><span class="bad">Avoid</span></div><div class="r"><span>Salmon Nigiri</span><span>No match</span></div></div>
+        <div class="pc"><span class="lbl">Hot kitchen</span><div class="r"><span>Miso Black Cod</span><span>No match</span></div><div class="r"><span>Shrimp Tempura</span><span class="bad">Avoid</span></div></div>`},
+  {h: "Schedule", p: "Build the week, catch overtime before you publish, and let swaps reach only the people who can cover them.",
+   ph: `<div class="ph-top"><span>Schedule</span><span>Nov 17 – 23</span></div><div class="ph-title">This week</div>
+        <div class="pc"><div class="sched"><span></span><span class="d">Thu</span><span class="d">Fri</span><span class="d">Sat</span><span class="d">Sun</span>
+        <span class="n">Ana</span><span class="s">5–11</span><span class="s">5–11</span><span></span><span class="s">4–10</span>
+        <span class="n">Luis</span><span class="s">4–12</span><span class="s">4–12</span><span class="s ot">4–12</span><span></span>
+        <span class="n">Marco</span><span class="s">3–11</span><span></span><span class="s">3–11</span><span class="s">3–11</span>
+        <span class="n">Sofía</span><span></span><span class="s">5–10</span><span class="s">5–10</span><span class="s">5–10</span></div></div>
+        <div class="pc"><b>Luis · 41 h</b><span style="color:var(--c-fail)">Overtime on Saturday</span></div>`},
+  {h: "Side work and sections", p: "Tap a name, then a job. Draw tonight's sections on your own floor map and send it to everyone.",
+   ph: `<div class="ph-top"><span>Tonight · Dinner</span><span>9 working</span></div><div class="ph-title">Sections</div>
+        <div class="pc"><div class="floor">
+          <div class="zone" style="left:8px;top:14px;width:46%;height:70px"><b>1 · Ana</b></div>
+          <div class="zone l" style="left:52%;top:14px;width:44%;height:70px"><b>2 · Luis</b></div>
+          <div class="zone" style="left:8px;top:98px;width:88%;height:62px"><b>3 · Sofía</b></div>
+          <i style="left:18px;top:34px">11</i><i style="left:56px;top:34px" class="rd">12</i><i style="left:62%;top:34px">21</i><i style="left:78%;top:34px" class="rd">22</i>
+          <i style="left:20px;top:116px">31</i><i style="left:30%;top:116px">32</i><i style="left:50%;top:116px" class="rd">33</i><i style="left:70%;top:116px">34</i></div></div>
+        <div class="pc"><span class="lbl">Closing</span><div class="pills"><span>Ice buckets · Ana</span><span class="on">Glassware · Luis</span><span>Side station · Sofía</span></div></div>`},
+  {h: "Pre-shift", p: "The 86 list, the dishes to push and a note, on the phone of everyone working tonight.",
+   ph: `<div class="ph-top"><span>Friday · Dinner</span><span>Sent 4:52 PM</span></div><div class="ph-title">Tonight's pre-shift</div>
+        <div class="pc"><span>Two VIPs at 8 PM on table 12, both shellfish allergies. Push the omakase.</span><div class="pills"><span class="out">Toro · 86</span><span>Uni · Low</span><span class="on">Omakase · Focus</span></div></div>
+        <div class="pc"><span class="lbl">Seen by</span><b>8 of 9 working today</b></div>`},
+  {h: "Team chat", p: "FOH, BOH, the bar and the managers, each in their own chat. Notices, pins, photos and voice notes.",
+   ph: `<div class="ph-top"><span>Chat</span><span>FOH</span></div><div class="ph-title">Front of house</div>
+        <div class="pc" style="background:var(--lime);color:var(--on-lime);border-color:var(--on-lime)"><span class="lbl" style="color:var(--on-lime)">Notice · pinned</span><span>Toro is 86 for the night. Offer the hamachi instead.</span></div>
+        <p class="bub ai">Can someone grab more lemons from the walk-in?</p><p class="bub me">On it 👍</p><p class="bub ai">Table 12 is seated, VIP.</p>`},
+  {h: "Shift report and assistant", p: "Covers, sales and issues at close, and an assistant that answers from your own data.",
+   ph: `<div class="ph-top"><span>Assistant</span><span>Manager</span></div><div class="ph-title">Ask your restaurant</div>
+        <p class="bub me">Who's close to overtime this week?</p>
+        <div class="pc"><span>Two people pass 40 hours if they work what's scheduled:</span><div class="r"><span><b>Luis</b></span><span class="bad">45.5 h</span></div><div class="r"><span><b>Ana</b></span><span class="bad">41 h</span></div><span style="font-size:11px;color:var(--c-muted)">From the published schedule</span></div>`},
+];
+let cur = 0, timer = null, paused = false;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function renderTour() {
+  document.getElementById("mods").innerHTML = MODS.map((m, i) => `<button class="mod" type="button" role="tab" aria-selected="${i === cur}" data-mod="${i}"><span class="num">0${i + 1}</span><span><h3>${m.h}</h3><p>${m.p}</p></span><span class="prog"></span></button>`).join("");
+  document.getElementById("phone").innerHTML = MODS[cur].ph;
+  clearTimeout(timer);
+  if (!paused && !reduce) timer = setTimeout(() => { cur = (cur + 1) % MODS.length; renderTour(); }, 6000);
+}
+
+const ROLES = [
+  {k: "Owner or GM", q: "“I know how last night went before I get to the restaurant.”", who: "Owners and GMs", items: ["Labor and sales for the week, every location side by side", "Urgent reports reach your phone the moment they're sent", "Ask the assistant what the reports keep saying"]},
+  {k: "Floor manager", q: "“Pre-shift, side work and sections are out before 5.”", who: "Floor managers", items: ["Build the front of house and publish it to every phone", "Send tonight's side work and sections in a few taps", "Approve swaps with the hours in front of you"]},
+  {k: "Chef", q: "“The line's schedule and the 86 list are in my hands.”", who: "Head chefs and sous chefs", items: ["Build the kitchen schedule on your own", "86 what's out and the floor sees it right away", "Your own BOH chat, separate from the floor"]},
+  {k: "Server or bartender", q: "“I studied the new menu on the bus.”", who: "Servers, bartenders and cooks", items: ["Your shifts, side work and section on your phone", "A tutor that helps you study and sell", "Release or swap a shift without a single text"]},
+];
+let role = 0;
+function renderRoles() {
+  document.getElementById("rolesRow").innerHTML = ROLES.map((r, i) => `<button class="chip" type="button" data-role="${i}" aria-pressed="${i === role}">${r.k}</button>`).join("");
+  const r = ROLES[role];
+  document.getElementById("rolePanel").innerHTML = `<div class="role-big"><q>${r.q}</q><small>${r.who}</small></div><div class="role-list">${r.items.map(t => `<div class="role-item"><span class="ck">✓</span><span>${t}</span></div>`).join("")}</div>`;
+}
+
+document.addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  if (b.dataset.night) renderNight(b.dataset.night);
+  if (b.dataset.mod) { cur = Number(b.dataset.mod); paused = true; document.getElementById("tour").classList.add("paused"); renderTour(); }
+  if (b.dataset.role) { role = Number(b.dataset.role); renderRoles(); }
+  if (b.id === "notesBtn") { const on = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", String(on)); b.textContent = on ? "Notas visibles" : "Notas ocultas"; document.getElementById("page").classList.toggle("hide-notes", !on); }
+});
+renderNight("with"); renderTour(); renderRoles();
+</script>
