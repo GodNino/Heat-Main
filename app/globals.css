@@ -3961,3 +3961,18 @@ span.dash-name { text-decoration:none; }
 
 /* Invitations: the Delete buttons carry a small trash icon next to the word. To undo, revert the commit that added this block. */
 :root:root:root:root:root:root:root .invite-mail .btn.secondary { display:inline-flex; align-items:center; gap:6px; }
+
+/* Landing v3 (mockup docs/mockups/landing-v3.html): the dish video picture, the team trio (chat, employee
+   of the month, email invites) and the search highlight in the Files stop. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .lp3-trio { display:grid; gap:14px; margin-top:20px; }
+@media (min-width: 760px) { :root:root:root:root:root:root:root .lp3-trio { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
+:root:root:root:root:root:root:root .lp3-trio-item { display:flex; flex-direction:column; }
+:root:root:root:root:root:root:root .lp3-trio-visual { margin-top:auto; padding-top:16px; }
+:root:root:root:root:root:root:root .lp3-video { position:relative; display:grid; place-items:center; height:150px; margin-bottom:14px; border-radius:14px; background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .lp3-play { display:grid; place-items:center; width:48px; height:48px; border-radius:50%; background:var(--lime); color:#1b1c1a; }
+:root:root:root:root:root:root:root .lp3-video-by { position:absolute; left:12px; bottom:10px; font-family:var(--font-mono); font-size:11px; }
+:root:root:root:root:root:root:root .lp3-hit { background:var(--lime); color:#1b1c1a; padding:0 2px; border-radius:3px; }
+
+/* Landing v3: a card drawn inside a dark spotlight keeps the card's own text color (the dish video card's
+   title and Photo chip were light on light). To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .lp2-spot .lp-card { color:var(--c-text); }
