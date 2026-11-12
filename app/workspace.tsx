@@ -82,6 +82,7 @@ import { LastShiftNote, ShiftReports } from "./shift-report";
 import { LanguageSwitch, currentLang, setLang } from "./language";
 import { NotificationSwitch, notify } from "./notifications";
 import { GettingStarted } from "./getting-started";
+import { DishMedia, DishVideoEditor } from "./dish-video";
 import { EmployeeOfMonth, EmployeeOfMonthCard } from "./employee-of-month";
 import { Events, NextEventCard } from "./events";
 import { TeamChat, useChatUnread } from "./team-chat";
@@ -634,7 +635,8 @@ export function DishCard({ item, score, shift }: { item: MenuItem; score?: Progr
   const summary = summaryFor(item, cardRows);
   return (
     <article className="panel dish-card overflow-hidden enter">
-      {item.photo_url ? (
+      {/* The photo, and when the card has one, its video beside it in a small slider (069). */}
+      <DishMedia item={item} photo={item.photo_url ? (
         <img
           src={item.photo_url}
           alt={item.name}
@@ -647,7 +649,7 @@ export function DishCard({ item, score, shift }: { item: MenuItem; score?: Progr
           <Utensils size={24} />
           <span className="text-sm">Photo unavailable</span>
         </div>
-      )}
+      )} />
       <div className="p-6">
         <p className="eyebrow muted mb-2">{`Know your ${labelFor(contentTypeOf(item)).name}`}</p>
         <div className="flex items-center gap-2"><h2 className="text-2xl font-semibold tracking-tight">{item.name}</h2><CardQuizScore score={score} /></div>
@@ -710,6 +712,8 @@ function AddDish({
   // The version of this item the save is checked against. Deleting a field for good rewrites the items
   // that had an answer in it, so it is read again afterwards instead of failing the save as "changed elsewhere".
   const [stamp, setStamp] = useState(item?.updated_at);
+  // The card's video saves on its own (dish-video.tsx), so the editor only mirrors it here.
+  const [video, setVideo] = useState<Pick<MenuItem, "video_path" | "video_seconds" | "video_by">>({video_path: item?.video_path ?? null, video_seconds: item?.video_seconds ?? null, video_by: item?.video_by ?? null});
   // Mirrors of the fields the Allergy check reads. The inputs stay uncontrolled -- saving still
   // reads the form, not these -- so this can only ever show what is about to be saved, never change it.
   const [seeIngredients, setSeeIngredients] = useState(item?.ingredients.join(", ") ?? "");
@@ -1000,6 +1004,8 @@ function AddDish({
               }}
             />
           </div>
+          {item ? <DishVideoEditor item={{...item, ...video}} onChanged={patch => { setVideo(patch); void onRefresh(); }} />
+            : <p className="muted mb-5 text-sm">Save the {noun} first, then you can add a video that explains it.</p>}
           <CardFieldInputs part="extra" restaurantId={restaurant.id} contentType={formType} rows={cards.rows} ready={cards.ready} items={items} many={many} values={item?.details} onRows={onCardRows} onDeleted={afterDelete} />
           <label className="mb-6 flex items-start gap-3 font-normal">
             <input className="mt-1 !w-4" type="checkbox" required />I have
