@@ -186,6 +186,21 @@ function Auth({ invitation, trial }: { invitation: string; trial: boolean }) {
   // A trial visitor came from "Start free trial": they are setting up a restaurant, so they start on the sign-up form.
   const [signup, setSignup] = useState(trial && !invitation);
   const [forgot, setForgot] = useState(false);
+  // What the invite link is for (072), shown before signing in. An email invitation opens on
+  // "Create account" with the email and name it was sent to already written.
+  const [invite, setInvite] = useState<{restaurant: string; role: string | null; name: string | null; email: string | null} | null | "gone">(null);
+  useEffect(() => {
+    if (!invitation || !supabase) return;
+    let live = true;
+    void supabase.rpc("invite_preview", {invite_token: invitation}).then(({data, error}) => {
+      if (!live || error) return;
+      const row = ((data ?? []) as {restaurant: string; role: string | null; name: string | null; email: string | null}[])[0];
+      setInvite(row ?? "gone");
+      if (row?.email) setSignup(true);
+    });
+    return () => { live = false; };
+  }, [invitation]);
+  const preview = invite && invite !== "gone" ? invite : null;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -274,10 +289,16 @@ function Auth({ invitation, trial }: { invitation: string; trial: boolean }) {
             {invitation ? "Your team is waiting" : trial ? "14-day free trial" : "Your menu workspace"}
           </p>
           <h2 className="text-2xl font-semibold tracking-tight">
-            {forgot ? "Reset your password" : trial && signup ? "Start your free trial" : signup ? "Create your account" : "Welcome to HEAT"}
+            {forgot ? "Reset your password"
+              : preview ? `${preview.name ? `${preview.name}, you're` : "You're"} invited to join ${preview.restaurant}${preview.role ? ` as ${preview.role}` : ""}`
+              : trial && signup ? "Start your free trial" : signup ? "Create your account" : "Welcome to HEAT"}
           </h2>
           <p className="muted mt-3 mb-8">
-            {invitation
+            {invite === "gone"
+              ? "This invitation is no longer open. Ask your manager for a new one, or sign in if you already joined."
+              : preview?.email && signup ? `Create your account with ${preview.email} to get started.`
+              : preview ? (signup ? "Create your account to get started." : "Sign in with your HEAT account to join.")
+              : invitation
               ? "Sign in or create an account to join your restaurant."
               : trial
                 ? "Create your account, then set up your restaurant with its own menu. No card needed."
@@ -305,7 +326,7 @@ function Auth({ invitation, trial }: { invitation: string; trial: boolean }) {
               <Notice text={error} error />
               <Notice text={message} />
               <form onSubmit={submit}>
-                {signup && <Field label="Your name"><input id="display-name" name="display-name" autoComplete="given-name" required maxLength={60} /></Field>}
+                {signup && <Field label="Your name"><input id="display-name" name="display-name" autoComplete="given-name" required maxLength={60} key={preview?.name ?? "name"} defaultValue={preview?.name ?? undefined} /></Field>}
                 <Field label="Email address">
                   <input
                     id="email"
@@ -315,6 +336,8 @@ function Auth({ invitation, trial }: { invitation: string; trial: boolean }) {
                     required
                     maxLength={254}
                     placeholder="you@restaurant.com"
+                    key={preview?.email ?? "email"}
+                    defaultValue={preview?.email ?? undefined}
                   />
                 </Field>
                 {signup && !invitation && !trial && (
