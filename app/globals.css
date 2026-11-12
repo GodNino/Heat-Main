@@ -3870,3 +3870,69 @@ span.dash-name { text-decoration:none; }
 :root:root:root:root:root:root:root .invite-mail-actions { display:flex; flex-wrap:wrap; gap:8px; }
 :root:root:root:root:root:root:root .invite-mail-position { display:grid; gap:8px; margin:0; padding:0; border:0; min-width:0; }
 :root:root:root:root:root:root:root .invite-mail-position legend { margin-bottom:8px; padding:0; font-size:13px; font-weight:700; }
+
+/* Restaurant files (074): search, folders, file rows with type tag and share label, the share sheet,
+   the upload form and the file view. Chips 30 px, selected dark. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .files { display:grid; gap:14px; }
+:root:root:root:root:root:root:root .files .section-chip { margin:0; }
+:root:root:root:root:root:root:root .files-start { justify-self:start; }
+:root:root:root:root:root:root:root .files-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+:root:root:root:root:root:root:root .files-actions .btn.disabled { opacity:.5; pointer-events:none; }
+:root:root:root:root:root:root:root .files-search { position:relative; display:block; }
+:root:root:root:root:root:root:root .files-search svg { position:absolute; left:16px; top:13px; color:var(--c-muted); pointer-events:none; }
+:root:root:root:root:root:root:root .files-search input { width:100%; padding-left:44px; }
+:root:root:root:root:root:root:root .files-folders-head { display:flex; justify-content:space-between; align-items:center; gap:14px; }
+:root:root:root:root:root:root:root .files-folders { display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:14px; }
+:root:root:root:root:root:root:root .files-folder { display:grid; gap:6px; align-content:start; padding:16px; border:1px solid var(--c-line-5); border-radius:16px; background:var(--c-surface); color:inherit; font:inherit; text-align:left; cursor:pointer; }
+:root:root:root:root:root:root:root .files-folder b { font-size:14px; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .files-folder small { font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .files-share { justify-self:start; display:inline-flex; align-items:center; min-height:22px; margin-top:6px; padding:0 8px; border:1px solid var(--c-line-5); border-radius:999px; font-size:11px; font-weight:600; color:var(--c-muted); }
+:root:root:root:root:root:root:root .files-share.on { border-color:var(--c-text); color:var(--c-text); }
+:root:root:root:root:root:root:root .files-list { display:grid; border:1px solid var(--c-line-5); border-radius:16px; overflow:hidden; background:var(--c-surface); }
+:root:root:root:root:root:root:root .files-row { display:grid; grid-template-columns:minmax(0, 1fr) 44px; align-items:center; border-top:1px solid var(--c-line-5); }
+:root:root:root:root:root:root:root .files-row:first-child { border-top:0; }
+:root:root:root:root:root:root:root .files-row-main { display:grid; grid-template-columns:40px minmax(0, 1fr); gap:14px; align-items:center; padding:10px 0 10px 16px; border:0; background:transparent; color:inherit; font:inherit; text-align:left; cursor:pointer; min-width:0; }
+:root:root:root:root:root:root:root .files-row-text { display:grid; min-width:0; }
+:root:root:root:root:root:root:root .files-row-text b { font-size:13px; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .files-row-text small { font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .files-hit { margin-top:6px; padding:6px 8px; border-radius:8px; background:var(--c-raised); font-size:12px; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .files-hit mark { background:var(--lime); color:#1b1c1a; border-radius:3px; padding:0 2px; }
+:root:root:root:root:root:root:root .files-type { display:grid; place-items:end center; width:40px; height:48px; padding-bottom:6px; border-radius:8px; color:#fff; font-size:10px; font-weight:700; }
+:root:root:root:root:root:root:root .files-type.pdf { background:var(--c-fail, #D42A1C); }
+:root:root:root:root:root:root:root .files-type.doc { background:#2f6fd6; }
+:root:root:root:root:root:root:root .files-type.xls { background:var(--c-pass, #17803F); }
+:root:root:root:root:root:root:root .files-type.img, :root:root:root:root:root:root:root .files-type.file { background:var(--c-muted); }
+:root:root:root:root:root:root:root .files-star { display:grid; place-items:center; width:44px; height:44px; border:0; background:transparent; color:var(--c-muted); cursor:pointer; }
+:root:root:root:root:root:root:root .files-star[aria-pressed="true"] { color:var(--c-text); }
+:root:root:root:root:root:root:root .files-new { display:grid; gap:14px; padding:16px; border:1px solid var(--c-line-5); border-radius:16px; background:var(--c-surface); }
+:root:root:root:root:root:root:root .files-new .field { margin:0; }
+:root:root:root:root:root:root:root .files-sheet { position:fixed; left:0; right:0; bottom:0; z-index:40; display:grid; gap:14px; max-height:85dvh; overflow:auto; padding:16px max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); border-top:1px solid var(--c-line-5); border-radius:20px 20px 0 0; background:var(--c-surface); box-shadow:0 -10px 30px rgb(0 0 0 / .2); }
+@media (min-width: 768px) { :root:root:root:root:root:root:root .files-sheet { left:50%; right:auto; bottom:auto; top:50%; width:min(480px, calc(100vw - 32px)); transform:translate(-50%, -50%); border:1px solid var(--c-line-5); border-radius:20px; } }
+:root:root:root:root:root:root:root .files-sheet-head { display:flex; justify-content:space-between; align-items:center; gap:14px; font-size:20px; }
+:root:root:root:root:root:root:root .files-close { display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:transparent; color:inherit; cursor:pointer; }
+:root:root:root:root:root:root:root .files-options { display:grid; border:1px solid var(--c-line-5); border-radius:16px; overflow:hidden; }
+:root:root:root:root:root:root:root .files-option { display:grid; grid-template-columns:minmax(0, 1fr) 22px; gap:14px; align-items:center; min-height:52px; padding:8px 16px; border:0; border-top:1px solid var(--c-line-5); background:transparent; color:inherit; font:inherit; text-align:left; cursor:pointer; }
+:root:root:root:root:root:root:root .files-option:first-child { border-top:0; }
+:root:root:root:root:root:root:root .files-option b { display:block; font-size:13px; }
+:root:root:root:root:root:root:root .files-option small { display:block; font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .files-tick { display:grid; place-items:center; width:22px; height:22px; border:1px solid var(--c-line-5); border-radius:6px; font-size:13px; }
+:root:root:root:root:root:root:root .files-option[aria-checked="true"] .files-tick { background:var(--lime); border-color:#1b1c1a; color:#1b1c1a; }
+:root:root:root:root:root:root:root .files-upload { display:grid; gap:14px; padding:16px; }
+:root:root:root:root:root:root:root .files-upload .field { margin:0; }
+:root:root:root:root:root:root:root .files-pick { display:grid; grid-template-columns:40px minmax(0, 1fr); gap:14px; align-items:center; padding:16px; border:1px solid var(--c-text); border-radius:16px; cursor:pointer; }
+:root:root:root:root:root:root:root .files-pick b { display:block; font-size:13px; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .files-pick small { display:block; font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .files-label { margin:0 0 8px; font-size:13px; font-weight:700; }
+:root:root:root:root:root:root:root .files-chips { display:flex; flex-wrap:wrap; gap:8px; }
+:root:root:root:root:root:root:root .files-chips button { min-height:30px; padding:0 14px; border:1px solid var(--c-text); border-radius:999px; background:transparent; color:var(--c-text); font:inherit; font-size:12px; font-weight:600; cursor:pointer; }
+:root:root:root:root:root:root:root .files-chips button[aria-pressed="true"] { background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .files-preview { padding:0; overflow:hidden; }
+:root:root:root:root:root:root:root .files-frame { display:block; width:100%; height:min(70dvh, 720px); border:0; background:#fff; }
+:root:root:root:root:root:root:root .files-image { display:block; width:100%; max-height:70dvh; object-fit:contain; background:var(--c-raised); }
+:root:root:root:root:root:root:root .files-meta { display:grid; margin:0; padding:0 16px; border-top:1px solid var(--c-line-5); }
+:root:root:root:root:root:root:root .files-meta div { display:flex; justify-content:space-between; gap:14px; min-height:36px; align-items:center; border-top:1px solid var(--c-line-5); font-size:13px; }
+:root:root:root:root:root:root:root .files-meta div:first-child { border-top:0; }
+:root:root:root:root:root:root:root .files-meta dt { color:var(--c-muted); }
+:root:root:root:root:root:root:root .files-meta dd { margin:0; font-weight:600; text-align:right; }
+:root:root:root:root:root:root:root .files-move { min-height:30px; height:30px; padding:0 12px; border:1px solid var(--c-text); border-radius:999px; background:transparent; font-size:12px; font-weight:600; max-width:100%; }
+:root:root:root:root:root:root:root .files-confirm { display:inline-flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:13px; font-weight:600; }
