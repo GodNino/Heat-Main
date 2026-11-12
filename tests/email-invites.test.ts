@@ -30,6 +30,7 @@ test("email invites: who sends, renew, cancel, and joining with the position", a
     const demo = (await db.query<{id: string}>("insert into public.restaurants(owner_id,name) values($1,'Demo') returning id", [uid(6)])).rows[0].id;
     await db.query("insert into public.restaurant_members(restaurant_id,user_id,access) values($1,$2,'{team}'),($1,$3,'{}')", [rid, uid(2), uid(3)]);
     const asUser = (id: number) => db.exec(`reset role; set role authenticated; select set_config('request.jwt.claim.sub','${uid(id)}',false), set_config('request.jwt.claims','${JSON.stringify({is_anonymous: id === 6})}',false);`);
+    const invite_preview = async (t: string) => (await db.query<{restaurant: string; role: string | null; name: string | null; email: string | null}>("select * from public.invite_preview($1)", [t])).rows[0];
     const invite = (r: string, email: string, role = "Server", name = "Lucía", lang = "es") =>
       db.query<{t: string}>("select public.save_email_invite($1,$2,$3,$4,$5) t", [r, email, name, role, lang]).then(x => x.rows[0].t);
 
@@ -60,6 +61,17 @@ test("email invites: who sends, renew, cancel, and joining with the position", a
     await assert.rejects(db.query("select public.join_restaurant($1)", [second]), /invalid or expired/);
     await asUser(2);
     await assert.rejects(invite(rid, "lucia@gmail.com"), /already joined/);
+
+    // The sign-in screen can say what the link is for, signed out (072); not once it's used.
+    await db.exec("reset role; set role anon; select set_config('request.jwt.claim.sub','',false)");
+    const pre = await invite_preview(first);
+    assert.equal(pre, undefined, "a replaced link shows nothing");
+    await db.exec("reset role");
+    const freshToken = (await db.query<{t: string}>("insert into public.email_invites(restaurant_id,email,name,role,created_by) values($1,'nuevo@gmail.com','Pedro','Host',$2) returning token t", [rid, uid(2)])).rows[0].t;
+    await db.exec("set role anon");
+    assert.deepEqual(await invite_preview(freshToken), {restaurant: "Osaka", role: "Host", name: "Pedro", email: "nuevo@gmail.com"});
+    assert.equal(await invite_preview(second), undefined, "an accepted link shows nothing");
+    await asUser(2);
 
     // Cancel turns a pending link off.
     const pending = await invite(rid, "carlos@gmail.com", "Host", "");
