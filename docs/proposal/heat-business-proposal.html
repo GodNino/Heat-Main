@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>HEAT business proposal</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Printable business proposal (US Letter). Text in [brackets] is for Diego and Gaby to fill in before sending. */
+@page { size: Letter; margin: 0.75in 0.8in; }
+:root { --lime:#C7F23A; --text:#1B1C1A; --muted:#62645D; --line:#DCDCD5; --bg:#F1F1EC; --surface:#FBFBF8; }
+* { box-sizing:border-box; }
+html { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+body { margin:0; font:10.5pt/1.55 "IBM Plex Sans", Helvetica, Arial, sans-serif; color:var(--text); }
+h1 { font-size:30pt; line-height:1.05; margin:0; letter-spacing:-.01em; }
+h2 { font-size:16pt; margin:0 0 8pt; padding-top:4pt; break-after:avoid; }
+.keep { break-inside:avoid; }
+h3 { font-size:11.5pt; margin:12pt 0 4pt; break-after:avoid; }
+p { margin:0 0 8pt; }
+ul { margin:0 0 8pt; padding-left:16pt; }
+li { margin:0 0 3pt; }
+.mono { font-family:"IBM Plex Mono", monospace; }
+.label { break-after:avoid; font-size:8pt; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin:0 0 4pt; }
+.section { margin:0 0 18pt; }
+.break { break-before:page; }
+.fill { background:#F3F8D9; border-bottom:1px solid #b9cf55; padding:0 2pt; }
+table { width:100%; border-collapse:collapse; margin:4pt 0 10pt; break-inside:avoid; }
+th, td { text-align:left; vertical-align:top; padding:6pt 8pt; border-bottom:1px solid var(--line); font-size:9.5pt; }
+th { font-size:8pt; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); border-bottom:1.5px solid var(--text); }
+td.num, th.num { text-align:right; white-space:nowrap; }
+.box { border:1px solid var(--line); border-radius:10pt; padding:12pt 14pt; margin:0 0 10pt; break-inside:avoid; background:var(--surface); }
+.box.lime { background:var(--lime); border-color:var(--text); }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:10pt; }
+.grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10pt; }
+.big { font-size:20pt; font-weight:700; line-height:1.1; }
+.small { font-size:8.5pt; color:var(--muted); }
+/* Cover */
+.cover { height:9.4in; display:flex; flex-direction:column; justify-content:space-between; }
+.cover-top { background:#141414; color:#F3F3F0; border-radius:14pt; padding:28pt; }
+.logo { font-size:26pt; font-weight:700; }
+.logo span { color:var(--lime); }
+.cover h1 { color:#F3F3F0; margin-top:60pt; }
+.cover h1 em { font-style:normal; color:var(--lime); }
+.cover-sub { margin-top:14pt; font-size:12.5pt; color:#d5d6cf; max-width:5in; }
+.cover-meta { display:grid; grid-template-columns:repeat(3, 1fr); gap:10pt; }
+.cover-meta div { border-top:1.5px solid var(--text); padding-top:6pt; }
+.sign { display:grid; grid-template-columns:1fr 1fr; gap:28pt; margin-top:22pt; }
+.sign div { border-top:1px solid var(--text); padding-top:6pt; font-size:9pt; }
+</style>
+</head>
+<body>
+
+<!-- Cover -->
+<section class="cover">
+  <div class="cover-top">
+    <div class="logo">heat<span>.</span></div>
+    <h1>Business proposal<br><em>HEAT for <span class="fill" style="color:#1B1C1A">[Osaka Miami]</span></em></h1>
+    <p class="cover-sub">One app for what the team needs to know and what managers need to run: menu training with an AI tutor, allergens, the schedule, side work, pre-shift, private events, the team chat and the restaurant's files.</p>
+  </div>
+  <div>
+    <div class="cover-meta">
+      <div><p class="label">Prepared for</p><span class="fill">[Name, title]</span><br><span class="fill">[Company]</span></div>
+      <div><p class="label">Prepared by</p>Diego Martínez and Gaby <span class="fill">[last name]</span><br><span class="fill">[HEAT Platform LLC]</span></div>
+      <div><p class="label">Date · valid for</p>November 12, 2026<br>30 days</div>
+    </div>
+    <p class="small" style="margin-top:16pt">Confidential. Prepared for the company named above.</p>
+  </div>
+</section>
+
+<!-- 1 Summary -->
+<section class="section break">
+  <p class="label">1 · Summary</p>
+  <h2>What we're asking for</h2>
+  <p>Full-service restaurants ask a lot of their teams. Servers learn a long menu and its allergens from a binder and memory. Side work, sections and the pre-shift live on a whiteboard and in group chats. The schedule and shift swaps go out by text. New people take weeks to be ready, and a mistake with an allergen is a risk to the guest and to the business.</p>
+  <p>HEAT puts all of that in one app on every phone, built inside a working restaurant. It is ready to use today; this proposal is not for something still to be built.</p>
+  <div class="box lime">
+    <p class="label" style="color:var(--text)">The request</p>
+    <p style="margin:0"><b>Approve a 60-day pilot of HEAT at <span class="fill">[1]</span> location, starting <span class="fill">[date]</span></b>, with clear goals agreed up front. At the end, we decide together whether to continue, using the results.</p>
+  </div>
+  <div class="grid3">
+    <div class="box"><p class="label">One app</p><p style="margin:0">Replaces the group chat, the menu binder, the whiteboard, the schedule app and the paper shift report.</p></div>
+    <div class="box"><p class="label">Safer service</p><p style="margin:0">Allergens on every dish card, always with the codes and the “confirm with the kitchen” line. It never calls a dish safe.</p></div>
+    <div class="box"><p class="label">Ready faster</p><p style="margin:0">New people study on their phone with an AI tutor that only uses our own menu.</p></div>
+  </div>
+</section>
+
+<!-- 2 Problem -->
+<section class="section">
+  <p class="label">2 · Today</p>
+  <h2>What a shift runs on today</h2>
+  <table>
+    <tr><th>Area</th><th>How it works today</th><th>What it costs</th></tr>
+    <tr><td><b>Menu training</b></td><td>Binder, shadow shifts, asking the kitchen</td><td>Weeks before a new server knows the menu; knowledge depends on who trained them</td></tr>
+    <tr><td><b>Allergens</b></td><td>Memory and asking the kitchen at the table</td><td>Risk to the guest, to the license and of a claim</td></tr>
+    <tr><td><b>Schedule and swaps</b></td><td>A schedule app or spreadsheet, swaps by text</td><td>Manager time; overtime found after the fact</td></tr>
+    <tr><td><b>Side work, sections, pre-shift</b></td><td>Whiteboard and group chat</td><td>Missed tasks; people who weren't there don't see it</td></tr>
+    <tr><td><b>Events (BEOs)</b></td><td>Printed and passed around</td><td>Changes in the count or the menu don't reach everyone</td></tr>
+    <tr><td><b>Documents</b></td><td>Personal phones, email, a shared drive</td><td>Specs and price lists are hard to find, or shared too widely</td></tr>
+  </table>
+</section>
+
+<!-- 3 Solution -->
+<section class="section break">
+  <p class="label">3 · What HEAT does</p>
+  <h2>Everything the shift needs, on one phone</h2>
+  <div class="grid2">
+    <div>
+      <h3>For the team</h3>
+      <ul>
+        <li><b>Menu cards</b> for every dish, cocktail and wine, with photo, a short video of the chef explaining it, ingredients and allergens.</li>
+        <li><b>AI tutor</b> that quizzes, explains and practises selling, using only our menu. When a card doesn't say, it tells them to ask the kitchen.</li>
+        <li><b>Allergy check:</b> pick the guest's allergies and see what not to offer and what to confirm.</li>
+        <li><b>My shift:</b> their schedule, side work, section and tonight's pre-shift.</li>
+        <li><b>Team chat</b> by side (floor, kitchen, bar), direct messages, photos and voice notes.</li>
+        <li>Every screen in <b>English and Spanish</b>; each person picks.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>For managers</h3>
+      <ul>
+        <li><b>Schedule</b> for front and back of house, with overtime and time off flagged before publishing; swaps go only to people who can cover.</li>
+        <li><b>Side work and sections</b> on the restaurant's own floor map, sent in a few taps.</li>
+        <li><b>Pre-shift</b> (86 list, dishes to push, notes) sent to who's working today.</li>
+        <li><b>Private events:</b> the whole BEO on every phone working it; when it changes, the team sees what changed and confirms.</li>
+        <li><b>End-of-shift report</b> and a dashboard; urgent reports reach owners right away.</li>
+        <li><b>Files:</b> folders of PDFs, Word and Excel, managers only by default, searchable inside.</li>
+        <li><b>Assistant</b> that answers questions from the restaurant's own data and changes nothing without confirmation.</li>
+        <li><b>Employee of the month</b> voting, and <b>email invitations</b> for new people.</li>
+      </ul>
+    </div>
+  </div>
+  <p class="small">HEAT opens in the phone's browser and can be added to the home screen, with notifications. Nothing to download from a store. Native iPhone and Android apps are on the roadmap (section 8).</p>
+</section>
+
+<!-- 4 Value -->
+<section class="section break">
+  <p class="label">4 · What the restaurant gains</p>
+  <h2>How we'll measure it</h2>
+  <p>We'd rather measure than promise. During the pilot we track these and compare them with how things are today:</p>
+  <table>
+    <tr><th>Goal</th><th>How we measure it</th><th>Today</th><th>Target in the pilot</th></tr>
+    <tr><td>New servers ready sooner</td><td>Days from start to passing the menu and allergen quizzes</td><td><span class="fill">[__ days]</span></td><td><span class="fill">[__ days]</span></td></tr>
+    <tr><td>Team knows the menu</td><td>Share of the team with each menu section studied</td><td>Not measured</td><td><span class="fill">[80%]</span></td></tr>
+    <tr><td>Less manager time on admin</td><td>Hours a week on schedule, swaps, side work and pre-shift</td><td><span class="fill">[__ h]</span></td><td><span class="fill">[__ h]</span></td></tr>
+    <tr><td>Everyone gets the pre-shift</td><td>Share of people working who opened it</td><td>Not measured</td><td><span class="fill">[90%]</span></td></tr>
+    <tr><td>Team adoption</td><td>Share of the team active each week</td><td>—</td><td><span class="fill">[85%]</span></td></tr>
+  </table>
+  <p class="small">The “Today” numbers come from the restaurant before the pilot starts. We fill them in together in week 1.</p>
+</section>
+
+<!-- 5 Pilot -->
+<section class="section break">
+  <p class="label">5 · The pilot</p>
+  <h2>60 days, one location, clear goals</h2>
+  <table>
+    <tr><th>When</th><th>What happens</th><th>Who</th></tr>
+    <tr><td><b>Week 1</b></td><td>Load the menu (dishes, cocktails, wine, allergens), the team and the floor map. Train the managers (about 1 hour). Record the “Today” numbers.</td><td>HEAT, with the GM</td></tr>
+    <tr><td><b>Week 2</b></td><td>Invite the whole team by email. First published schedule and pre-shift in HEAT. Team studies the menu with the tutor.</td><td>Managers, team</td></tr>
+    <tr><td><b>Weeks 3–6</b></td><td>HEAT runs the shift: schedule, side work, sections, pre-shift, events, chat. Weekly 20-minute check-in to fix what gets in the way.</td><td>Everyone; HEAT support</td></tr>
+    <tr><td><b>Weeks 7–8</b></td><td>Measure the goals in section 4 and write a short results report. Decide: continue, adjust or stop.</td><td>HEAT, GM, <span class="fill">[approver]</span></td></tr>
+  </table>
+  <h3>What we need from the restaurant</h3>
+  <ul>
+    <li>A manager who owns the pilot, and 1 hour of their time in week 1.</li>
+    <li>The current menu with ingredients and allergens, confirmed by the kitchen.</li>
+    <li>The team list with emails and positions.</li>
+    <li>Permission for the team to use HEAT on their own phones during work.</li>
+  </ul>
+</section>
+
+<!-- 6 Security -->
+<section class="section break">
+  <p class="label">6 · Security and data</p>
+  <h2>The restaurant's data stays the restaurant's</h2>
+  <ul>
+    <li><b>Separated by restaurant.</b> Every table is protected by row-level rules in the database, so one restaurant can never read another's data. An automated test checks this across the whole database on every change.</li>
+    <li><b>Access per person.</b> Managers decide who can change the menu, the pre-shift, the team and each side of the schedule. Files are managers-only until shared.</li>
+    <li><b>Where it lives.</b> Database and files on Supabase (PostgreSQL, United States, us-east-1); the app on Vercel. Private files open only through short-lived links.</li>
+    <li><b>Email</b> goes out from heatplatform.io through Resend.</li>
+    <li><b>AI.</b> The tutor and assistant use Anthropic's Claude through its business API, which does not use customer data to train its models. They only see the data the person using them is allowed to see.</li>
+    <li><b>Limits</b> on email, AI and notifications protect against misuse and runaway costs.</li>
+    <li><b>If the restaurant leaves,</b> we deliver an export of its menu, team and documents within <span class="fill">[30]</span> days on request, then delete its data.</li>
+    <li><b>Backups:</b> daily database backups, kept for <span class="fill">[7]</span> days.</li>
+  </ul>
+  <p class="small">HEAT does not handle payments or card data and does not connect to the POS in this phase.</p>
+</section>
+
+<!-- 7 Pricing -->
+<section class="section break">
+  <p class="label">7 · Investment</p>
+  <h2>Price and terms</h2>
+  <table>
+    <tr><th>Item</th><th>What it includes</th><th class="num">Price</th></tr>
+    <tr><td><b>Pilot · 60 days</b></td><td>Everything in section 3 for one location, setup, manager training and weekly support</td><td class="num"><span class="fill">[$0 software · $500 setup]</span></td></tr>
+    <tr><td><b>Monthly, per location</b></td><td>Every feature, unlimited team members, updates, email support (reply within 1 business day)</td><td class="num"><span class="fill">[$179 / month]</span></td></tr>
+    <tr><td><b>Setup, per new location</b></td><td>Menu, team and floor map loaded; manager training</td><td class="num"><span class="fill">[$750 one time]</span></td></tr>
+    <tr><td><b>More locations</b></td><td>From the third location</td><td class="num"><span class="fill">[15% off]</span></td></tr>
+    <tr><td><b>Paid yearly</b></td><td>12 months paid up front</td><td class="num"><span class="fill">[2 months free]</span></td></tr>
+  </table>
+  <h3>How this compares</h3>
+  <p>Getting the same coverage from separate tools usually means three apps and three logins. Approximate public prices per location per month, November 2026:</p>
+  <table>
+    <tr><th>Need</th><th>Typical tool</th><th class="num">Approx. per month</th></tr>
+    <tr><td>Schedule, chat, tasks</td><td>7shifts (Pro / Premium)</td><td class="num">$80–150</td></tr>
+    <tr><td>Checklists and side work</td><td>Jolt</td><td class="num">$90–300 + setup</td></tr>
+    <tr><td>Menu and allergen quizzes</td><td>ShiftTrained and similar</td><td class="num">$30–70</td></tr>
+    <tr><td colspan="2"><b>Total with separate tools</b></td><td class="num"><b>$200–500</b></td></tr>
+    <tr><td colspan="2"><b>HEAT, all in one</b></td><td class="num"><b><span class="fill">[$179]</span></b></td></tr>
+  </table>
+  <p class="small">Competitor prices are ranges from public comparisons, not quotes, and change often.</p>
+  <h3>Terms</h3>
+  <ul>
+    <li>After the pilot: month to month, cancel with 30 days' notice. No long contract.</li>
+    <li>Billed monthly by <span class="fill">[HEAT Platform LLC]</span>; net 15.</li>
+    <li>HEAT and its software belong to <span class="fill">[HEAT Platform LLC]</span>. The restaurant owns its own data (menu, team, documents) and licenses HEAT to use it.</li>
+  </ul>
+</section>
+
+<!-- 8 Roadmap -->
+<section class="section break">
+  <p class="label">8 · What's next</p>
+  <h2>Roadmap</h2>
+  <table>
+    <tr><th>When</th><th>What</th></tr>
+    <tr><td><span class="fill">[Q1 2027]</span></td><td>iPhone and Android apps in the App Store and Google Play, with native notifications</td></tr>
+    <tr><td><span class="fill">[Q1 2027]</span></td><td>Import the menu from a PDF or the POS export; subtitles on dish videos</td></tr>
+    <tr><td><span class="fill">[Q2 2027]</span></td><td>Reservations view for the floor; more reports across locations</td></tr>
+  </table>
+  <p class="small">Dates are targets, not commitments. The pilot uses what exists today.</p>
+</section>
+
+<!-- 9 About + next steps -->
+<section class="section">
+  <p class="label">9 · Who we are</p>
+  <h2>Built inside a working restaurant</h2>
+  <p><b>Diego Martínez</b> — <span class="fill">[role and years in restaurants]</span>. <b>Gaby <span class="fill">[last name]</span></b> — <span class="fill">[role; design and product]</span>. We built HEAT for the problems we saw every shift, and we tested it with a real team, menu and schedule.</p>
+  <p>Contact: <span class="fill">[diego@heatplatform.io]</span> · <span class="fill">[phone]</span> · heatplatform.io</p>
+</section>
+
+<section class="section">
+  <p class="label">10 · Next steps</p>
+  <h2>To start the pilot</h2>
+  <ol>
+    <li>Approve this proposal and the pilot location.</li>
+    <li>Name the manager who owns the pilot.</li>
+    <li>Share the menu with allergens and the team list.</li>
+    <li>We set up HEAT and train the managers in week 1.</li>
+  </ol>
+  <div class="sign">
+    <div>For <span class="fill">[Company]</span><br><br>Name, title<br><br>Date</div>
+    <div>For <span class="fill">[HEAT Platform LLC]</span><br><br>Name, title<br><br>Date</div>
+  </div>
+</section>
+
+</body>
+</html>
