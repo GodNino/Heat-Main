@@ -9,6 +9,7 @@ import { supabase } from "@/lib/supabase";
 import { checkFile, FILE_TYPES, snippetParts } from "@/lib/file-types";
 import { Field, Notice, ScreenHeader } from "./ui";
 import { currentLang } from "./language";
+import { DocxPreview, XlsxPreview } from "./file-preview";
 
 type Share = "bar" | "boh" | "foh" | "all";
 type Folder = {id: string; name: string; share: Share[]};
@@ -193,7 +194,9 @@ export function Files({restaurantId, userId, isManager}: {restaurantId: string; 
         {!link ? <p className="muted p-5" role="status">Loading…</p>
           : isPdf ? <iframe src={link} title={file.name} className="files-frame" />
           : isImage ? <img src={link} alt={file.name} className="files-image" />
-          : <p className="muted p-5">Word and Excel files open in their own app. Tap Download.</p>}
+          : file.mime.includes("wordprocessingml") ? <DocxPreview url={link} />
+          : file.mime.includes("spreadsheetml") ? <XlsxPreview url={link} />
+          : <p className="muted p-5">This older Word or Excel format can't be shown here. Tap Download to open it.</p>}
         <dl className="files-meta">
           <div><dt>Uploaded by</dt><dd>{people[file.uploaded_by] ?? "Manager"} · {when(file.created_at)}</dd></div>
           {isManager && <div><dt>Who sees it</dt><dd>{shareLabel(shareOf(file))}{shareOf(file).length ? " · and managers" : ""}{file.share ? "" : " (as the folder)"}</dd></div>}
