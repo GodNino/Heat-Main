@@ -3868,3 +3868,5 @@ span.dash-name { text-decoration:none; }
 :root:root:root:root:root:root:root .invite-mail-state.expired { color:var(--c-fail, #D42A1C); border-color:var(--c-fail, #D42A1C); }
 :root:root:root:root:root:root:root .invite-mail-state.cancelled { color:var(--c-muted); }
 :root:root:root:root:root:root:root .invite-mail-actions { display:flex; flex-wrap:wrap; gap:8px; }
+:root:root:root:root:root:root:root .invite-mail-position { display:grid; gap:8px; margin:0; padding:0; border:0; min-width:0; }
+:root:root:root:root:root:root:root .invite-mail-position legend { margin-bottom:8px; padding:0; font-size:13px; font-weight:700; }

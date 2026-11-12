@@ -84,6 +84,7 @@ import { NotificationSwitch, notify } from "./notifications";
 import { GettingStarted } from "./getting-started";
 import { DishMedia, DishVideoEditor } from "./dish-video";
 import { EmailInvites } from "./email-invites";
+import { PositionChips, samePosition } from "./position-chips";
 import { EmployeeOfMonth, EmployeeOfMonthCard } from "./employee-of-month";
 import { Events, NextEventCard } from "./events";
 import { TeamChat, useChatUnread } from "./team-chat";
@@ -1364,36 +1365,6 @@ type TeamAssignment = {id: string; menu_item_id: string; item_name: string; note
 // Suggestions, not a list to choose from: every kitchen names its jobs differently,
 // and a restaurant that calls somebody a captain should be able to type captain.
 const TEAM_ROLES = POSITIONS;
-const POSITION_GROUPS = [
-  {key: "foh", label: "FOH", title: "Front of house", positions: FOH_POSITIONS},
-  {key: "boh", label: "BOH", title: "Kitchen", positions: KITCHEN_POSITIONS},
-] as const;
-const samePosition = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
-
-// Positions in two short groups: FOH and BOH. Tapping one shows its positions; the group holding the
-// chosen position starts open and says which one it is. "Other" is for whatever this restaurant calls the job.
-function PositionChips({value, otherOn, onPick, onOther, before}: {value: string; otherOn: boolean; onPick: (position: string) => void; onOther: () => void; before?: ReactNode}) {
-  const holder = POSITION_GROUPS.find(g => g.positions.some(p => samePosition(p, value)));
-  const [open, setOpen] = useState<"foh" | "boh" | null>(holder?.key ?? null);
-  const shown = POSITION_GROUPS.find(g => g.key === open);
-  return <>
-    <div className="word-chips">
-      {before}
-      {POSITION_GROUPS.map(group => {
-        const picked = group.positions.find(p => samePosition(p, value));
-        return <button key={group.key} type="button" className="word-chip position-group" aria-expanded={open === group.key} aria-pressed={!!picked && !otherOn} title={group.title}
-          onClick={() => setOpen(open === group.key ? null : group.key)}>
-          <b>{group.label}</b>{picked && !otherOn ? <span>{` · ${picked}`}</span> : <small>{group.title}</small>}<ChevronDown size={14} aria-hidden="true" className={open === group.key ? "rotate-180" : ""} />
-        </button>;
-      })}
-      <button type="button" className="word-chip" aria-pressed={otherOn} onClick={onOther}><Plus size={14} />Other</button>
-    </div>
-    {shown && <div className="word-chips position-list" role="group" aria-label={shown.title}>
-      {shown.positions.map(position => <button key={position} type="button" className="word-chip" aria-pressed={!otherOn && samePosition(position, value)} onClick={() => onPick(position)}>{position}</button>)}
-    </div>}
-  </>;
-}
-
 // Which job an invite link is for (migration 042). "Anyone" is the restaurant's plain link; each
 // position has a link of its own, and whoever joins with it starts in that position.
 function InviteFor({restaurantId, busy, action, current, onAnyone, onPick}: {restaurantId: string; busy: boolean; action: (work: () => Promise<void>) => Promise<void>; current: string; onAnyone: () => void; onPick: (role: string, token: string) => void}) {
@@ -1834,7 +1805,7 @@ function Workspace({
   }
   const [inviteLink, setInviteLink] = useState("");
   // Team has two tabs: the people, and inviting (by email or a shared link).
-  const [teamTab, setTeamTab] = useState<"team" | "invite">("team");
+  const [teamTab, setTeamTab] = useState<"team" | "invite">("invite");
   // The plain link stays at hand while the manager tries the position links (042).
   const [generalInvite, setGeneralInvite] = useState("");
   const [inviteRole, setInviteRole] = useState("");
@@ -2486,7 +2457,7 @@ function Workspace({
               {dashboardScope === "brand" && ownsBrand && brand
                 ? <BrandDashboard key={brand.id} organization={brand} currentId={restaurant.id} onOpen={id => {setSelected(id);setDashboardScope("location");window.scrollTo(0, 0);}} />
                 : can("team") ? <ManagerDashboard key={restaurant.id} today={renderToday()} restaurantId={restaurant.id} restaurantName={restaurant.name} onOpenMember={id => {setTeamOpenId(id);navigate("team");}} onOpenSchedule={() => openSchedule("week")} onOpenReports={openPastReports} /> : renderToday()}
-            </section> : null) : view === "schedule" ? <Schedule key={`${restaurant.id}-${scheduleTab ?? ""}`} initialTab={scheduleTab} restaurantId={restaurant.id} restaurantName={restaurant.name} userId={user.id} canManage={(can("team") || can("schedule_foh") || can("schedule_boh")) && !employeeView} access={{all: can("team"), foh: can("schedule_foh"), kitchen: can("schedule_boh")}} setMessage={setMessage} /> : view === "reports" ? (can("preshift") || can("team") ? <ShiftReports key={`${restaurant.id}-${reportsTab ?? ""}`} initialTab={reportsTab ?? undefined} restaurant={restaurant} restaurants={restaurants} brand={brand} ownsBrand={ownsBrand} canWrite={can("preshift")} canManageRecipients={can("team")} setMessage={setMessage} /> : null) : view === "locations" ? (can("library") ? <Locations key={restaurant.id} userId={user.id} restaurant={restaurant} restaurants={restaurants} organizations={organizations} items={items} canImport={can("library")} busy={busy} action={action} setMessage={setMessage} onChanged={loadRestaurants} onItemsChanged={loadItems} onOpen={id => {setDetailItem(null);setSelected(id);setCategory("All");setQuery("");setNavOpen(false);setEmployeeView(false);setInviteLink("");window.scrollTo(0, 0);}} /> : null) : view === "words" ? <WordsManager key={restaurant.id} restaurantId={restaurant.id} restaurantName={restaurant.name} custom={customTerms} onChanged={loadGlossary} canEdit={can("words")} /> : view === "story" ? <Story key={restaurant.id} restaurantId={restaurant.id} restaurantName={restaurant.name} canEdit={can("words")} /> : view === "assistant" ? ((isOwner || access.length > 0) && !employeeView ? <Assistant key={restaurant.id} restaurantId={restaurant.id} restaurantName={restaurant.name} /> : null) : view === "tutor" ? <Tutor key={`${restaurant.id}-${tutorCard?.id ?? ""}`} restaurantId={restaurant.id} restaurantName={restaurant.name} userId={user.id} card={tutorCard ? {name: tutorCard.name, onBack: () => openCard(tutorCard)} : undefined} items={items} /> : view === "standards" ? <Standards key={restaurant.id} restaurantId={restaurant.id} canEdit={can("standards")} restaurantName={restaurant.name} /> : view === "chat" ? <TeamChat key={restaurant.id} restaurantId={restaurant.id} userId={user.id} isManager={isOwner || access.length > 0} onUnread={setLiveUnread} /> : view === "events" ? <Events key={restaurant.id} restaurantId={restaurant.id} userId={user.id} canManage={can("preshift") && !employeeView} items={items} /> : view === "recognition" ? <EmployeeOfMonth key={restaurant.id} restaurantId={restaurant.id} userId={user.id} canManage={can("team") && !employeeView} canVote={!isOwner && access.length === 0} /> : view === "checklists" ? <Checklists key={restaurant.id} restaurantId={restaurant.id} canManage={can("preshift")} onOpenSchedule={can("team") ? () => navigate("schedule") : undefined} /> : view === "team" ? (can("team") ? <section className="mx-auto max-w-3xl"><p className="eyebrow muted">Manager workspace · {restaurant.name}</p>{!viewingMember && <h1 className="mt-3 text-2xl font-semibold">Team</h1>}{!viewingMember && <div className="category-tabs team-tabs mt-5" role="group" aria-label="Team view"><button type="button" aria-pressed={teamTab === "team"} onClick={() => setTeamTab("team")}>Your team</button><button type="button" data-tour="invite" aria-pressed={teamTab === "invite"} onClick={() => setTeamTab("invite")}>Invite</button></div>}{!viewingMember && teamTab === "invite" && <><EmailInvites key={`invites-${restaurant.id}`} restaurantId={restaurant.id} restaurantName={restaurant.name} /><section className="panel mt-5 mb-5 p-5"><InfoRow info={<>Create an invitation link and share it through WhatsApp, text, or email. Employees can create an account or sign in to join {restaurant.name}.<br /><br />Links expire after 7 days. Creating a replacement disables the previous link.</>}><h2 className="text-xl font-semibold">Or share a link (WhatsApp, text)</h2></InfoRow>                    {can("team") && (
+            </section> : null) : view === "schedule" ? <Schedule key={`${restaurant.id}-${scheduleTab ?? ""}`} initialTab={scheduleTab} restaurantId={restaurant.id} restaurantName={restaurant.name} userId={user.id} canManage={(can("team") || can("schedule_foh") || can("schedule_boh")) && !employeeView} access={{all: can("team"), foh: can("schedule_foh"), kitchen: can("schedule_boh")}} setMessage={setMessage} /> : view === "reports" ? (can("preshift") || can("team") ? <ShiftReports key={`${restaurant.id}-${reportsTab ?? ""}`} initialTab={reportsTab ?? undefined} restaurant={restaurant} restaurants={restaurants} brand={brand} ownsBrand={ownsBrand} canWrite={can("preshift")} canManageRecipients={can("team")} setMessage={setMessage} /> : null) : view === "locations" ? (can("library") ? <Locations key={restaurant.id} userId={user.id} restaurant={restaurant} restaurants={restaurants} organizations={organizations} items={items} canImport={can("library")} busy={busy} action={action} setMessage={setMessage} onChanged={loadRestaurants} onItemsChanged={loadItems} onOpen={id => {setDetailItem(null);setSelected(id);setCategory("All");setQuery("");setNavOpen(false);setEmployeeView(false);setInviteLink("");window.scrollTo(0, 0);}} /> : null) : view === "words" ? <WordsManager key={restaurant.id} restaurantId={restaurant.id} restaurantName={restaurant.name} custom={customTerms} onChanged={loadGlossary} canEdit={can("words")} /> : view === "story" ? <Story key={restaurant.id} restaurantId={restaurant.id} restaurantName={restaurant.name} canEdit={can("words")} /> : view === "assistant" ? ((isOwner || access.length > 0) && !employeeView ? <Assistant key={restaurant.id} restaurantId={restaurant.id} restaurantName={restaurant.name} /> : null) : view === "tutor" ? <Tutor key={`${restaurant.id}-${tutorCard?.id ?? ""}`} restaurantId={restaurant.id} restaurantName={restaurant.name} userId={user.id} card={tutorCard ? {name: tutorCard.name, onBack: () => openCard(tutorCard)} : undefined} items={items} /> : view === "standards" ? <Standards key={restaurant.id} restaurantId={restaurant.id} canEdit={can("standards")} restaurantName={restaurant.name} /> : view === "chat" ? <TeamChat key={restaurant.id} restaurantId={restaurant.id} userId={user.id} isManager={isOwner || access.length > 0} onUnread={setLiveUnread} /> : view === "events" ? <Events key={restaurant.id} restaurantId={restaurant.id} userId={user.id} canManage={can("preshift") && !employeeView} items={items} /> : view === "recognition" ? <EmployeeOfMonth key={restaurant.id} restaurantId={restaurant.id} userId={user.id} canManage={can("team") && !employeeView} canVote={!isOwner && access.length === 0} /> : view === "checklists" ? <Checklists key={restaurant.id} restaurantId={restaurant.id} canManage={can("preshift")} onOpenSchedule={can("team") ? () => navigate("schedule") : undefined} /> : view === "team" ? (can("team") ? <section className="mx-auto max-w-3xl"><p className="eyebrow muted">Manager workspace · {restaurant.name}</p>{!viewingMember && <h1 className="mt-3 text-2xl font-semibold">Team</h1>}{!viewingMember && <div className="category-tabs team-tabs mt-5" role="group" aria-label="Team view"><button type="button" data-tour="invite" aria-pressed={teamTab === "invite"} onClick={() => setTeamTab("invite")}>Invite</button><button type="button" aria-pressed={teamTab === "team"} onClick={() => setTeamTab("team")}>Your team</button></div>}{!viewingMember && teamTab === "invite" && <><EmailInvites key={`invites-${restaurant.id}`} restaurantId={restaurant.id} restaurantName={restaurant.name} /><section className="panel mt-5 mb-5 p-5"><InfoRow info={<>Create an invitation link and share it through WhatsApp, text, or email. Employees can create an account or sign in to join {restaurant.name}.<br /><br />Links expire after 7 days. Creating a replacement disables the previous link.</>}><h2 className="text-xl font-semibold">Or share a link (WhatsApp, text)</h2></InfoRow>                    {can("team") && (
                       <button
                         disabled={busy}
                         className="btn mt-6"
