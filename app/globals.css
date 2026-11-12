@@ -3844,3 +3844,27 @@ span.dash-name { text-decoration:none; }
 :root:root:root:root:root:root:root .password-box > input { width:100%; padding-right:52px; }
 :root:root:root:root:root:root:root .password-eye { position:absolute; right:2px; top:50%; transform:translateY(-50%); display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:transparent; color:var(--c-muted); cursor:pointer; }
 :root:root:root:root:root:root:root .password-eye[aria-pressed="true"] { color:var(--c-text); }
+
+/* Invite by email (071): the form, the language chips (30 px, selected dark) and the list of
+   invitations with their state. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .invite-mail-form { display:grid; gap:14px; margin-top:16px; }
+:root:root:root:root:root:root:root .invite-mail-form .field { margin:0; }
+:root:root:root:root:root:root:root .invite-mail-form .btn { justify-self:start; }
+:root:root:root:root:root:root:root .invite-mail-form input[aria-invalid="true"] { border-color:var(--c-fail, #D42A1C); }
+:root:root:root:root:root:root:root .invite-mail-error { margin:-8px 0 0; font-size:12px; font-weight:600; color:var(--c-fail, #D42A1C); }
+:root:root:root:root:root:root:root .invite-mail-lang { display:flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:13px; font-weight:700; }
+:root:root:root:root:root:root:root .invite-mail-lang button { min-height:30px; padding:0 14px; border:1px solid var(--c-text); border-radius:999px; background:transparent; color:var(--c-text); font:inherit; font-size:12px; font-weight:600; cursor:pointer; }
+:root:root:root:root:root:root:root .invite-mail-lang button[aria-pressed="true"] { background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .invite-mail-chip { margin:20px 0 14px; }
+:root:root:root:root:root:root:root .invite-mail-list { display:grid; border:1px solid var(--c-line-5); border-radius:16px; overflow:hidden; }
+:root:root:root:root:root:root:root .invite-mail-row { display:grid; gap:8px; padding:12px 16px; border-top:1px solid var(--c-line-5); }
+:root:root:root:root:root:root:root .invite-mail-row:first-child { border-top:0; }
+:root:root:root:root:root:root:root .invite-mail-head { display:flex; justify-content:space-between; align-items:center; gap:14px; }
+:root:root:root:root:root:root:root .invite-mail-head > span:first-child { min-width:0; }
+:root:root:root:root:root:root:root .invite-mail-head b { display:block; font-size:13px; overflow-wrap:anywhere; }
+:root:root:root:root:root:root:root .invite-mail-head small { display:block; font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .invite-mail-state { flex:none; display:inline-flex; align-items:center; min-height:26px; padding:0 10px; border:1px solid var(--c-line-5); border-radius:999px; font-size:11px; font-weight:700; }
+:root:root:root:root:root:root:root .invite-mail-state.joined { background:var(--c-text); color:var(--c-bg); border-color:var(--c-text); }
+:root:root:root:root:root:root:root .invite-mail-state.expired { color:var(--c-fail, #D42A1C); border-color:var(--c-fail, #D42A1C); }
+:root:root:root:root:root:root:root .invite-mail-state.cancelled { color:var(--c-muted); }
+:root:root:root:root:root:root:root .invite-mail-actions { display:flex; flex-wrap:wrap; gap:8px; }

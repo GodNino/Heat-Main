@@ -3,7 +3,7 @@
 // Until migration 066 is applied the function doesn't exist; then nothing is limited, as before.
 type RpcClient = {rpc: (fn: string, args: Record<string, unknown>) => PromiseLike<{data: unknown; error: {code?: string} | null}>};
 
-export const LIMIT_KINDS = ["tutor", "assistant", "report_email", "notify"] as const;
+export const LIMIT_KINDS = ["tutor", "assistant", "report_email", "notify", "invite_email"] as const;
 export type LimitKind = typeof LIMIT_KINDS[number];
 
 export function missingFunction(error: {code?: string} | null) {
