@@ -39,6 +39,24 @@ export function validatePhoto(
   return null;
 }
 
+// Dish videos (069): a short phone video explaining the card. MP4, MOV or WebM, up to 100 MB and
+// 10 minutes; the bucket enforces the same size and types.
+export const VIDEO_TYPES: Record<string, string> = {"video/mp4": "mp4", "video/quicktime": "mov", "video/webm": "webm"};
+export const MAX_VIDEO_BYTES = 100 * 1024 * 1024;
+export const MAX_VIDEO_SECONDS = 600;
+export function validateVideo(file: Pick<File, "size" | "type">, seconds?: number): string | null {
+  if (!VIDEO_TYPES[file.type]) return "Choose an MP4, MOV or WebM video.";
+  if (!file.size) return "This video is empty. Choose another file.";
+  if (file.size > MAX_VIDEO_BYTES) return "Choose a video smaller than 100 MB. A minute or two at 720p is plenty.";
+  if (seconds !== undefined && seconds > MAX_VIDEO_SECONDS) return "Keep the video under 10 minutes.";
+  return null;
+}
+// Where a card's video lives: the restaurant's folder, then the card, then a fresh name so a new
+// upload never serves the old file from a cache.
+export function videoPath(restaurantId: string, itemId: string, type: string, stamp = Date.now()) {
+  return `${restaurantId}/${itemId}/${stamp}.${VIDEO_TYPES[type] ?? "mp4"}`;
+}
+
 export function expandCrossContamination(value: string): string {
   return value.replace(/\bCC\b/gi, "cross-contamination");
 }
