@@ -3798,3 +3798,42 @@ span.dash-name { text-decoration:none; }
   :root:root:root:root:root:root:root .lp2-steps::before { content:""; position:absolute; left:24px; right:24px; top:44px; height:2px; background:var(--c-text); z-index:0; }
   :root:root:root:root:root:root:root .lp2-steps > li { position:relative; z-index:1; }
 }
+
+/* Dish videos (069, 070): the photo / video slider at the top of the card, its two tabs (30 px chips,
+   selected dark), and the video box in the dish editor. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .dish-media { display:grid; }
+:root:root:root:root:root:root:root .dish-media-stage { position:relative; touch-action:pan-y; }
+:root:root:root:root:root:root:root .dish-media-photo { position:relative; }
+:root:root:root:root:root:root:root .dish-media-photo > img { display:block; }
+:root:root:root:root:root:root:root .dish-media-length { position:absolute; right:14px; bottom:14px; display:inline-flex; align-items:center; gap:6px; min-height:26px; padding:0 10px; border-radius:999px; background:rgb(20 20 20 / .78); color:#f3f3f0; font-size:12px; font-weight:600; }
+:root:root:root:root:root:root:root .dish-media-video { position:relative; display:grid; place-items:center; aspect-ratio:16 / 10; background:#141414; color:#f3f3f0; }
+:root:root:root:root:root:root:root .dish-media-video video { width:100%; height:100%; object-fit:contain; background:#141414; }
+:root:root:root:root:root:root:root .dish-media-msg { margin:0; padding:16px; font-size:13px; text-align:center; }
+:root:root:root:root:root:root:root .dish-media-by { position:absolute; left:14px; top:14px; min-height:26px; display:inline-flex; align-items:center; padding:0 10px; border-radius:999px; background:rgb(20 20 20 / .78); font-size:12px; font-weight:600; pointer-events:none; }
+:root:root:root:root:root:root:root .dish-media-arrow { position:absolute; top:50%; transform:translateY(-50%); display:grid; place-items:center; width:44px; height:44px; border:0; border-radius:50%; background:rgb(20 20 20 / .55); color:#f3f3f0; cursor:pointer; }
+:root:root:root:root:root:root:root .dish-media-arrow.prev { left:14px; }
+:root:root:root:root:root:root:root .dish-media-arrow.next { right:14px; }
+:root:root:root:root:root:root:root .dish-media-video .dish-media-arrow { top:40%; }
+:root:root:root:root:root:root:root .dish-media-empty { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; aspect-ratio:16 / 7; border:0; background:#141414; color:#f3f3f0; font:inherit; font-size:13px; font-weight:600; cursor:pointer; }
+:root:root:root:root:root:root:root .dish-media-tabs { display:flex; justify-content:center; gap:8px; padding:14px 16px 0; }
+:root:root:root:root:root:root:root .dish-media-tabs button { display:inline-flex; align-items:center; gap:6px; min-height:30px; padding:0 14px; border:1px solid var(--c-text); border-radius:999px; background:transparent; color:var(--c-text); font:inherit; font-size:12px; font-weight:600; cursor:pointer; }
+:root:root:root:root:root:root:root .dish-media-tabs button[aria-pressed="true"] { background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .dish-video-editor { display:grid; gap:8px; margin-bottom:20px; }
+:root:root:root:root:root:root:root .dish-video-label { margin:0; font-size:13px; font-weight:700; }
+:root:root:root:root:root:root:root .dish-video-box { display:grid; gap:14px; padding:16px; border:1px solid var(--c-line-5); border-radius:16px; background:var(--c-surface); }
+:root:root:root:root:root:root:root .dish-video-current { display:flex; gap:14px; align-items:center; }
+:root:root:root:root:root:root:root .dish-video-current b { display:block; font-size:13px; }
+:root:root:root:root:root:root:root .dish-video-current small { display:block; font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .dish-video-actions { display:flex; flex-wrap:wrap; gap:8px; }
+:root:root:root:root:root:root:root .dish-video-actions .btn.disabled { opacity:.5; pointer-events:none; }
+:root:root:root:root:root:root:root .dish-video-progress { height:8px; border-radius:999px; background:var(--c-raised-2); overflow:hidden; }
+:root:root:root:root:root:root:root .dish-video-progress span { display:block; height:100%; background:var(--c-text); transition:width .3s; }
+:root:root:root:root:root:root:root .dish-video-error { margin:0; font-size:13px; font-weight:600; color:var(--c-fail, #D42A1C); }
+:root:root:root:root:root:root:root .dish-video-confirm { display:grid; gap:14px; font-size:13px; font-weight:600; }
+@media (prefers-reduced-motion: reduce) { :root:root:root:root:root:root:root .dish-video-progress span { transition:none; } }
+/* The slider takes the card photo's place: no inner padding, the photo keeps its 4:3 crop, and the
+   editor's three buttons share one size. */
+:root:root:root:root:root:root:root .item-detail article > .dish-media { padding:0; }
+:root:root:root:root:root:root:root .item-detail .dish-media-photo > img { aspect-ratio:4 / 3; object-fit:cover; }
+:root:root:root:root:root:root:root .item-detail .dish-media-video { aspect-ratio:4 / 3; }
+:root:root:root:root:root:root:root .dish-video-actions .btn { min-height:30px; height:30px; padding:0 14px; font-size:12px; }

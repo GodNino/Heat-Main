@@ -57,9 +57,23 @@ test("dish videos: who uploads, who watches, and copies leave the video behind",
     const copy = (await db.query<{video_path: string | null; video_seconds: number | null}>(
       "insert into public.menu_items(restaurant_id,name,description,ingredients,category,content_type,video_path,video_seconds) values($1,'Tiradito','Fish','{fish}','Raw','food',$2,75) returning video_path, video_seconds", [other, path])).rows[0];
     assert.deepEqual(copy, {video_path: null, video_seconds: null});
-    // Removing the video clears its length too.
+    // A video is not a change to the dish: quizzes and progress keep counting (070).
+    await db.exec("reset role");
+    const stampOf = async () => (await db.query<{t: string}>("select updated_at::text t from public.menu_items where id = $1", [item])).rows[0].t;
+    const before = await stampOf();
+    await db.query("update public.menu_items set video_seconds = 80, video_by = 'Kenji' where id = $1", [item]);
+    assert.equal(await stampOf(), before, "a video change keeps the dish's time");
+    await db.query("update public.menu_items set name = 'Tiradito clásico' where id = $1", [item]);
+    const renamed = await stampOf();
+    assert.notEqual(renamed, before, "a real edit still moves it");
+    await db.query("update public.menu_items set updated_at = clock_timestamp() where id = $1", [item]);
+    assert.notEqual(await stampOf(), renamed, "a quiz edit's explicit new time still counts");
+    await asUser(2);
+    // Who explains it (070); removing the video clears its length and the name too.
+    await db.query("update public.menu_items set video_by = 'Chef Kenji' where id = $1", [item]);
+    assert.equal((await db.query<{video_by: string}>("select video_by from public.menu_items where id = $1", [item])).rows[0].video_by, "Chef Kenji");
     await db.query("update public.menu_items set video_path = null where id = $1", [item]);
-    assert.equal((await db.query<{video_seconds: number | null}>("select video_seconds from public.menu_items where id = $1", [item])).rows[0].video_seconds, null);
+    assert.deepEqual((await db.query("select video_seconds, video_by from public.menu_items where id = $1", [item])).rows[0], {video_seconds: null, video_by: null});
   } finally {
     await db.close();
   }
