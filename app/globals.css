@@ -3936,3 +3936,20 @@ span.dash-name { text-decoration:none; }
 :root:root:root:root:root:root:root .files-meta dd { margin:0; font-weight:600; text-align:right; }
 :root:root:root:root:root:root:root .files-move { min-height:30px; height:30px; padding:0 12px; border:1px solid var(--c-text); border-radius:999px; background:transparent; font-size:12px; font-weight:600; max-width:100%; }
 :root:root:root:root:root:root:root .files-confirm { display:inline-flex; flex-wrap:wrap; align-items:center; gap:8px; font-size:13px; font-weight:600; }
+
+/* Word and Excel shown inside Files: the document on a light page that scrolls in its box, and the
+   spreadsheet as a table with sheet tabs (30 px chips). To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .file-view { display:grid; }
+:root:root:root:root:root:root:root .file-view-docx { max-height:70dvh; overflow:auto; background:var(--c-raised); }
+:root:root:root:root:root:root:root .file-view-docx .docx-wrapper { padding:16px !important; background:var(--c-raised) !important; }
+:root:root:root:root:root:root:root .file-view-docx .docx-wrapper > section.docx { max-width:100%; margin:0 auto 14px !important; padding:24px !important; border:1px solid var(--c-line-5); box-shadow:none !important; }
+:root:root:root:root:root:root:root .file-view-tabs { display:flex; flex-wrap:wrap; gap:8px; padding:14px 16px 0; }
+:root:root:root:root:root:root:root .file-view-tabs button { min-height:30px; padding:0 14px; border:1px solid var(--c-text); border-radius:999px; background:transparent; color:var(--c-text); font:inherit; font-size:12px; font-weight:600; cursor:pointer; }
+:root:root:root:root:root:root:root .file-view-tabs button[aria-pressed="true"] { background:var(--c-text); color:var(--c-bg); }
+:root:root:root:root:root:root:root .file-view-table { max-height:70dvh; overflow:auto; margin:14px 16px; border:1px solid var(--c-line-5); border-radius:12px; }
+:root:root:root:root:root:root:root .file-view-table table { border-collapse:collapse; font-size:13px; width:max-content; min-width:100%; }
+:root:root:root:root:root:root:root .file-view-table th, :root:root:root:root:root:root:root .file-view-table td { padding:6px 10px; border-right:1px solid var(--c-line-5); border-bottom:1px solid var(--c-line-5); text-align:left; vertical-align:top; max-width:240px; overflow-wrap:break-word; }
+:root:root:root:root:root:root:root .file-view-table thead th { position:sticky; top:0; z-index:1; background:var(--c-raised); font-size:11px; font-weight:700; color:var(--c-muted); }
+:root:root:root:root:root:root:root .file-view-table tr > th:first-child { width:1%; min-width:40px; text-align:center; }
+:root:root:root:root:root:root:root .file-view-table tbody th { position:sticky; left:0; background:var(--c-raised); font-size:11px; font-weight:700; color:var(--c-muted); }
+:root:root:root:root:root:root:root .file-view-table td { background:var(--c-surface); }
