@@ -64,7 +64,7 @@ import { dishCard, allergySheet, preshiftSheet, employeeSheet } from "@/lib/shee
 import { termsFor, mergeTerms, type Term, type CustomTerm } from "@/lib/glossary";
 import { CONTENT_TYPES, categoryOf, contentTypeOf, filterContent, type ContentType } from "@/lib/categories";
 import { TaxonomyContext, useTaxonomy, namesIn, wordsIn, type SectionWords, type MenuCategoryRow, type Taxonomy } from "./taxonomy";
-import { Notice, Field, InfoRow, ScreenHeader, SectionInfo } from "./ui";
+import { Notice, Field, InfoRow, PasswordInput, ScreenHeader, SectionInfo } from "./ui";
 import { AssignDishes } from "./assign-dishes";
 import { TodayFigures, TodayStatus } from "./today";
 import { photoLinks, shrinkPhoto, forgetPhotoLinks } from "./photos";
@@ -333,10 +333,9 @@ function Auth({ invitation, trial }: { invitation: string; trial: boolean }) {
                   </Field>
                 )}
                 {!forgot && <><Field label="Password">
-                  <input
+                  <PasswordInput
                     id="password"
                     name="password"
-                    type="password"
                     autoComplete={signup ? "new-password" : "current-password"}
                     minLength={signup ? 8 : undefined}
                     maxLength={128}
@@ -404,8 +403,8 @@ function NewPassword({ onDone }: { onDone: () => void }) {
       <p className="muted mt-3 mb-8">You're almost back in. Pick a new password for your HEAT account.</p>
       <Notice text={error} error />
       <form onSubmit={submit}>
-        <Field label="New password"><input id="new-password" name="new-password" type="password" autoComplete="new-password" minLength={8} maxLength={128} required placeholder="At least 8 characters" /></Field>
-        <Field label="Repeat the new password"><input id="confirm-password" name="confirm-password" type="password" autoComplete="new-password" minLength={8} maxLength={128} required /></Field>
+        <Field label="New password"><PasswordInput id="new-password" name="new-password" autoComplete="new-password" minLength={8} maxLength={128} required placeholder="At least 8 characters" /></Field>
+        <Field label="Repeat the new password"><PasswordInput id="confirm-password" name="confirm-password" autoComplete="new-password" minLength={8} maxLength={128} required /></Field>
         <button className="btn w-full" disabled={busy}>{busy ? "Saving…" : "Save new password"}</button>
       </form>
     </div>
