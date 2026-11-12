@@ -81,6 +81,26 @@ test("email invites: who sends, renew, cancel, and joining with the position", a
     await asUser(3);
     await assert.rejects(db.query("select public.cancel_email_invite($1)", [pending]), /Team access/);
 
+    // Delete: one invitation (a pending link stops working), or every finished one at once (075).
+    await asUser(3);
+    await assert.rejects(db.query("select public.delete_email_invite($1)", [pending]), /Team access/);
+    await assert.rejects(db.query("select public.clear_email_invites($1)", [rid]), /Team access/);
+    await asUser(2);
+    const waiting = await invite(rid, "espera@gmail.com", "Host", "");
+    await db.exec("reset role");
+    await db.query("update public.email_invites set expires_at = now() - interval '1 day' where token = (select token from public.email_invites where email = 'nuevo@gmail.com')");
+    await asUser(2);
+    const before = (await db.query<{n: number}>("select count(*)::int n from public.email_invites where restaurant_id = $1", [rid])).rows[0].n;
+    const cleared = (await db.query<{n: number}>("select public.clear_email_invites($1) n", [rid])).rows[0].n;
+    assert.ok(cleared >= 3, "joined, cancelled and expired all go");
+    assert.deepEqual((await db.query<{email: string}>("select email from public.email_invites where restaurant_id = $1", [rid])).rows.map(r => r.email), ["espera@gmail.com"], "only the pending one stays");
+    assert.equal(before - cleared, 1);
+    await db.query("select public.delete_email_invite($1)", [waiting]);
+    assert.equal((await db.query("select * from public.email_invites where restaurant_id = $1", [rid])).rows.length, 0);
+    await asUser(5);
+    await assert.rejects(db.query("select public.join_restaurant($1)", [waiting]), /invalid or expired/, "a deleted link can't be used");
+    await asUser(2);
+
     // Limits: never from the demo, and the same invitation not twice within two minutes.
     await asUser(2);
     assert.equal((await db.query<{ok: boolean}>("select public.claim_request('invite_email', 'x') ok")).rows[0].ok, true);

@@ -3958,3 +3958,6 @@ span.dash-name { text-decoration:none; }
    outlined in the bubble's light text color on a clear background. To undo, revert the commit that added this block. */
 :root:root:root:root:root:root:root .tc-msg.me .tc-actions .btn { background:transparent; color:var(--c-bg); border-color:var(--c-bg); }
 :root:root:root:root:root:root:root .tc-msg.me .tc-actions .btn svg { color:inherit; }
+
+/* Invitations: the Delete buttons carry a small trash icon next to the word. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .invite-mail .btn.secondary { display:inline-flex; align-items:center; gap:6px; }

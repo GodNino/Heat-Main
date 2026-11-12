@@ -10,6 +10,11 @@ import { PositionChips } from "./position-chips";
 import { currentLang } from "./language";
 import { inviteEmail } from "@/lib/invite-email";
 import { Field, Notice } from "./ui";
+import { Trash2 } from "lucide-react";
+import { translateText } from "@/lib/i18n-es";
+
+// The browser's own confirm box isn't on the page, so it is put in Spanish here.
+const say = (text: string) => currentLang() === "es" ? translateText(text) ?? text : text;
 
 type Invite = {token: string; email: string; name: string; role: string; lang: "en" | "es"; sent_at: string; expires_at: string; accepted_at: string | null; cancelled_at: string | null};
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -84,7 +89,22 @@ export function EmailInvites({restaurantId, restaurantName}: {restaurantId: stri
     setMessage(`Invitation for ${i.email} cancelled.`); await load();
   }
 
+  async function remove(i: Invite) {
+    if (inviteState(i) === "pending" && !window.confirm(say(`Delete the invitation for ${i.email}? Their link will stop working.`))) return;
+    setError(""); setMessage("");
+    const r = await supabase!.rpc("delete_email_invite", {invite_token: i.token});
+    if (r.error) return setError(/delete_email_invite/.test(r.error.message) ? "Deleting invitations needs database update 075." : r.error.message);
+    setMessage(`Invitation for ${i.email} deleted.`); await load();
+  }
+  async function clearFinished() {
+    setError(""); setMessage("");
+    const r = await supabase!.rpc("clear_email_invites", {rid: restaurantId});
+    if (r.error) return setError(/clear_email_invites/.test(r.error.message) ? "Deleting invitations needs database update 075." : r.error.message);
+    setMessage(r.data === 1 ? "1 old invitation deleted." : `${r.data ?? 0} old invitations deleted.`); await load();
+  }
+
   if (missing) return null;
+  const finished = (list ?? []).filter(i => inviteState(i) !== "pending").length;
   return <section className="panel mt-5 mb-5 p-5 invite-mail">
     <h2 className="text-xl font-semibold">Invite someone by email</h2>
     <p className="muted mt-2 text-sm">We email them a link to join {restaurantName}. It works for 7 days.</p>
@@ -116,13 +136,15 @@ export function EmailInvites({restaurantId, restaurantName}: {restaurantId: stri
             <span><b>{i.name ? `${i.name} · ` : ""}{i.email}</b><small>{i.role} · {state === "joined" && i.accepted_at ? `Joined ${ago(i.accepted_at)}` : `Sent ${ago(i.sent_at)}`}</small></span>
             <span className={`invite-mail-state ${state}`}>{LABEL[state]}</span>
           </div>
-          {state !== "joined" && <div className="invite-mail-actions">
-            <button type="button" className="btn secondary" disabled={busy} onClick={() => void send({email: i.email, name: i.name, role: i.role, lang: i.lang})}>Resend</button>
+          <div className="invite-mail-actions">
+            {state !== "joined" && <button type="button" className="btn secondary" disabled={busy} onClick={() => void send({email: i.email, name: i.name, role: i.role, lang: i.lang})}>Resend</button>}
             {state === "pending" && <button type="button" className="btn secondary" disabled={busy} onClick={() => void cancel(i)}>Cancel</button>}
-          </div>}
+            <button type="button" className="btn secondary" disabled={busy} onClick={() => void remove(i)}><Trash2 size={13} aria-hidden="true" />Delete</button>
+          </div>
         </div>; })}
       </div>
-      <p className="muted mt-3 text-xs">Resend sends a new link and turns off the old one.</p>
+      <p className="muted mt-3 text-xs">Resend sends a new link and turns off the old one. Deleting someone who joined only clears the list; they stay on the team.</p>
+      {finished > 1 && <button type="button" className="btn secondary mt-3" disabled={busy} onClick={() => void clearFinished()}><Trash2 size={13} aria-hidden="true" />Delete all old ({finished})</button>}
     </>}
   </section>;
 }
