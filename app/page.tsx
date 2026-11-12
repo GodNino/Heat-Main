@@ -2,7 +2,7 @@
 // Same colours, type and pieces as the app, so moving from here into it feels like one product.
 // Every picture on this page is the app's own screens drawn in HTML, not a screenshot: they stay
 // sharp, follow light and dark, and translate with the rest of the page.
-import { ArrowRight, Bell, BookOpen, CalendarDays, CalendarOff, Check, FileText, Globe, Languages, ListChecks, MapPin, Store, Users } from "lucide-react";
+import { ArrowRight, Bell, BookOpen, CalendarDays, CalendarOff, Check, FileText, Globe, Languages, ListChecks, MapPin, MessageCircle, Play, Search, Store, Trophy, Users } from "lucide-react";
 import { HeatLogo } from "./heat-logo";
 import { AuthForward } from "./auth-forward";
 import { LanguageSwitch } from "./language";
@@ -11,13 +11,13 @@ import { NightTimeline, ProductTour, RoleSwitch, type Role } from "./landing-sec
 
 const FACTS = [
   ["AI tutor", "that knows your menu"],
-  ["FOH + BOH", "in one schedule"],
-  ["English · Español", "every screen"],
+  ["A video", "for every dish"],
+  ["Chat + events", "floor and kitchen together"],
   ["14 days free", "no card needed"],
 ];
 
 // What a restaurant puts away when it runs on HEAT.
-const REPLACES = ["WhatsApp group", "Menu binder", "Side work whiteboard", "Schedule app", "Swaps by text", "Paper shift report"];
+const REPLACES = ["WhatsApp group", "Menu binder", "Side work whiteboard", "Schedule app", "Swaps by text", "Paper shift report", "Shared Drive folder", "Printed BEOs", "Corkboard photo of the month"];
 
 const ROLE_VIEWS: Role[] = [
   {key: "owner", label: "Owner or GM", line: "Know how last night went before you get to the restaurant.", who: "Owners and GMs", items: ["Labor and sales for the week, every location side by side", "Urgent reports reach your phone the moment they're sent", "Ask the assistant what the reports keep saying"]},
@@ -37,6 +37,16 @@ const MORE = [
   {icon: MapPin, title: "Every location", text: "Each location keeps its own menu, team and schedule; open a new one and bring over only the dishes it shares."},
 ];
 
+// The team section: chat, recognition and invitations.
+const TEAM = [
+  {icon: MessageCircle, title: "Team chat", text: "Floor, kitchen and bar each have their chat, plus direct messages, photos and voice notes. A notice reaches every phone.",
+    visual: <div className="lp-chat"><p className="lp-bubble ai">86 black cod for tonight.</p><p className="lp-bubble me">Got it, telling the floor.</p></div>},
+  {icon: Trophy, title: "Employee of the month", text: "Managers nominate, the floor and the kitchen vote for their own, and HEAT announces the winner with the reasons people wrote.",
+    visual: <div className="lp-row"><span><b>Ana</b> · Server</span><span className="lp-chip">14 votes</span></div>},
+  {icon: Users, title: "Invite by email", text: "Type their email and position. They get a HEAT email in English or Spanish and join with one tap.",
+    visual: <div className="lp-row"><span><b>Lucía</b> · Bartender</span><span className="muted">Sent today</span></div>},
+];
+
 const FAQ = [
   ["Does my team need to download an app?", "No. HEAT opens in the phone's browser from the invite link. They can add it to the home screen and turn on notifications, like any app."],
   ["Can the kitchen and the floor build their own schedules?", "Yes. Give the floor manager the front-of-house schedule and the head chef or sous chef the kitchen. Each builds, publishes and approves only their side; the GM sees both."],
@@ -45,6 +55,9 @@ const FAQ = [
   ["We have more than one location.", "Each location gets its own workspace, team and schedule under your brand. The owner moves between them and compares them side by side."],
   ["Is the AI tutor safe with allergens?", "It only repeats what your cards say, and when a card doesn't say, it tells them to ask the kitchen. It teaches the craft too, from describing a dish to classic cocktails and selling, but your menu and your standards always win."],
   ["What can the manager assistant see?", "Only what that manager's access lets them see in the app: the schedule, the team's study and the shift reports. It never changes anything until the manager confirms."],
+  ["Who can see our files?", "Only managers, until a manager shares a folder or a single file with the bar, the kitchen, the floor or everyone. Files stay in your restaurant's private storage."],
+  ["Do we still need a WhatsApp group?", "No. The floor, the kitchen and the bar each have their own chat, managers can send a notice that reaches every phone, and messages clear after 30 days so old talk doesn't pile up."],
+  ["How long should a dish video be?", "Short is best: one or two minutes of the chef explaining the dish. It plays on the dish card, right after the photo."],
   ["Can I see it before adding my own menu?", "Open the demo kitchen: the real app with a sample menu, team and week of shifts, no account needed. Then start a 14-day trial with your own, no card."],
 ];
 
@@ -78,7 +91,7 @@ export default function Landing() {
           <div className="enter">
             <p className="lp-kicker"><span className="lp-dot" aria-hidden="true" />Built inside a working restaurant</p>
             <h1 className="site-title lp-title">Great service<br />starts with<br /><span className="lp-lime">knowing the menu.</span></h1>
-            <p className="mt-6 max-w-lg text-lg text-white/75">One app for what your team needs to know and what your managers need to run: the menu, allergens, an AI tutor, the schedule, side work, pre-shift and the end-of-shift report, with an assistant that knows your restaurant.</p>
+            <p className="mt-6 max-w-lg text-lg text-white/75">One app for what your team needs to know and what your managers need to run: the menu with a video for every dish, allergens, an AI tutor, the schedule, side work, pre-shift, private events, the team chat and every document your managers keep.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <a href="/trial" className="btn lp-btn-big">Start free trial<ArrowRight size={17} aria-hidden="true" /></a>
               <a href="/demo" className="btn secondary lp-btn-ghost">Try the demo kitchen</a>
@@ -121,6 +134,9 @@ export default function Landing() {
             {title: "Schedule", text: "Build the week in minutes. Publish it to every phone.", points: ["Overtime and time off flagged before you publish", "Swaps reach only people who can cover them", "Floor and kitchen each build their own side"], visual: <ScheduleVisual />},
             {title: "Side work and sections", text: "Tonight's side work and sections, in a few taps.", points: ["Tap a name, then a job", "Draw the sections on your own floor map", "Each person sees theirs on their phone"], visual: <SideworkVisual />},
             {title: "Pre-shift", text: "Tonight's board, on the phone of everyone working tonight.", points: ["The 86 list, the dishes to push and a note", "Sent only to who's on today's schedule"], visual: <PreshiftVisual />},
+            {title: "Private events", text: "The whole BEO on every phone working the event.", points: ["Menu by course, timeline, bar, setup and staff in one place", "Guest allergies seat by seat, with the plan for each", "When the count or the menu changes, the team sees what changed and confirms"], visual: <EventVisual />},
+            {title: "Team chat", text: "The floor, the kitchen and the bar, each with their own chat.", points: ["Direct messages, photos and voice notes", "A notice reaches every phone", "Messages clear after 30 days"], visual: <ChatVisual />},
+            {title: "Files", text: "Specs, price lists, BEOs and manuals, in folders.", points: ["Only managers by default; share a folder or a single file", "Search finds words inside PDFs, Word and Excel", "Word and Excel open right in HEAT"], visual: <FilesVisual />},
             {title: "End of shift", text: "Know how the night went, even when you weren't there.", points: ["Covers, sales, issues and what to order", "Urgent reports reach the owners right away"], visual: <DashboardVisual />},
             {title: "Manager assistant", text: "Ask your restaurant a question. Get the answer from your own data.", points: ["Who's close to overtime, who needs to study", "This week's reports in a few lines", "Nothing changes until you confirm"], visual: <AssistantVisual />},
           ]} /></div>
@@ -141,6 +157,41 @@ export default function Landing() {
             </dl>
           </div>
           <div className="reveal" aria-hidden="true"><TutorVisual /></div>
+        </div>
+      </section>
+
+      {/* ── Dish videos spotlight ── */}
+      <section id="videos" className="site-section brand-aside lp2-spot">
+        <div className="site-wrap lp2-spot-grid">
+          <div className="reveal">
+            <p className="lp-kicker"><span className="lp-dot" aria-hidden="true" />Dish videos</p>
+            <h2 className="lp2-spot-title">Every dish, explained by <span className="lp-lime">the chef who makes it.</span></h2>
+            <p className="lp2-spot-text">A short video on each dish card, right after the photo. The team hears how it's built, how to describe it and what to watch for, from your own kitchen.</p>
+            <dl className="lp2-spot-facts">
+              <div><dt>Swipe</dt><dd>From the photo to the video, on the same card</dd></div>
+              <div><dt>Who</dt><dd>Each video says who explains it</dd></div>
+              <div><dt>Allergens</dt><dd>Stay on the card, every time</dd></div>
+            </dl>
+          </div>
+          <div className="reveal" aria-hidden="true"><VideoVisual /></div>
+        </div>
+      </section>
+
+      {/* ── The team, together ── */}
+      <section id="team" className="site-section">
+        <div className="site-wrap">
+          <div className="reveal">
+            <p className="eyebrow muted">Your team, together</p>
+            <h2 className="site-heading lp-big">Talk, recognize and bring people in.</h2>
+          </div>
+          <div className="lp3-trio">
+            {TEAM.map(({icon: Icon, title, text, visual}) => <article key={title} className="panel p-6 reveal lp3-trio-item">
+              <Icon size={20} aria-hidden="true" />
+              <h3 className="mt-3 text-lg font-semibold">{title}</h3>
+              <p className="muted mt-2">{text}</p>
+              <div className="lp3-trio-visual" aria-hidden="true">{visual}</div>
+            </article>)}
+          </div>
         </div>
       </section>
 
@@ -181,8 +232,8 @@ export default function Landing() {
           <ol className="site-steps lp-steps lp2-steps">
             {[
               ["Create your restaurant", "Start a free trial and name it. Each location gets a workspace of its own."],
-              ["Add your menu", "Dishes, cocktails and wine, with photos, ingredients, allergens, prices and fire times."],
-              ["Invite and publish", "Share one link, pick each person's position, publish the week. That's it."],
+              ["Add your menu", "Dishes, cocktails and wine, with photos, videos, ingredients, allergens, prices and fire times."],
+              ["Invite and publish", "Email each person an invite with their position, or share one link. Publish the week. That's it."],
             ].map(([title, text], index) => <li key={title} className="panel p-6 reveal">
               <span className="step-number">{String(index + 1).padStart(2, "0")}</span>
               <h3 className="mt-3 text-lg font-semibold">{title}</h3>
@@ -378,6 +429,63 @@ function PreshiftVisual() {
       <p className="lp-card-text">Two VIPs at 8pm on table 12, both shellfish allergies. Push the Omakase.</p>
       <div className="lp-pills"><span className="out">Toro · 86'd</span><span className="low">Uni · Low count</span><span>Yuzu Spritz · New</span><span>Omakase · Focus</span></div>
       <div className="lp-audience"><span>Everyone</span><span className="on">Working today · 9</span><span>Pick who's on</span></div>
+    </div>
+  </div>;
+}
+
+function EventVisual() {
+  return <div className="lp-stack">
+    <div className="lp-card">
+      <p className="lp-card-eyebrow">Sat · 6:00 PM · Private room</p>
+      <p className="lp-card-title">Company dinner · 45 guests</p>
+      <div className="lp-row"><span>Passed bites</span><span className="muted">6:00 PM</span></div>
+      <div className="lp-row"><span>First course · Tiradito</span><span className="muted">7:15 PM</span></div>
+      <div className="lp-badges"><span>SHL · seat 2-4</span><span>GLU · seat 3-1</span><span>SES · seat 5-6</span></div>
+    </div>
+    <div className="lp-toast static"><Bell size={14} /><div><b>The BEO changed · v3</b><span>Guests 40 → 45 · Menu · Tap to confirm</span></div></div>
+  </div>;
+}
+
+function ChatVisual() {
+  return <div className="lp-stack">
+    <div className="lp-card">
+      <p className="lp-card-eyebrow">Kitchen · 6 people</p>
+      <div className="lp-chat">
+        <p className="lp-bubble ai">86 black cod for tonight.</p>
+        <p className="lp-bubble me">Got it, telling the floor.</p>
+        <p className="lp-bubble ai">Voice note · 0:12</p>
+      </div>
+      <div className="lp-pills"><span className="on">Kitchen</span><span>Floor</span><span>Bar</span><span>Managers</span></div>
+    </div>
+    <div className="lp-toast static"><MessageCircle size={14} /><div><b>Notice from Diego</b><span>Staff meal moves to 4:15 today</span></div></div>
+  </div>;
+}
+
+function FilesVisual() {
+  return <div className="lp-stack">
+    <div className="lp-card">
+      <p className="lp-card-eyebrow"><Search size={12} aria-hidden="true" /> yuzu</p>
+      <div className="lp-row"><span><b>Christmas specials.pdf</b></span><span className="muted">Bar</span></div>
+      <p className="lp-card-text">…the <mark className="lp3-hit">Yuzu</mark> Spritz takes 45 ml gin, 20 ml <mark className="lp3-hit">yuzu</mark>…</p>
+      <div className="lp-row"><span><b>Cocktail specs v3.xlsx</b></span><span className="muted">Bar</span></div>
+    </div>
+    <div className="lp-card lp-card-offset">
+      <p className="lp-card-eyebrow">Folders</p>
+      <div className="lp-row"><span>Bar recipes</span><span className="muted">Bar and managers</span></div>
+      <div className="lp-row"><span>Vendors</span><span className="muted">Managers only</span></div>
+      <div className="lp-row"><span>Events</span><span className="muted">Front of house</span></div>
+    </div>
+  </div>;
+}
+
+function VideoVisual() {
+  return <div className="lp-stack">
+    <div className="lp-card">
+      <div className="lp3-video"><span className="lp3-play"><Play size={20} /></span><span className="lp3-video-by">Chef Kenji · 1:15</span></div>
+      <div className="lp-pills"><span>Photo</span><span className="on">Video</span></div>
+      <p className="lp-card-title">Yellowtail Tiradito</p>
+      <p className="lp-card-text">Thin-sliced yellowtail, citrus soy, sliced chili, cilantro, toasted sesame.</p>
+      <div className="lp-badges"><span>FISH</span><span>SOY</span><span>GLUTEN</span><span className="cc">SESAME · CC</span></div>
     </div>
   </div>;
 }
