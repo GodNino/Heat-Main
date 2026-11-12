@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HEAT landing v3</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Mockup only: proposal for the landing after Files, Chat, Events, Videos, Employee of the month and email invites.
+   Lime tags mark what is new or changed. Colors are the HEAT tokens (DESIGN_RULES.md). */
+:root { --lime:#C7F23A; --c-bg:#F1F1EC; --c-surface:#FBFBF8; --c-text:#1B1C1A; --c-muted:#62645D; --c-line-5:#DCDCD5; --dark:#141414; --dark-2:#1f1f1e; --on-dark:#F3F3F0; --on-dark-muted:#A9AAA3; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--c-bg); color:var(--c-text); font:16px/1.5 "IBM Plex Sans", system-ui, sans-serif; }
+.wrap { max-width:1120px; margin:0 auto; padding:0 16px; }
+section { padding:56px 0; }
+.dark { background:var(--dark); color:var(--on-dark); }
+.sunken { background:#E9E9E3; }
+.tag { display:inline-flex; align-items:center; height:26px; padding:0 10px; border-radius:999px; background:var(--lime); color:var(--c-text); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+.tag.chg { background:transparent; border:1px solid currentColor; }
+.dark .tag.chg { color:var(--on-dark); }
+.note { font-family:"IBM Plex Mono", monospace; font-size:12px; color:var(--c-muted); margin:8px 0 0; }
+.dark .note { color:var(--on-dark-muted); }
+.eyebrow { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--c-muted); margin:14px 0 0; }
+.dark .eyebrow { color:var(--on-dark-muted); }
+h1 { font-size:clamp(36px, 8vw, 64px); line-height:1.02; margin:14px 0 0; letter-spacing:-.02em; }
+h2 { font-size:clamp(28px, 5vw, 44px); line-height:1.08; margin:8px 0 0; letter-spacing:-.01em; }
+h3 { font-size:20px; margin:0; }
+.lime-t { color:var(--lime); }
+.lead { font-size:18px; max-width:620px; margin:20px 0 0; }
+.dark .lead { color:#d5d6cf; }
+.btn { display:inline-flex; align-items:center; height:30px; padding:0 16px; border-radius:999px; border:1px solid var(--c-text); font-size:12px; font-weight:600; text-decoration:none; color:var(--c-text); background:transparent; }
+.btn.primary { background:var(--lime); }
+.dark .btn:not(.primary) { color:var(--on-dark); border-color:var(--on-dark); }
+.row { display:flex; flex-wrap:wrap; gap:14px; margin-top:20px; }
+.grid2 { display:grid; gap:20px; align-items:center; }
+@media (min-width:860px) { .grid2 { grid-template-columns:1.1fr .9fr; } }
+.grid3 { display:grid; gap:14px; margin-top:20px; }
+@media (min-width:760px) { .grid3 { grid-template-columns:repeat(3, 1fr); } }
+.card { background:var(--c-surface); border:1px solid var(--c-line-5); border-radius:18px; padding:16px; }
+.dark .card { background:var(--dark-2); border-color:#333; }
+.card p { margin:8px 0 0; color:var(--c-muted); font-size:15px; }
+.dark .card p { color:var(--on-dark-muted); }
+/* Facts strip */
+.facts { display:grid; grid-template-columns:repeat(2, 1fr); gap:14px; }
+@media (min-width:760px) { .facts { grid-template-columns:repeat(4, 1fr); } }
+.facts b { display:block; font-size:20px; }
+.facts span { color:var(--on-dark-muted); font-size:14px; }
+/* Replaces */
+.gone { list-style:none; padding:0; margin:20px 0 0; display:flex; flex-wrap:wrap; gap:10px; }
+.gone li { height:30px; display:inline-flex; align-items:center; padding:0 14px; border-radius:999px; border:1px solid var(--c-text); font-size:12px; font-weight:600; text-decoration:line-through; }
+.gone li.new { outline:2px solid var(--c-text); outline-offset:2px; }
+.gone li.keep { text-decoration:none; background:var(--c-text); color:var(--c-surface); }
+.limeband { background:var(--lime); color:var(--c-text); }
+/* Tour */
+.chips { display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-top:20px; }
+.chip { flex:none; height:30px; display:inline-flex; align-items:center; gap:6px; padding:0 14px; border-radius:999px; border:1px solid var(--c-text); font-size:12px; font-weight:600; background:transparent; white-space:nowrap; }
+.chip.on { background:var(--c-text); color:var(--c-surface); }
+.chip .dot { width:6px; height:6px; border-radius:50%; background:var(--lime); outline:1px solid var(--c-text); }
+.points { margin:14px 0 0; padding:0; list-style:none; }
+.points li { padding:10px 0; border-top:1px solid var(--c-line-5); font-size:15px; }
+.dark .points li { border-color:#333; }
+/* Phones */
+.phone { width:min(300px, 100%); margin:0 auto; background:var(--c-bg); border:8px solid #0c0c0c; border-radius:36px; overflow:hidden; color:var(--c-text); box-shadow:0 20px 50px rgb(0 0 0 / .25); }
+.ph-top { background:var(--c-surface); padding:12px 14px; font-weight:700; font-size:14px; border-bottom:1px solid var(--c-line-5); display:flex; justify-content:space-between; align-items:center; }
+.ph-body { padding:14px; display:grid; gap:10px; font-size:13px; }
+.mini { background:var(--c-surface); border:1px solid var(--c-line-5); border-radius:14px; padding:12px; }
+.mini b { font-size:13px; }
+.mini small { display:block; color:var(--c-muted); font-size:12px; }
+.lbl { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--c-muted); }
+.allergen { background:var(--lime); border-radius:12px; padding:10px; font-size:12px; font-weight:600; }
+.mono { font-family:"IBM Plex Mono", monospace; font-size:11px; }
+.media { position:relative; height:160px; border-radius:14px; background:linear-gradient(135deg, #2b2b28, #575a4e); display:grid; place-items:center; color:#fff; }
+.play { width:48px; height:48px; border-radius:50%; background:var(--lime); display:grid; place-items:center; color:var(--c-text); font-size:18px; }
+.seg { display:flex; gap:6px; }
+.seg span { height:30px; padding:0 12px; border-radius:999px; border:1px solid var(--c-text); display:inline-flex; align-items:center; font-size:12px; font-weight:600; }
+.seg span.on { background:var(--c-text); color:var(--c-surface); }
+.bubble { max-width:80%; padding:8px 12px; border-radius:14px; background:var(--c-surface); border:1px solid var(--c-line-5); }
+.bubble.me { justify-self:end; background:var(--c-text); color:var(--c-surface); border-color:var(--c-text); }
+.bubble small { display:block; font-size:11px; opacity:.7; }
+.hit { background:var(--lime); padding:0 2px; border-radius:3px; }
+.input { height:44px; border-radius:999px; border:1px solid var(--c-text); display:flex; align-items:center; padding:0 16px; font-size:16px; background:var(--c-surface); }
+table.xl { border-collapse:collapse; font-size:12px; width:100%; }
+table.xl td, table.xl th { border:1px solid var(--c-line-5); padding:4px 6px; text-align:left; }
+table.xl th { background:#E9E9E3; color:var(--c-muted); font-size:11px; }
+.trophy { font-size:28px; }
+details { border-top:1px solid var(--c-line-5); padding:14px 0; }
+summary { font-weight:600; cursor:pointer; }
+details p { color:var(--c-muted); margin:8px 0 0; }
+.legend { position:sticky; top:0; z-index:5; background:var(--c-text); color:var(--c-surface); font-size:13px; padding:10px 16px; display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+</style>
+</head>
+<body>
+
+<div class="legend"><b>Propuesta landing v3</b> <span class="tag">Nuevo</span> sección nueva <span class="tag chg" style="color:var(--c-surface)">Cambia</span> sección que ya existe con texto nuevo · lo demás queda igual</div>
+
+<!-- 1 · Hero -->
+<section class="dark">
+  <div class="wrap">
+    <span class="tag chg">Cambia · texto</span>
+    <p class="eyebrow">Built inside a working restaurant</p>
+    <h1>Great service<br>starts with<br><span class="lime-t">knowing the menu.</span></h1>
+    <p class="lead">One app for the whole restaurant: the menu with a video for every dish, allergens, an AI tutor, the schedule, side work, pre-shift, private events, the team chat and every document the managers keep.</p>
+    <div class="row"><a class="btn primary" href="#">Start free trial</a><a class="btn" href="#">Try the demo kitchen</a></div>
+    <p class="note">Antes: “…the menu, allergens, an AI tutor, the schedule, side work, pre-shift and the end-of-shift report…”. Ahora nombra video, eventos, chat y archivos.</p>
+  </div>
+</section>
+
+<!-- 2 · Facts -->
+<section class="dark" style="padding-top:0">
+  <div class="wrap">
+    <span class="tag chg">Cambia · 2 de 4</span>
+    <div class="facts" style="margin-top:14px">
+      <div><b>AI tutor</b><span>that knows your menu</span></div>
+      <div><b>A video</b><span>for every dish</span></div>
+      <div><b>Chat + events</b><span>floor and kitchen together</span></div>
+      <div><b>14 days free</b><span>no card needed</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 · Replaces -->
+<section class="limeband">
+  <div class="wrap">
+    <span class="tag chg" style="color:var(--c-text)">Cambia · 3 cosas más</span>
+    <p class="eyebrow" style="color:var(--c-text)">One app, one login</p>
+    <h2>Put away the group chat, the binder and the whiteboard.</h2>
+    <ul class="gone">
+      <li>WhatsApp group</li><li>Menu binder</li><li>Side work whiteboard</li><li>Schedule app</li><li>Swaps by text</li><li>Paper shift report</li>
+      <li class="new">Shared Drive folder</li><li class="new">Printed BEOs</li><li class="new">Corkboard photo of the month</li>
+      <li class="keep">HEAT</li>
+    </ul>
+    <p class="note" style="color:var(--c-text)">Las 3 con borde doble son nuevas.</p>
+  </div>
+</section>
+
+<!-- 4 · Product tour -->
+<section class="sunken">
+  <div class="wrap">
+    <span class="tag chg">Cambia · 3 paradas nuevas en el tour</span>
+    <p class="eyebrow">The product</p>
+    <h2>Everything the shift needs, on one phone.</h2>
+    <div class="chips" role="group" aria-label="Tour">
+      <span class="chip">Know the menu</span><span class="chip">Allergy check</span><span class="chip">Schedule</span><span class="chip">Side work and sections</span><span class="chip">Pre-shift</span>
+      <span class="chip on"><span class="dot"></span>Private events</span><span class="chip"><span class="dot"></span>Team chat</span><span class="chip"><span class="dot"></span>Files</span>
+      <span class="chip">End of shift</span><span class="chip">Manager assistant</span>
+    </div>
+    <div class="grid2" style="margin-top:20px">
+      <div>
+        <h3>Private events</h3>
+        <p style="margin:8px 0 0">The whole BEO on every phone working the event, and everyone confirms the latest version.</p>
+        <ul class="points">
+          <li>Menu by course, timeline, bar, setup and staff in one place</li>
+          <li>Guest allergies listed seat by seat, with the plan for each</li>
+          <li>When the count or the menu changes, the team sees what changed and confirms</li>
+        </ul>
+        <p class="note">Chat: “Floor, kitchen and bar chats, direct messages, photos and voice notes. Notices reach every phone.” · Files: “PDFs, Word and Excel in folders, shared only with who needs them. Search finds words inside.”</p>
+      </div>
+      <div class="phone" aria-hidden="true">
+        <div class="ph-top">Company dinner · Altamar <span class="mono">v3</span></div>
+        <div class="ph-body">
+          <div class="mini"><span class="lbl">Sat · 6:00 PM</span><b style="display:block">45 guests · Private room + terrace</b><small>Set menu, 4 courses</small></div>
+          <div class="allergen">Allergies · SHL seat 2-4 · GLU seat 3-1 · SES seat 5-6<br><span style="font-weight:400">Confirm with the kitchen.</span></div>
+          <div class="mini"><span class="lbl">What changed in v3</span><small>Guests 40 → 45 · Menu</small></div>
+          <a class="btn primary" href="#" style="justify-self:start">I read v3</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 · NEW spotlight: dish videos -->
+<section class="dark">
+  <div class="wrap grid2">
+    <div>
+      <span class="tag">Nuevo</span>
+      <p class="eyebrow">Dish videos</p>
+      <h2>Every dish, explained by <span class="lime-t">the chef who makes it.</span></h2>
+      <p class="lead">A short video on each dish card, right after the photo. The team hears how it's built, how to describe it and what to watch for, from your own kitchen.</p>
+      <ul class="points">
+        <li>Swipe from the photo to the video on the same card</li>
+        <li>Shows who explains it: Chef Kenji, the bar manager…</li>
+        <li>Allergens stay on the card, in lime, every time</li>
+      </ul>
+    </div>
+    <div class="phone" aria-hidden="true">
+      <div class="ph-top">Yellowtail Tiradito <span class="mono">$24</span></div>
+      <div class="ph-body">
+        <div class="media"><span class="play">▶</span><span class="mono" style="position:absolute;left:10px;bottom:8px">Chef Kenji · 1:15</span></div>
+        <div class="seg"><span>Photo</span><span class="on">Video</span></div>
+        <div class="mini"><small>Thin-sliced yellowtail, citrus soy, chili, cilantro.</small></div>
+        <div class="allergen">FSH · SOY · GLU<br><span style="font-weight:400">Confirm with the kitchen.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 · NEW: the team, together -->
+<section>
+  <div class="wrap">
+    <span class="tag">Nuevo</span>
+    <p class="eyebrow">Your team, together</p>
+    <h2>Talk, recognize and bring people in, without a group chat.</h2>
+    <div class="grid3">
+      <article class="card">
+        <h3>Team chat</h3>
+        <p>Floor, kitchen and bar each have their chat, plus direct messages, photos and voice notes. A notice reaches every phone. Messages clear after 30 days.</p>
+        <div class="ph-body" style="padding:14px 0 0">
+          <div class="bubble"><small>Toño · Line Cook</small>86 black cod for tonight</div>
+          <div class="bubble me">Got it, telling the floor<small>4:12 PM</small></div>
+        </div>
+      </article>
+      <article class="card">
+        <h3>Employee of the month</h3>
+        <p>Managers nominate, the floor and the kitchen vote for their own, and HEAT announces the winner with the reasons people wrote.</p>
+        <div class="mini" style="margin-top:14px"><span class="trophy" aria-hidden="true">🏆</span><b style="display:block">Ana · Server</b><small>“Always helps close, even when it isn't her turn.”</small></div>
+      </article>
+      <article class="card">
+        <h3>Invite by email</h3>
+        <p>Type their email and position. They get a HEAT email in English or Spanish and land on “You're invited to join Osaka Miami as Bartender”.</p>
+        <div class="mini" style="margin-top:14px"><b>Lucía · Bartender</b><small>Pending · sent today</small></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 7 · NEW: Files -->
+<section class="sunken">
+  <div class="wrap grid2">
+    <div>
+      <span class="tag">Nuevo</span>
+      <p class="eyebrow">Files</p>
+      <h2>Every document the restaurant keeps, <span style="background:var(--lime);padding:0 6px;border-radius:6px">found in seconds.</span></h2>
+      <p class="lead" style="color:var(--c-muted)">Specs, vendor price lists, BEOs and the service manual, in folders. Managers see everything; share a folder or a single file with the bar, the kitchen or the floor.</p>
+      <ul class="points">
+        <li>Search finds words inside PDFs, Word and Excel</li>
+        <li>Word and Excel open right in HEAT, no other app</li>
+        <li>Only managers by default</li>
+      </ul>
+    </div>
+    <div class="phone" aria-hidden="true">
+      <div class="ph-top">Files</div>
+      <div class="ph-body">
+        <div class="input">yuzu</div>
+        <div class="mini"><b>Christmas specials 2026.pdf</b><small>…the <span class="hit">Yuzu</span> Spritz takes 45 ml gin, 20 ml <span class="hit">yuzu</span>…</small></div>
+        <div class="mini"><b>Cocktail specs v3.xlsx</b>
+          <div class="seg" style="margin:8px 0"><span class="on">Cocktails</span><span>Batch</span></div>
+          <table class="xl"><tr><th></th><th>A</th><th>B</th></tr><tr><th>1</th><td>Yuzu Margarita</td><td>60 ml</td></tr><tr><th>2</th><td>Nikkei Negroni</td><td>30 ml</td></tr></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 · How it works -->
+<section>
+  <div class="wrap">
+    <span class="tag chg">Cambia · paso 3</span>
+    <p class="eyebrow">How it works</p>
+    <h2>Ready for service this week</h2>
+    <div class="grid3">
+      <article class="card"><span class="mono">01</span><h3 style="margin-top:8px">Create your restaurant</h3><p>Start a free trial and name it. Each location gets a workspace of its own.</p></article>
+      <article class="card"><span class="mono">02</span><h3 style="margin-top:8px">Add your menu</h3><p>Dishes, cocktails and wine, with photos, videos, ingredients, allergens and prices.</p></article>
+      <article class="card" style="outline:2px solid var(--lime)"><span class="mono">03</span><h3 style="margin-top:8px">Invite and publish</h3><p>Email each person an invite with their position, or share one link. Publish the week. That's it.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- 9 · FAQ -->
+<section class="sunken">
+  <div class="wrap">
+    <span class="tag chg">Cambia · 3 preguntas nuevas</span>
+    <p class="eyebrow">Questions</p>
+    <h2>What restaurants ask us</h2>
+    <div style="margin-top:20px;max-width:760px">
+      <details open><summary>Who can see our files?</summary><p>Only managers, until a manager shares a folder or a single file with the bar, the kitchen, the floor or everyone. Files stay in your restaurant's private storage.</p></details>
+      <details open><summary>Do we need WhatsApp for the team anymore?</summary><p>No. Each side has its own chat, managers can send a notice that reaches every phone, and messages clear after 30 days so old talk doesn't pile up.</p></details>
+      <details open><summary>How long can a dish video be?</summary><p>Short is best: one or two minutes of the chef explaining the dish. It plays on the dish card, right after the photo.</p></details>
+      <details><summary>Does my team need to download an app?</summary><p>…the rest of the questions stay as they are.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="wrap">
+    <p class="note">The final call to action and the footer stay as they are. The “Everything around it” list loses nothing; chat and files move out of it and into their own sections above.</p>
+  </div>
+</section>
+
+</body>
+</html>
