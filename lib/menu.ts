@@ -17,6 +17,10 @@ export type MenuItem = {
   details?: Record<string, string> | null;
   photo_path: string | null;
   photo_url?: string;
+  // A short video explaining the card (069, 070). Older databases leave these out.
+  video_path?: string | null;
+  video_seconds?: number | null;
+  video_by?: string | null;
   updated_at?: string;
 };
 export function listFromText(value: string): string[] {
