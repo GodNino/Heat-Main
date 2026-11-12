@@ -3976,3 +3976,9 @@ span.dash-name { text-decoration:none; }
 /* Landing v3: a card drawn inside a dark spotlight keeps the card's own text color (the dish video card's
    title and Photo chip were light on light). To undo, revert the commit that added this block. */
 :root:root:root:root:root:root:root .lp2-spot .lp-card { color:var(--c-text); }
+
+/* Events form: tighter, even spacing between fields. The first field (and the Bar / Setup / Notes boxes) carried the
+   general 20px bottom margin on top of the card's own gap, so those gaps were more than double the others. Now every
+   field sits 10px from the next. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .ev-card, :root:root:root:root:root:root:root .ev-grid2 { row-gap:10px; }
+:root:root:root:root:root:root:root .ev-card .field { margin-bottom:0; }
