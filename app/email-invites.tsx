@@ -6,7 +6,7 @@
 // Below, every invitation: pending, joined, expired or cancelled, with Resend and Cancel.
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { supabase } from "@/lib/supabase";
-import { POSITIONS } from "@/lib/schedule";
+import { PositionChips } from "./position-chips";
 import { currentLang } from "./language";
 import { inviteEmail } from "@/lib/invite-email";
 import { Field, Notice } from "./ui";
@@ -28,6 +28,7 @@ export function EmailInvites({restaurantId, restaurantName}: {restaurantId: stri
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [role, setRole] = useState("Server");
+  const [typing, setTyping] = useState(false);
   const [lang, setLang] = useState<"en" | "es">(() => (currentLang() === "es" ? "es" : "en"));
   const [bad, setBad] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -72,8 +73,9 @@ export function EmailInvites({restaurantId, restaurantName}: {restaurantId: stri
     event.preventDefault();
     const clean = email.trim();
     if (!EMAIL.test(clean)) { setBad(true); return; }
+    if (!role.trim()) { setError("Choose a position for this person."); return; }
     setBad(false);
-    if (await send({email: clean, name: name.trim(), role, lang})) { setEmail(""); setName(""); }
+    if (await send({email: clean, name: name.trim(), role: role.trim(), lang})) { setEmail(""); setName(""); }
   }
   async function cancel(i: Invite) {
     setError(""); setMessage("");
@@ -93,7 +95,12 @@ export function EmailInvites({restaurantId, restaurantName}: {restaurantId: stri
         onChange={e => { setEmail(e.target.value); if (bad) setBad(false); }} placeholder="name@email.com" /></Field>
       {bad && <p className="invite-mail-error" role="alert">Write a full email address, like name@gmail.com.</p>}
       <Field label="Name (optional)"><input id="invite-name" maxLength={60} value={name} onChange={e => setName(e.target.value)} placeholder="Lucía" /></Field>
-      <Field label="Position"><select id="invite-role" value={role} onChange={e => setRole(e.target.value)}>{POSITIONS.map(p => <option key={p} value={p}>{p}</option>)}</select></Field>
+      <fieldset className="invite-mail-position">
+        <legend>Position</legend>
+        <PositionChips value={role} otherOn={typing} onPick={value => { setTyping(false); setRole(value); }} onOther={() => { setTyping(true); setRole(""); }} />
+        {typing && <input id="invite-role" aria-label="Their position" maxLength={40} value={role} onChange={e => setRole(e.target.value)} placeholder="Captain, maître d', expo…" />}
+        {role && !typing && <p className="muted text-sm">They join as {role}.</p>}
+      </fieldset>
       <div className="invite-mail-lang" role="group" aria-label="Email language">
         <span>Email in</span>
         <button type="button" aria-pressed={lang === "en"} onClick={() => setLang("en")}>English</button>

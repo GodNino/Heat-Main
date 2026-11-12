@@ -84,6 +84,7 @@ import { NotificationSwitch, notify } from "./notifications";
 import { GettingStarted } from "./getting-started";
 import { DishMedia, DishVideoEditor } from "./dish-video";
 import { EmailInvites } from "./email-invites";
+import { PositionChips, samePosition } from "./position-chips";
 import { EmployeeOfMonth, EmployeeOfMonthCard } from "./employee-of-month";
 import { Events, NextEventCard } from "./events";
 import { TeamChat, useChatUnread } from "./team-chat";
@@ -1364,36 +1365,6 @@ type TeamAssignment = {id: string; menu_item_id: string; item_name: string; note
 // Suggestions, not a list to choose from: every kitchen names its jobs differently,
 // and a restaurant that calls somebody a captain should be able to type captain.
 const TEAM_ROLES = POSITIONS;
-const POSITION_GROUPS = [
-  {key: "foh", label: "FOH", title: "Front of house", positions: FOH_POSITIONS},
-  {key: "boh", label: "BOH", title: "Kitchen", positions: KITCHEN_POSITIONS},
-] as const;
-const samePosition = (a: string, b: string) => a.trim().toLowerCase() === b.trim().toLowerCase();
-
-// Positions in two short groups: FOH and BOH. Tapping one shows its positions; the group holding the
-// chosen position starts open and says which one it is. "Other" is for whatever this restaurant calls the job.
-function PositionChips({value, otherOn, onPick, onOther, before}: {value: string; otherOn: boolean; onPick: (position: string) => void; onOther: () => void; before?: ReactNode}) {
-  const holder = POSITION_GROUPS.find(g => g.positions.some(p => samePosition(p, value)));
-  const [open, setOpen] = useState<"foh" | "boh" | null>(holder?.key ?? null);
-  const shown = POSITION_GROUPS.find(g => g.key === open);
-  return <>
-    <div className="word-chips">
-      {before}
-      {POSITION_GROUPS.map(group => {
-        const picked = group.positions.find(p => samePosition(p, value));
-        return <button key={group.key} type="button" className="word-chip position-group" aria-expanded={open === group.key} aria-pressed={!!picked && !otherOn} title={group.title}
-          onClick={() => setOpen(open === group.key ? null : group.key)}>
-          <b>{group.label}</b>{picked && !otherOn ? <span>{` · ${picked}`}</span> : <small>{group.title}</small>}<ChevronDown size={14} aria-hidden="true" className={open === group.key ? "rotate-180" : ""} />
-        </button>;
-      })}
-      <button type="button" className="word-chip" aria-pressed={otherOn} onClick={onOther}><Plus size={14} />Other</button>
-    </div>
-    {shown && <div className="word-chips position-list" role="group" aria-label={shown.title}>
-      {shown.positions.map(position => <button key={position} type="button" className="word-chip" aria-pressed={!otherOn && samePosition(position, value)} onClick={() => onPick(position)}>{position}</button>)}
-    </div>}
-  </>;
-}
-
 // Which job an invite link is for (migration 042). "Anyone" is the restaurant's plain link; each
 // position has a link of its own, and whoever joins with it starts in that position.
 function InviteFor({restaurantId, busy, action, current, onAnyone, onPick}: {restaurantId: string; busy: boolean; action: (work: () => Promise<void>) => Promise<void>; current: string; onAnyone: () => void; onPick: (role: string, token: string) => void}) {

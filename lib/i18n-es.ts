@@ -1000,6 +1000,7 @@ const PATTERNS: [RegExp, (m: RegExpMatchArray) => string][] = [
   [/^(.+) · Joined (today|yesterday|\d+ days ago)$/, m => `${m[1]} · Se unió ${m[2] === "today" ? "hoy" : m[2] === "yesterday" ? "ayer" : `hace ${m[2].split(" ")[0]} días`}`],
   [/^(?:(.+), you're|You're) invited to join (.+?)(?: as (.+))?$/, m => `${m[1] ? `${m[1]}, te` : "Te"} invitaron a unirte a ${m[2]}${m[3] ? ` como ${m[3]}` : ""}`],
   [/^Create your account with (.+) to get started\.$/, m => `Crea tu cuenta con ${m[1]} para empezar.`],
+  [/^They join as (.+)\.$/, m => `Entra como ${m[1]}.`],
   [/^Report saved and emailed to (\d+) (person|people)\.$/, m => `Reporte guardado y enviado a ${m[1]} ${m[2] === "person" ? "persona" : "personas"}.`],
   [/^Bring dishes into (.+)$/, m => `Traer platos a ${m[1]}`],
   [/^All (.+) locations$/, m => `Todos los locales de ${m[1]}`],
