@@ -399,6 +399,109 @@ export function plainShiftReportSheet(input: ShiftReportSheetInput, header: Shee
   return sheet.finish(`${input.label} report - ${input.day}`);
 }
 
+/* ------------------------------------------------------------------ event -- */
+
+export type EventSheetInput = {
+  name: string;
+  /** "Saturday, December 6". */
+  day: string;
+  /** "6:00 PM – 10:30 PM". */
+  time: string;
+  guests: number;
+  room: string;
+  contact: string;
+  serviceStyle: string;
+  status: string;
+  version: number;
+  menu: { course: string; time: string; items: { name: string; qty: number; codes: string[] }[] }[];
+  allergies: { who: string; what: string; plan: string; code: string }[];
+  timeline: { time: string; what: string }[];
+  bar: string[];
+  setup: string[];
+  team: string[];
+  notes: string;
+  /** The kitchen copy leaves out the client contact, the bar and the setup. */
+  kitchen: boolean;
+};
+
+/**
+ * The BEO on paper. The guests' allergies come first, right under the facts, because on a busy night
+ * that is the part somebody must not miss. Money never goes on paper: a printed BEO gets passed around.
+ */
+export function plainEventSheet(input: EventSheetInput, header: SheetHeader): Uint8Array {
+  const sheet = new PlainSheet(header, `${input.name} / ${input.kitchen ? 'Kitchen sheet' : 'BEO'}`, false, true);
+  sheet.title(input.name, `${input.day} / ${input.time} / ${input.status} / Version ${input.version}`);
+  sheet.y += 10;
+  sheet.glance([
+    { label: 'Guests', value: input.guests ? `${input.guests} guaranteed` : '' },
+    { label: 'Room', value: input.room },
+    { label: 'Service', value: input.serviceStyle },
+  ]);
+  if (input.room && measure(input.room, 'bold', CELL) > WIDTH / 3 - 14) { sheet.y += 6; sheet.labelled('Room', input.room); }
+  if (input.serviceStyle && measure(input.serviceStyle, 'bold', CELL) > WIDTH / 3 - 14) { sheet.y += 6; sheet.labelled('Service', input.serviceStyle); }
+  if (!input.kitchen && input.contact.trim()) { sheet.y += 8; sheet.labelled('Client contact', input.contact.trim()); }
+  sheet.y += 10;
+
+  // Allergies: a red band with the count, one row per guest, then the kitchen line.
+  sheet.band("Guests' allergies and diets", RED, WHITE, `${input.allergies.length}`);
+  if (input.allergies.length) {
+    for (const a of input.allergies) {
+      const label = `${a.who || 'Guest'}`;
+      const value = `${a.what}${a.code && a.code !== 'NOTE' && a.code !== 'NONE' ? ` (${a.code})` : ''}${a.plan ? ` / Plan: ${a.plan}` : ''}`;
+      sheet.y += 4;
+      sheet.labelled(label, value);
+    }
+  } else {
+    sheet.y += 4;
+    sheet.body('No allergies recorded for this event.', 'regular', MUTED);
+  }
+  sheet.y += 4;
+  panelText(sheet, 'Always confirm with the kitchen before serving.', SOFT_OLIVE, OLIVE, 'bold');
+
+  sheet.section(input.serviceStyle ? `Menu / ${input.serviceStyle}` : 'Menu');
+  if (!input.menu.length) sheet.body('No menu yet.', 'regular', MUTED);
+  for (const course of input.menu) {
+    sheet.need(LEAD * 3);
+    sheet.y += 2;
+    sheet.body(`${course.course || 'Course'}${course.time ? ` / ${course.time}` : ''}`, 'bold');
+    for (const dish of course.items) {
+      // One line per dish: the name, its allergen codes, and how many, so a 4-course menu fits on the first page.
+      const qty = dish.qty ? String(dish.qty) : '-';
+      const codes = dish.codes.length ? dish.codes.join(' / ') : '';
+      const name = lines(dish.name, 'regular', WIDTH - 12 - 170);
+      sheet.need(LEAD * name.length + 4);
+      name.forEach((row, i) => sheet.put(row.text, LEFT + 12, sheet.y + i * LEAD, 'regular', SIZE));
+      if (codes) sheet.putRight(codes, LEFT + WIDTH - 44, sheet.y + 1.5, 'regular', 8.5, MUTED);
+      sheet.putRight(qty, LEFT + WIDTH, sheet.y, 'bold', SIZE);
+      sheet.y += name.length * LEAD;
+      sheet.hair(sheet.y, HAIR, LEFT + 12, WIDTH - 12);
+      sheet.y += 4;
+    }
+  }
+
+  if (input.timeline.length) {
+    sheet.section('Run of show');
+    for (const t of input.timeline) sheet.labelled(t.time || '-', t.what);
+  }
+  if (!input.kitchen && input.bar.length) {
+    sheet.section('Bar');
+    for (const line of input.bar) sheet.body(`- ${line}`);
+  }
+  if (!input.kitchen && input.setup.length) {
+    sheet.section('Setup');
+    for (const line of input.setup) sheet.body(`- ${line}`);
+  }
+  if (input.team.length) {
+    sheet.section(`Team / ${input.team.length}`);
+    for (const person of input.team) sheet.body(`- ${person}`);
+  }
+  if (input.notes.trim()) {
+    sheet.section('Notes');
+    for (const paragraph of input.notes.split(/\r?\n/)) sheet.body(paragraph);
+  }
+  return sheet.finish(`${input.name} - ${input.kitchen ? 'Kitchen sheet' : 'BEO'}`);
+}
+
 /* --------------------------------------------------------------- pre-shift -- */
 
 export function plainPreshiftSheet(input: PreshiftInput, date: string, header: SheetHeader): Uint8Array {

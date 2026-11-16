@@ -20,7 +20,7 @@ import type { CardFieldRow } from "./card-fields.ts";
 import type { CustomTerm } from "./glossary.ts";
 import { contentTypeOf, CONTENT_LABELS } from "./categories.ts";
 import { plainScheduleSheet, type ScheduleSheetInput } from "./schedule-sheet.ts";
-import { plainShiftReportSheet, type ShiftReportSheetInput } from "./plain-sheets.ts";
+import { plainShiftReportSheet, type ShiftReportSheetInput, plainEventSheet, type EventSheetInput } from "./plain-sheets.ts";
 import { plainLaborSheet, type LaborSheetInput } from "./labor-sheet.ts";
 import { plainSectionsSheet, type SectionsSheetInput } from "./sections-sheet.ts";
 
@@ -249,5 +249,18 @@ export function sectionsSheet(input: SectionsSheetInput, context: SheetContext):
   return {
     filename: `${slug(context.restaurant)}-sections-${input.day}-${slug(input.service)}.pdf`,
     bytes: plainSectionsSheet(input, header(context, "Sections")),
+  };
+}
+
+/* ----------------------------------------------------------------- events --- */
+
+export type { EventSheetInput };
+
+/** A private event's BEO, or its shorter kitchen copy, ready to print. */
+export function eventSheet(input: EventSheetInput & { startsAt: string; updated?: string | Date | null }, context: SheetContext): PrintedSheet {
+  const stamp = input.startsAt.slice(0, 10);
+  return {
+    filename: `${input.kitchen ? "kitchen" : "beo"}-${slug(input.name)}-${stamp}.pdf`,
+    bytes: plainEventSheet(input, header(context, input.kitchen ? "Kitchen sheet" : "BEO", input.updated)),
   };
 }
