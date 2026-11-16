@@ -11,6 +11,8 @@ import { allergenCode } from "@/lib/allergies";
 import type { MenuItem } from "@/lib/menu";
 import { Field, Notice, ScreenHeader } from "./ui";
 import { notify } from "./notifications";
+import { DownloadSheet } from "./sheet-download";
+import { eventSheet } from "@/lib/sheets";
 
 type Dish = {name: string; qty: number; menu_item_id?: string | null};
 type Course = {course: string; time: string; items: Dish[]};
@@ -51,7 +53,7 @@ function toDraft(e: EventRow, pay: Payment | null): Draft {
     bar: e.bar.join("\n"), setup: e.setup.join("\n"), staff: e.staff, notes: e.notes, pay: pay ?? {minimum_spend: null, deposit: null, deposit_paid: false, gratuity: "", notes: ""}};
 }
 
-export function Events({restaurantId, userId, canManage, items}: {restaurantId: string; userId: string; canManage: boolean; items: MenuItem[]}) {
+export function Events({restaurantId, restaurantName, userId, canManage, items}: {restaurantId: string; restaurantName: string; userId: string; canManage: boolean; items: MenuItem[]}) {
   const [events, setEvents] = useState<EventRow[] | null>(null);
   const [team, setTeam] = useState<Person[]>([]);
   const [openId, setOpenId] = useState("");
@@ -245,6 +247,14 @@ export function Events({restaurantId, userId, canManage, items}: {restaurantId: 
     const sinceMine = mine ? changes.filter(c => c.version > mine.version) : [];
     const kitchen = sheet === "kitchen";
     const codes = allergyCodes(open.allergies);
+    // The sheet on screen (full BEO or kitchen) is the one that prints. Money stays off paper.
+    const print = async () => eventSheet({
+      name: open.name, startsAt: open.starts_at, day: day(open.starts_at), time: `${hour(open.starts_at)} – ${hour(open.ends_at)}`,
+      guests: open.guests, room: open.room, contact: open.contact, serviceStyle: open.service_style, status: STATUS[open.status], version: open.version,
+      menu: open.menu.map(c => ({course: c.course, time: c.time, items: c.items.map(d => ({name: d.name, qty: d.qty, codes: (itemFor(d)?.allergens ?? []).map(allergenCode).filter(x => x !== "NOTE")}))})),
+      allergies: open.allergies.map(a => ({...a, code: allergenCode(a.what)})), timeline: open.timeline, bar: open.bar, setup: open.setup,
+      team: open.staff.map(id => `${nameOf(id)}${roleOf(id) ? `, ${roleOf(id)}` : ""}`), notes: open.notes, kitchen, updated: open.updated_at,
+    }, {restaurant: restaurantName});
     return <section className="mx-auto max-w-5xl ev">
       <button type="button" className="btn secondary ev-start" onClick={() => { setOpenId(""); setSheet("full"); setConfirmDelete(false); }}>Back</button>
       <ScreenHeader eyebrow={`BEO · version ${open.version}`} title={open.name} />
@@ -252,6 +262,7 @@ export function Events({restaurantId, userId, canManage, items}: {restaurantId: 
       <Notice text={message} />
       <div className="ev-actions">
         <div className="ev-chips" role="group" aria-label="Sheet"><button type="button" className="ev-chip" aria-pressed={!kitchen} onClick={() => setSheet("full")}>Full BEO</button><button type="button" className="ev-chip" aria-pressed={kitchen} onClick={() => setSheet("kitchen")}>Kitchen sheet</button></div>
+        <DownloadSheet variant="button" buttonLabel="Print" busyLabel="Preparing the sheet" label={kitchen ? "Download the kitchen sheet to print" : "Download the BEO to print"} build={print} />
         {canManage ? <>
           <button type="button" className="btn secondary" onClick={() => { setDraft(toDraft(open, pay)); setEditingId(open.id); setError(""); setMessage(""); }}>Edit</button>
           <button type="button" className="btn" disabled={busy} onClick={() => void sendToTeam(open)}>Send to the team</button>
