@@ -3982,3 +3982,46 @@ span.dash-name { text-decoration:none; }
    field sits 10px from the next. To undo, revert the commit that added this block. */
 :root:root:root:root:root:root:root .ev-card, :root:root:root:root:root:root:root .ev-grid2 { row-gap:10px; }
 :root:root:root:root:root:root:root .ev-card .field { margin-bottom:0; }
+
+/* Manager Today v2 (docs/mockups/manager-today.html): "Needs you" as one numbered list, two columns for
+   the day beside the event and last night, and the event and last-night cards.
+   To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .today { display:flex; flex-direction:column; gap:14px; }
+:root:root:root:root:root:root:root .today > * { margin-top:0; margin-bottom:0; }
+:root:root:root:root:root:root:root .needs { padding:16px; }
+:root:root:root:root:root:root:root .needs-head { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:14px; }
+:root:root:root:root:root:root:root .needs-head .section-chip { margin:0; }
+:root:root:root:root:root:root:root .needs-head small, :root:root:root:root:root:root:root .needs-empty { font-size:13px; color:var(--c-muted); margin:0; }
+:root:root:root:root:root:root:root .needs-list { list-style:none; margin:0; padding:0; }
+:root:root:root:root:root:root:root .needs-row { display:grid; grid-template-columns:26px minmax(0, 1fr) auto; gap:12px; align-items:center; min-height:44px; padding:10px 0; border-top:1px solid var(--c-line-5); }
+:root:root:root:root:root:root:root .needs-row:first-child { border-top:0; padding-top:0; }
+:root:root:root:root:root:root:root .needs-num { width:26px; height:26px; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:700; border:1.5px solid var(--c-text); }
+:root:root:root:root:root:root:root .needs-num.hot { background:var(--c-fail); border-color:var(--c-fail); color:#fff; }
+:root:root:root:root:root:root:root .needs-text { min-width:0; }
+:root:root:root:root:root:root:root .needs-text b { display:block; font-size:14px; }
+:root:root:root:root:root:root:root .needs-text small { display:block; font-size:12px; color:var(--c-muted); overflow-wrap:break-word; }
+:root:root:root:root:root:root:root .today-columns { display:grid; gap:14px; }
+@media (min-width: 900px) { :root:root:root:root:root:root:root .today-columns { grid-template-columns:minmax(0, 1.15fr) minmax(0, .85fr); align-items:start; } }
+:root:root:root:root:root:root:root .today-col { display:flex; flex-direction:column; gap:14px; min-width:0; }
+:root:root:root:root:root:root:root .today-col > * { margin:0; }
+:root:root:root:root:root:root:root .today-col:empty { display:none; }
+:root:root:root:root:root:root:root .card-row { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:14px; }
+:root:root:root:root:root:root:root .last-night, :root:root:root:root:root:root:root .event-today { padding:16px; }
+:root:root:root:root:root:root:root .last-night-figures, :root:root:root:root:root:root:root .event-today-facts { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-bottom:14px; }
+:root:root:root:root:root:root:root .last-night-figures b { display:block; font-size:20px; line-height:1.1; }
+:root:root:root:root:root:root:root .last-night-figures span { font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .last-night-note { margin:10px 0 0; padding-left:10px; border-left:3px solid var(--c-text); font-size:13px; }
+:root:root:root:root:root:root:root .last-night-note.bad { border-color:var(--c-fail); }
+:root:root:root:root:root:root:root .event-today-name { margin:0 0 12px; font-weight:700; }
+:root:root:root:root:root:root:root .event-today-facts span { display:block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--c-muted); }
+:root:root:root:root:root:root:root .event-today-facts b { font-size:14px; }
+:root:root:root:root:root:root:root .event-today-allergens { display:grid; gap:6px; padding:12px; border-radius:14px; background:var(--lime); color:#1b1c1a; font-size:13px; }
+:root:root:root:root:root:root:root .event-today-codes { display:flex; flex-wrap:wrap; gap:6px; }
+:root:root:root:root:root:root:root .event-today-codes span { font-family:var(--font-mono); font-size:11px; font-weight:700; border:1px solid #1b1c1a; border-radius:999px; padding:1px 8px; }
+
+/* Manager Today v2: on a phone the four numbers sit two by two, so no label gets cut.
+   To undo, revert the commit that added this block. */
+@media (max-width: 640px) {
+  :root:root:root:root:root:root:root .today .dash-stats-row { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px 0; }
+  :root:root:root:root:root:root:root .today .dash-stats-row li:nth-child(odd) { border-left:0; padding-left:0; }
+}
