@@ -67,7 +67,7 @@ import { CONTENT_TYPES, categoryOf, contentTypeOf, filterContent, type ContentTy
 import { TaxonomyContext, useTaxonomy, namesIn, wordsIn, type SectionWords, type MenuCategoryRow, type Taxonomy } from "./taxonomy";
 import { Notice, Field, InfoRow, PasswordInput, ScreenHeader, SectionInfo } from "./ui";
 import { AssignDishes } from "./assign-dishes";
-import { TodayFigures, TodayStatus } from "./today";
+import { TodayFigures } from "./today";
 import { photoLinks, shrinkPhoto, forgetPhotoLinks } from "./photos";
 import { WordsManager } from "./words";
 import { Standards } from "./standards";
@@ -90,10 +90,10 @@ import { PositionChips, samePosition } from "./position-chips";
 import { EmployeeOfMonth, EmployeeOfMonthCard } from "./employee-of-month";
 import { Events, NextEventCard } from "./events";
 import { TeamChat, useChatUnread } from "./team-chat";
-import { MyWeek, Schedule, ShiftChangesWaiting, TodayRoster, type ScheduleTab } from "./schedule";
+import { MyWeek, Schedule, ShiftChangesWaiting, type ScheduleTab } from "./schedule";
 import { FOH_POSITIONS, KITCHEN_POSITIONS, POSITIONS, positionRank } from "@/lib/schedule";
 import { type AttentionTarget } from "./home-cards";
-import { NeedsYou, LastNightCard, EventTodayCard, type NeedTarget } from "./manager-today";
+import { NeedsYou, LastNightCard, EventTodayCard, TodayPlan, type NeedTarget } from "./manager-today";
 
 // Every screen the workspace can show. Named once: it used to be spelled out in two places.
 type View = "tostudy" | "home" | "library" | "allergy" | "review" | "progress" | "team" | "preshift" | "words" | "standards" | "story" | "library-settings" | "checklists" | "locations" | "dashboard" | "reports" | "schedule" | "tutor" | "assistant" | "chat" | "recognition" | "events" | "files";
@@ -1785,9 +1785,8 @@ function Workspace({
       {(can("preshift") || can("team") || canSchedule) && <TodayFigures key={`figures-${rid}`} restaurantId={rid} canReports={canReports} />}
       <div className="today-columns">
         <div className="today-col">
-          <TodayStatus key={`status-${rid}`} restaurantId={rid} canPreshift={can("preshift")} canReports={canReports} onPreshift={edit => {navigate("preshift"); setPreshiftEdit(edit);}} onSideWork={() => navigate("checklists")} onReport={openPastReports} doneOnly />
+          <TodayPlan key={`plan-${rid}`} restaurantId={rid} items={items} onOpenSchedule={() => openSchedule("week")} />
           {can("preshift") && <PostedPreShiftCard key={`posted-${rid}`} restaurantId={rid} items={items} restaurantName={restaurant.name} />}
-          {(can("preshift") || can("team") || canSchedule) && <TodayRoster key={`roster-${rid}`} restaurantId={rid} onOpen={() => openSchedule("week")} />}
         </div>
         <div className="today-col">
           <EventTodayCard key={`event-${rid}`} restaurantId={rid} onOpen={() => navigate("events")} />
