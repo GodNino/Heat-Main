@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { allergenCode } from "@/lib/allergies";
 import { ISSUE_KINDS, MOODS, money, serviceDay, type ShiftReport } from "@/lib/shift-report";
-import { shortTime } from "@/lib/schedule";
+import { addDays, readSettings, shiftHours, shortTime, weekStart } from "@/lib/schedule";
+import { buildDay, flagPeople, momentTime, type DayInput, type DayJob, type DayShift, type Flag, type Moment } from "@/lib/today-day";
 import { needsFrom, type Facts, type NeedTarget } from "@/lib/today-needs";
 export type { NeedTarget };
 
@@ -133,4 +134,91 @@ export function EventTodayCard({restaurantId, onOpen}: {restaurantId: string; on
       <span>Confirm with the kitchen before serving.</span>
     </div>}
   </section>;
+}
+
+// ── Part 2: the day's timeline, and who on the team needs something ──
+// One load feeds both cards. Every part that fails to load is simply left out.
+export function TodayPlan({restaurantId, items, onOpenSchedule}: {restaurantId: string; items: {id: string; name: string}[]; onOpenSchedule: () => void}) {
+  const [data, setData] = useState<{moments: Moment[]; flags: Flag[]; all: Flag[]; names: Map<string, string>} | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  useEffect(() => {
+    const db = supabase;
+    if (!db) return;
+    let live = true;
+    const quiet = async <T,>(work: () => PromiseLike<T>, fallback: T): Promise<T> => { try { return await work(); } catch { return fallback; } };
+    void (async () => {
+      const saved = await quiet(async () => (await db.from("schedule_settings").select("*").eq("restaurant_id", restaurantId).maybeSingle()).data, null);
+      const settings = readSettings(saved);
+      const from = new Date(); from.setHours(0, 0, 0, 0);
+      const to = new Date(from); to.setDate(to.getDate() + 1);
+      const week = weekStart(new Date(), settings.week_start), weekEnd = addDays(week, 7);
+      const today = localDay();
+      type Row = DayShift & {break_minutes?: number | null};
+      const shiftsIn = (a: Date, b: Date) => quiet(async () => { const {data, error} = await db.from("schedule_shifts").select("user_id,starts_at,ends_at,position,break_minutes").eq("restaurant_id", restaurantId).eq("published", true).gte("starts_at", a.toISOString()).lt("starts_at", b.toISOString()); return error ? [] : (data ?? []) as Row[]; }, [] as Row[]);
+      const [shifts, weekShifts, team, board, jobs, floor, events, filed] = await Promise.all([
+        shiftsIn(from, to), shiftsIn(week, weekEnd),
+        quiet(async () => ((await db.rpc("schedule_team", {rid: restaurantId})).data ?? []) as {user_id: string; name: string}[], []),
+        quiet(async () => { const {data, error} = await db.rpc("get_preshift_board", {rid: restaurantId}); if (error) return null; const b = (data as {board?: {restaurant_id: string; note: string; entries: {menu_item_id: string; status: string}[]; focus_item_ids?: string[] | null; focus_item_id?: string | null} | null} | null)?.board ?? null;
+          const posted = !!b && b.restaurant_id === restaurantId && (!!b.note?.trim() || !!b.entries?.length || !!b.focus_item_ids?.length || !!b.focus_item_id);
+          const name = (id: string) => items.find(i => i.id === id)?.name;
+          const pick = (status: string) => posted ? b!.entries.filter(e => e.status === status).map(e => name(e.menu_item_id)).filter((n): n is string => !!n) : [];
+          return {posted, out: pick("86"), low: pick("low")}; }, null),
+        quiet(async () => {
+          const s = await db.from("checklist_shifts").select("id").eq("restaurant_id", restaurantId).eq("shift_date", today);
+          if (s.error) return null;
+          if (!s.data?.length) return [] as DayJob[];
+          const a = await db.from("checklist_assignments").select("job_id,user_id,done_at").in("shift_id", s.data.map(r => r.id as string));
+          if (a.error) return null;
+          const rows = (a.data ?? []) as {job_id: string | null; user_id: string | null; done_at: string | null}[];
+          const ids = [...new Set(rows.map(r => r.job_id).filter((x): x is string => !!x))];
+          const j = ids.length ? await db.from("checklist_jobs").select("id,phase").in("id", ids) : {data: [], error: null};
+          const phase = new Map(((j.data ?? []) as {id: string; phase: DayJob["phase"]}[]).map(r => [r.id, r.phase]));
+          return rows.map(r => ({user_id: r.user_id, phase: (r.job_id && phase.get(r.job_id)) || null, done: !!r.done_at}));
+        }, null as DayJob[] | null),
+        quiet(async () => { const {data, error} = await db.from("floor_plans").select("rows,posted_at").eq("restaurant_id", restaurantId).eq("service_date", today).eq("service", "Dinner").maybeSingle(); return error ? null : data as {rows: {server_id: string | null; sa: {id?: string}[]}[]; posted_at: string | null} | null; }, null),
+        quiet(async () => { const {data, error} = await db.from("events").select("name,starts_at,guests").eq("restaurant_id", restaurantId).neq("status", "cancelled").gte("starts_at", from.toISOString()).lt("starts_at", to.toISOString()); return error ? [] : (data ?? []) as DayInput["events"]; }, [] as DayInput["events"]),
+        quiet(async () => { const {count, error} = await db.from("shift_reports").select("id", {count: "exact", head: true}).eq("restaurant_id", restaurantId).eq("service_date", today); return !error && (count ?? 0) > 0; }, false),
+      ]);
+      if (!live) return;
+      const sectionsSent = !!floor?.posted_at;
+      const moments = buildDay({settings, shifts, board, jobs, sectionsSent, events, reportFiled: filed}, new Date());
+      const weekHours = new Map<string, number>();
+      for (const s of weekShifts) weekHours.set(s.user_id, (weekHours.get(s.user_id) ?? 0) + shiftHours(s));
+      const inSections = sectionsSent ? new Set((floor?.rows ?? []).flatMap(r => [r.server_id, ...(r.sa ?? []).map(h => h.id)]).filter((x): x is string => !!x)) : null;
+      const listed = [...(settings.server_positions ?? []), ...(settings.sa_positions ?? [])];
+      const sectionPositions = (p: string) => listed.length ? listed.some(x => x.trim().toLowerCase() === p.trim().toLowerCase()) : /server|assistant|s\.?a\.?$/i.test(p);
+      const withJobs = jobs ? new Set(jobs.map(j => j.user_id).filter((x): x is string => !!x)) : null;
+      const {flags, all} = flagPeople({settings, today: shifts, weekHours, withJobs, inSections, sectionPositions});
+      setData({moments, flags, all, names: new Map(team.map(p => [p.user_id, p.name || "Team member"]))});
+    })();
+    return () => { live = false; };
+  }, [restaurantId, items]);
+  if (!data || (!data.moments.length && !data.all.length)) return null;
+  const name = (id: string) => data.names.get(id) ?? "Team member";
+  const initials = (n: string) => n.split(/\s+/).filter(Boolean).map(w => w[0]).join("").slice(0, 2).toUpperCase() || "?";
+  const people = showAll ? data.all : data.flags;
+  const set = data.all.length - data.flags.length;
+  return <>
+    {data.moments.length > 0 && <section className="panel day-card" aria-label="The day">
+      <div className="card-row"><b className="text-sm">The day</b><small className="muted">Schedule, board and events</small></div>
+      <ol className="day-line">{data.moments.map((m, i) => <li key={i} className={`day-moment ${m.state}`}>
+        <span className="day-time">{momentTime(m)}</span><span className="day-rail" aria-hidden="true"><i /></span>
+        <span className="day-text"><b>{m.title}</b>{m.detail && <span>{" · "}{m.detail}</span>}
+          {m.tag && <span className={`day-tag ${m.tag.tone}`}>{m.tag.text}</span>}
+          {(m.out?.length || m.low?.length) ? <span className="day-chips">{m.out?.map(n => <span key={`o-${n}`} className="out" title="86'd">{n}</span>)}{m.low?.map(n => <span key={`l-${n}`}>{n}{" · "}{"Low count"}</span>)}</span> : null}
+        </span>
+      </li>)}</ol>
+    </section>}
+    {data.all.length > 0 && <section className="panel working-card" aria-label="Working today">
+      <div className="card-row"><b className="text-sm">{`Working today · ${data.all.length}`}</b>
+        {data.all.length > data.flags.length && <button type="button" className="btn secondary" onClick={() => setShowAll(v => !v)}>{showAll ? "Only who needs something" : `See all ${data.all.length}`}</button>}</div>
+      {people.length > 0 && <ul className="working-list">{people.map(p => <li key={p.user_id}>
+        <span className="working-av" aria-hidden="true">{initials(name(p.user_id))}</span>
+        <span className="working-text"><b>{name(p.user_id)}</b><small>{p.position}{p.notes.map(n => <span key={n} className="working-flag">{" · "}{n}</span>)}</small></span>
+        <span className="working-time">{p.time}</span>
+      </li>)}</ul>}
+      {!showAll && <p className="muted text-sm working-foot">{data.flags.length ? `The other ${set} ${set === 1 ? "is" : "are"} set: shift, side work and section.` : "Everyone is set: shift, side work and section."}</p>}
+      <button type="button" className="btn secondary working-schedule" onClick={onOpenSchedule}>Open the schedule</button>
+    </section>}
+  </>;
 }

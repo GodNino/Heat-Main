@@ -4025,3 +4025,37 @@ span.dash-name { text-decoration:none; }
   :root:root:root:root:root:root:root .today .dash-stats-row { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px 0; }
   :root:root:root:root:root:root:root .today .dash-stats-row li:nth-child(odd) { border-left:0; padding-left:0; }
 }
+
+/* Manager Today v2, part 2: the day's timeline (time, a rail with a dot, what happens and its status)
+   and "Working today" with only who needs something. To undo, revert the commit that added this block. */
+:root:root:root:root:root:root:root .day-card, :root:root:root:root:root:root:root .working-card { padding:16px; }
+:root:root:root:root:root:root:root .day-line { list-style:none; margin:0; padding:0; }
+:root:root:root:root:root:root:root .day-moment { display:grid; grid-template-columns:52px 14px minmax(0, 1fr); gap:10px; align-items:start; min-height:36px; }
+:root:root:root:root:root:root:root .day-time { font-family:var(--font-mono); font-size:12px; color:var(--c-muted); padding-top:2px; white-space:nowrap; }
+:root:root:root:root:root:root:root .day-rail { position:relative; align-self:stretch; }
+:root:root:root:root:root:root:root .day-rail::before { content:""; position:absolute; left:6px; top:0; bottom:0; width:1.5px; background:var(--c-line-5); }
+:root:root:root:root:root:root:root .day-moment:last-child .day-rail::before { bottom:auto; height:10px; }
+:root:root:root:root:root:root:root .day-rail i { position:absolute; left:1px; top:5px; width:12px; height:12px; border-radius:50%; background:var(--c-surface); border:2px solid var(--c-text); }
+:root:root:root:root:root:root:root .day-moment.done .day-rail i { background:var(--c-text); }
+:root:root:root:root:root:root:root .day-moment.now .day-rail i { background:var(--lime); }
+:root:root:root:root:root:root:root .day-text { display:block; padding-bottom:12px; font-size:13px; min-width:0; overflow-wrap:break-word; }
+:root:root:root:root:root:root:root .day-text b { font-size:14px; }
+:root:root:root:root:root:root:root .day-moment.done .day-text { color:var(--c-muted); }
+:root:root:root:root:root:root:root .day-moment.done .day-text b { color:var(--c-text); }
+:root:root:root:root:root:root:root .day-tag { display:inline-flex; align-items:center; height:22px; padding:0 8px; margin-left:6px; border-radius:999px; border:1px solid var(--c-line-5); font-size:11px; font-weight:700; vertical-align:1px; white-space:nowrap; }
+:root:root:root:root:root:root:root .day-tag.ok { color:var(--c-pass); border-color:currentColor; }
+:root:root:root:root:root:root:root .day-tag.bad { color:var(--c-fail); border-color:currentColor; }
+:root:root:root:root:root:root:root .day-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+:root:root:root:root:root:root:root .day-chips span { display:inline-flex; align-items:center; height:24px; padding:0 9px; border-radius:999px; border:1px solid var(--c-line-5); font-size:11px; font-weight:600; color:var(--c-text); }
+:root:root:root:root:root:root:root .day-chips span.out { text-decoration:line-through; color:var(--c-fail); border-color:currentColor; }
+:root:root:root:root:root:root:root .working-list { list-style:none; margin:0; padding:0; }
+:root:root:root:root:root:root:root .working-list li { display:grid; grid-template-columns:32px minmax(0, 1fr) auto; gap:10px; align-items:center; min-height:44px; padding:6px 0; border-top:1px solid var(--c-line-5); }
+:root:root:root:root:root:root:root .working-list li:first-child { border-top:0; }
+:root:root:root:root:root:root:root .working-av { width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background:var(--c-line-5); font-size:12px; font-weight:700; }
+:root:root:root:root:root:root:root .working-text { min-width:0; }
+:root:root:root:root:root:root:root .working-text b { display:block; font-size:14px; }
+:root:root:root:root:root:root:root .working-text small { font-size:12px; color:var(--c-muted); }
+:root:root:root:root:root:root:root .working-flag { color:var(--c-fail); font-weight:600; }
+:root:root:root:root:root:root:root .working-time { font-family:var(--font-mono); font-size:12px; text-align:right; }
+:root:root:root:root:root:root:root .working-foot { margin:10px 0 0; }
+:root:root:root:root:root:root:root .working-schedule { margin-top:14px; }
