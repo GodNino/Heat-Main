@@ -123,16 +123,33 @@ body[data-when="morning"] .pill[data-show~="morning"], body[data-when="afternoon
 body[data-when="morning"] .todo-row[data-show~="morning"], body[data-when="afternoon"] .todo-row[data-show~="afternoon"], body[data-when="close"] .todo-row[data-show~="close"] { display:grid; }
 body[data-when="morning"] .col.right .lastnight { order:-1; }
 .todo-row.first { border-top:0; padding-top:0; }
+
+/* v3: grouped by priority. Four bands, most urgent first; the time of day moves items between them. */
+.tier { margin-top:20px; }
+.tier-head { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:0 0 14px; }
+.tier-head h2 { margin:0; font-size:20px; line-height:1.2; }
+.tier-head p { margin:0; font-size:13px; color:var(--c-muted); }
+.tier-num { display:inline-grid; place-items:center; width:26px; height:26px; border-radius:50%; font-size:12px; font-weight:700; border:1.5px solid var(--c-text); flex:none; align-self:center; }
+.tier.now .tier-num { background:var(--c-fail); border-color:var(--c-fail); color:#fff; }
+.tier.now > .card { border:1.5px solid var(--c-fail); }
+.two { display:grid; gap:14px; }
+@media (min-width:900px) { .two { grid-template-columns:minmax(0, 1.15fr) minmax(0, .85fr); align-items:start; } }
+.stack { display:flex; flex-direction:column; gap:14px; }
+.empty { font-size:14px; margin:0; }
+.when-tag { display:inline-flex; height:22px; align-items:center; padding:0 8px; border-radius:999px; border:1px solid var(--c-line-5); font-size:11px; font-weight:700; color:var(--c-muted); }
+body[data-when="morning"] .only-pm, body[data-when="close"] .only-pm { display:none !important; }
+.only-morning { display:none !important; } body[data-when="morning"] .only-morning { display:grid !important; }
+.only-close { display:none !important; } body[data-when="close"] .only-close { display:grid !important; }
 </style>
 </head>
 <body data-when="afternoon">
-<div class="legend"><b>Mockup v2 · Dashboard del manager, "Hoy"</b> · Todo sale de datos que HEAT ya tiene. Lo gris en letra de máquina son notas, no van en la app.</div>
+<div class="legend"><b>Mockup v3 · Dashboard del manager, por prioridad</b> · 4 grupos, de lo más urgente a lo informativo. Lo gris en letra de máquina son notas, no van en la app.</div>
 <main class="page">
   <div class="when-switch"><b>Solo para el mockup · ver a las:</b>
     <button class="chip" data-pick="morning">11 AM</button><button class="chip on" data-pick="afternoon">4 PM</button><button class="chip" data-pick="close">11:30 PM</button>
-    <span class="muted">El dashboard cambia solo según la hora.</span></div>
+    <span class="muted">Las cosas suben o bajan de grupo según la hora.</span></div>
 
-  <!-- 1. Header -->
+  <!-- Header -->
   <div class="headline">
     <div>
       <p class="eyebrow">Dashboard · Osaka - Miami</p>
@@ -144,130 +161,122 @@ body[data-when="morning"] .col.right .lastnight { order:-1; }
     <span class="pill" data-show="morning"><span class="dot"></span>Lunch · open now · Dinner at 5:00 PM</span>
     <span class="pill" data-show="afternoon"><span class="dot"></span>Dinner · doors 5:00 PM · in 1 h</span>
     <span class="pill" data-show="close"><span class="dot"></span>Dinner · closing</span>
-    <span class="pill">Private event tonight · 45 guests</span>
+    <span class="pill">You work 3:00 – 11:30 PM</span>
   </div>
 
-  <!-- 2. Needs you: first on every screen -->
-  <section class="card" aria-label="Needs you" style="margin-top:20px">
-    <div class="card-head"><span class="section-chip">Needs you</span><span class="lead-time">Most urgent first</span></div>
-    <div class="todo">
-      <div class="todo-row first" data-show="morning"><span class="num hot">1</span><span><b>Order from last night's report</b><small>Yuzu, sesame oil, 2 cases of prosecco</small></span><button class="btn primary">Open report</button></div>
-      <div class="todo-row first" data-show="afternoon"><span class="num hot">1</span><span><b>Pre-shift not posted</b><small>Dinner starts in 1 h. 9 people will read it.</small></span><button class="btn primary">Post pre-shift</button></div>
-      <div class="todo-row first" data-show="close"><span class="num hot">1</span><span><b>Write tonight's report</b><small>Covers, sales, issues and what to order</small></span><button class="btn primary">Write report</button></div>
-      <div class="todo-row" data-show="morning afternoon"><span class="num">2</span><span><b>Friday 5–11 PM has no server</b><small>Mia gave it up. Nobody has taken it yet.</small></span><button class="btn">Find someone</button></div>
-      <div class="todo-row" data-show="morning afternoon close"><span class="num">3</span><span><b>Shift swap: Ana → Luis</b><small>Fri 5–11 PM · Luis would reach 41 h</small></span><button class="btn">Review</button></div>
-      <div class="todo-row" data-show="morning afternoon close"><span class="num">4</span><span><b>Time off: Sofía, Nov 28</b><small>Asked 2 days ago</small></span><button class="btn">Review</button></div>
-      <div class="todo-row" data-show="afternoon"><span class="num">5</span><span><b>2 people haven't read the BEO v3</b><small>Company dinner · Altamar</small></span><button class="btn">Remind</button></div>
-    </div>
-  </section>
-  <p class="ann">Va primero, en el teléfono y en la computadora. Lo de arriba cambia con la hora: en la mañana, qué pedir de anoche; en la tarde, el pre-turno; al cerrar, el reporte. Incluye turnos que nadie tomó. Una sola acción en lima.</p>
-
-  <!-- 3. Your shift -->
-  <section class="card me" aria-label="Your schedule" style="margin-top:14px">
-    <div class="me-shift">
-      <p class="eyebrow" style="margin-bottom:4px">Your shift today</p>
-      <b>3:00 – 11:30 PM</b>
-      <small>Manager on duty · Dinner · 42 h this week</small>
-    </div>
-    <div>
-      <div class="week" aria-label="Your week">
-        <div class="wd"><span>Mon</span><b>11–7</b></div>
-        <div class="wd off"><span>Tue</span><b>Off</b></div>
-        <div class="wd"><span>Wed</span><b>3–11</b></div>
-        <div class="wd today"><span>Thu</span><b>3–11:30</b></div>
-        <div class="wd"><span>Fri</span><b>3–12</b></div>
-        <div class="wd"><span>Sat</span><b>3–12</b></div>
-        <div class="wd off"><span>Sun</span><b>Off</b></div>
+  <!-- 1. NOW -->
+  <section class="tier now" aria-label="Do now">
+    <div class="tier-head"><span class="tier-num">1</span><h2>Do now</h2><p>Blocks tonight's service if it waits.</p></div>
+    <section class="card">
+      <div class="todo">
+        <div class="todo-row first" data-show="morning"><span class="num hot">!</span><span><b>Order from last night's report</b><small>Yuzu, sesame oil, 2 cases of prosecco · before the 2 PM delivery cut-off</small></span><button class="btn primary">Open report</button></div>
+        <div class="todo-row first" data-show="afternoon"><span class="num hot">!</span><span><b>Pre-shift not posted</b><small>Dinner starts in 1 h · 9 people will read it</small></span><button class="btn primary">Post pre-shift</button></div>
+        <div class="todo-row first" data-show="close"><span class="num hot">!</span><span><b>Write tonight's report</b><small>Covers, sales, issues and what to order</small></span><button class="btn primary">Write report</button></div>
+        <div class="todo-row" data-show="morning afternoon"><span class="num hot">!</span><span><b>Friday 5–11 PM has no server</b><small>Mia gave it up · nobody has taken it</small></span><button class="btn">Find someone</button></div>
+        <div class="todo-row" data-show="afternoon"><span class="num hot">!</span><span><b>2 people working the event haven't read the BEO v3</b><small>Company dinner · starts at 6 PM</small></span><button class="btn">Remind</button></div>
+        <div class="todo-row" data-show="close"><span class="num hot">!</span><span><b>Closing checklist · 5 of 9</b><small>Kitchen and bar still open</small></span><button class="btn">Open checklist</button></div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn">My schedule</button><button class="btn">Ask for time off</button></div>
-    </div>
+    </section>
+    <p class="ann">Solo lo que no puede esperar. Borde rojo para que se vea primero. Una sola acción en lima. Si no hay nada: “Nothing urgent. You're all set for now.”</p>
   </section>
-  <p class="ann">Tu propio horario: el turno de hoy y tu semana, del mismo horario publicado. El dueño y los managers ya pueden tener turnos.</p>
 
-  <!-- 4. Numbers -->
-  <section class="kpis" aria-label="Today in numbers" style="margin-top:14px">
-    <div class="kpi"><b>14</b><span>Working today</span><small>9 FOH · 5 BOH</small></div>
-    <div class="kpi"><b>86.5 h</b><span>Scheduled today</span><small><span class="up">−4%</span> vs last Thursday</small></div>
-    <div class="kpi"><b>212</b><span>Covers last night</span><small><span class="up">+8%</span> vs last Wednesday</small></div>
-    <div class="kpi"><b>$16,480</b><span>Sales last night</span><small><span class="down">−3%</span> vs last Wednesday</small></div>
+  <!-- 2. TODAY -->
+  <section class="tier" aria-label="Today">
+    <div class="tier-head"><span class="tier-num">2</span><h2>Today</h2><p>What's happening and who's on.</p></div>
+    <div class="two">
+      <div class="stack">
+        <section class="card" aria-label="Timeline">
+          <div class="card-head"><span class="label">The day</span><span class="lead-time">Schedule, board and events</span></div>
+          <div class="timeline">
+            <div class="tl done"><span class="t">10:00 AM</span><span class="rail"><i></i></span><p><b>Opening checklist</b><span class="tag ok">8 of 8</span></p></div>
+            <div class="tl done"><span class="t">10:30 AM</span><span class="rail"><i></i></span><p><b>Lunch</b> · 6 on the floor, 4 in the kitchen</p></div>
+            <div class="tl done"><span class="t">3:00 PM</span><span class="rail"><i></i></span><p><b>Event setup</b> · Private room + terrace</p></div>
+            <div class="tl now"><span class="t">4:30 PM</span><span class="rail"><i></i></span><p><b>Pre-shift</b><span class="tag bad">Not posted</span><span class="out"><span class="x">Toro</span><span class="x">Uni</span><span>Wagyu · low</span></span></p></div>
+            <div class="tl"><span class="t">5:00 PM</span><span class="rail"><i></i></span><p><b>Dinner</b> · 9 FOH, 5 BOH · side work and sections <span class="tag ok">Sent</span></p></div>
+            <div class="tl"><span class="t">6:00 PM</span><span class="rail"><i></i></span><p><b>Company dinner · Altamar</b> · 45 guests</p></div>
+            <div class="tl"><span class="t">11:00 PM</span><span class="rail"><i></i></span><p><b>Closing checklist</b> · then the end-of-shift report</p></div>
+          </div>
+        </section>
+        <section class="card" aria-label="Working today">
+          <div class="card-head"><span class="label">Working today · 14</span><button class="btn">See all 14</button></div>
+          <div class="people">
+            <div class="person"><span class="av">LG</span><span><b>Luis García</b><small>Bartender · <span class="down">39.5 h this week</span></small></span><span class="when">4–12 AM</span></div>
+            <div class="person"><span class="av">JP</span><span><b>Jack Park</b><small>Server assistant · <span class="down">no side work tonight</span></small></span><span class="when">3–11 PM</span></div>
+            <div class="person"><span class="av">MV</span><span><b>Mia Vega</b><small>Server · <span class="down">no section</span></small></span><span class="when">5–11 PM</span></div>
+          </div>
+          <p class="lead-time" style="margin:10px 0 0">The other 11 are set: shift, section and side work.</p>
+        </section>
+      </div>
+      <div class="stack">
+        <section class="card" aria-label="Event today">
+          <div class="card-head"><span class="label">Event today</span><button class="btn">Open BEO</button></div>
+          <p style="margin:0 0 12px;font-weight:700">Company dinner · Grupo Altamar</p>
+          <div class="facts">
+            <div><span>Time</span><b>6–10:30 PM</b></div>
+            <div><span>Guests</span><b>45</b></div>
+            <div><span>Read v3</span><b>4 of 6</b></div>
+          </div>
+          <div class="allergen">
+            <b>3 guest allergies</b>
+            <div class="codes"><span>SHL</span><span>GLU</span><span>SES</span></div>
+            Confirm with the kitchen before serving.
+          </div>
+        </section>
+        <section class="card me" aria-label="Your schedule" style="grid-template-columns:1fr">
+          <div class="me-shift">
+            <p class="eyebrow" style="margin-bottom:4px">Your shift today</p>
+            <b>3:00 – 11:30 PM</b>
+            <small>Manager on duty · Dinner · 42 h this week</small>
+          </div>
+          <div>
+            <div class="week" aria-label="Your week">
+              <div class="wd"><span>Mon</span><b>11–7</b></div>
+              <div class="wd off"><span>Tue</span><b>Off</b></div>
+              <div class="wd"><span>Wed</span><b>3–11</b></div>
+              <div class="wd today"><span>Thu</span><b>3–11:30</b></div>
+              <div class="wd"><span>Fri</span><b>3–12</b></div>
+              <div class="wd"><span>Sat</span><b>3–12</b></div>
+              <div class="wd off"><span>Sun</span><b>Off</b></div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap"><button class="btn">My schedule</button><button class="btn">Ask for time off</button></div>
+          </div>
+        </section>
+      </div>
+    </div>
+    <p class="ann">Lo de hoy: la línea del día, el evento con sus alérgenos, quién necesita algo del equipo y tu propio turno.</p>
   </section>
-  <p class="ann">Si anoche nadie llenó el reporte, cubiertos y ventas dicen “No report last night”, con un botón para llenarlo.</p>
 
-  <div class="grid">
-    <div class="col">
-      <!-- 5. Today's timeline, with the board's status inside -->
-      <section class="card" aria-label="Today">
-        <div class="card-head"><span class="section-chip">Today</span><span class="lead-time">Schedule, board and events</span></div>
-        <div class="timeline">
-          <div class="tl done"><span class="t">10:00 AM</span><span class="rail"><i></i></span><p><b>Opening checklist</b><span class="tag ok">8 of 8</span></p></div>
-          <div class="tl done"><span class="t">10:30 AM</span><span class="rail"><i></i></span><p><b>Lunch</b> · 6 on the floor, 4 in the kitchen</p></div>
-          <div class="tl done"><span class="t">3:00 PM</span><span class="rail"><i></i></span><p><b>Event setup</b> · Private room + terrace</p></div>
-          <div class="tl now"><span class="t">4:30 PM</span><span class="rail"><i></i></span><p><b>Pre-shift</b><span class="tag bad">Not posted</span><span class="out"><span class="x">Toro</span><span class="x">Uni</span><span>Wagyu · low</span></span></p></div>
-          <div class="tl"><span class="t">5:00 PM</span><span class="rail"><i></i></span><p><b>Dinner</b> · 9 FOH, 5 BOH · side work and sections <span class="tag ok">Sent</span></p></div>
-          <div class="tl"><span class="t">6:00 PM</span><span class="rail"><i></i></span><p><b>Company dinner · Altamar</b> · 45 guests · 3 allergies</p></div>
-          <div class="tl"><span class="t">11:00 PM</span><span class="rail"><i></i></span><p><b>Closing checklist</b> · then the end-of-shift report</p></div>
-        </div>
-      </section>
-      <p class="ann">Una sola línea del día: horario, checklists, pre-turno con el 86, side work y el evento, cada uno con su estado. Reemplaza la tarjeta “Tonight's board”.</p>
+  <!-- 3. WHEN YOU CAN -->
+  <section class="tier" aria-label="When you can">
+    <div class="tier-head"><span class="tier-num">3</span><h2>When you can</h2><p>Requests and follow-ups. Not for tonight.</p></div>
+    <section class="card">
+      <div class="todo">
+        <div class="todo-row first"><span class="num">1</span><span><b>Shift swap: Ana → Luis</b><small>Fri 5–11 PM · Luis would reach 41 h · asked today</small></span><button class="btn">Review</button></div>
+        <div class="todo-row"><span class="num">2</span><span><b>Time off: Sofía, Nov 28</b><small>Asked 2 days ago</small></span><button class="btn">Review</button></div>
+        <div class="todo-row"><span class="num">3</span><span><b>2 people behind on study</b><small>Leo and Mia · Ceviches, assigned Monday</small></span><button class="btn">Remind</button></div>
+        <div class="todo-row only-pm" data-show="afternoon"><span class="num">4</span><span><b>Getting started · 3 of 6</b><small>Next: draw your floor map</small></span><button class="btn">Continue</button></div>
+      </div>
+    </section>
+    <p class="ann">Lo que tiene que hacerse, pero no antes del servicio. Cuando algo se acerca a su fecha (por ejemplo, un turno de mañana sin cubrir), sube al grupo 1.</p>
+  </section>
 
-      <!-- 6. Working today: only who needs attention -->
-      <section class="card" aria-label="Working today">
-        <div class="card-head"><span class="label">Working today · 14</span><button class="btn">See all 14</button></div>
-        <div class="people">
-          <div class="person"><span class="av">LG</span><span><b>Luis García</b><small>Bartender · <span class="down">39.5 h this week</span></small></span><span class="when">4–12 AM</span></div>
-          <div class="person"><span class="av">JP</span><span><b>Jack Park</b><small>Server assistant · <span class="down">no side work tonight</span></small></span><span class="when">3–11 PM</span></div>
-          <div class="person"><span class="av">MV</span><span><b>Mia Vega</b><small>Server · <span class="down">no section</span></small></span><span class="when">5–11 PM</span></div>
-        </div>
-        <p class="lead-time" style="margin:10px 0 0">The other 11 are set: shift, section and side work.</p>
-      </section>
-      <p class="ann">Solo quien necesita algo (casi en 40 h, sin sección o sin side work). El resto, con “See all”.</p>
-    </div>
-
-    <div class="col right">
-      <!-- 7. Event today -->
-      <section class="card" aria-label="Event today">
-        <div class="card-head"><span class="label">Event today</span><button class="btn">Open BEO</button></div>
-        <p style="margin:0 0 12px;font-weight:700">Company dinner · Grupo Altamar</p>
-        <div class="facts">
-          <div><span>Time</span><b>6–10:30 PM</b></div>
-          <div><span>Guests</span><b>45</b></div>
-          <div><span>Read v3</span><b>4 of 6</b></div>
-        </div>
-        <div class="allergen">
-          <b>3 guest allergies</b>
-          <div class="codes"><span>SHL</span><span>GLU</span><span>SES</span></div>
-          Confirm with the kitchen before serving.
-        </div>
-      </section>
-
-      <!-- 8. Last night -->
-      <section class="card lastnight" aria-label="Last night">
-        <div class="card-head"><span class="label">Last night · Dinner</span><button class="btn">Full report</button></div>
-        <div class="night">
-          <div><b>212</b><span>covers</span></div>
-          <div><b>$16.5k</b><span>sales</span></div>
-          <div><b>Busy</b><span>how it went</span></div>
-        </div>
-        <p class="note bad"><b>Issue:</b> table 12 waited 25 min for mains (kitchen).</p>
-        <p class="note"><b>To order:</b> yuzu, sesame oil, 2 cases of prosecco.</p>
-        <p class="note"><b>For today:</b> check the walk-in temperature before lunch.</p>
-      </section>
-      <p class="ann">En la mañana sube al primer lugar de esta columna.</p>
-
-      <!-- 9. Study, one line -->
-      <section class="card oneline" aria-label="Study">
-        <span><b>Study</b><small>2 people behind on what you assigned · 74% of the menu known</small></span>
-        <button class="btn">Training</button>
-      </section>
-
-      <!-- 10. Getting started, folded -->
-      <section class="card oneline" aria-label="Getting started">
-        <span><b>Getting started · 3 of 6</b><small>Next: draw your floor map</small></span>
-        <button class="btn">Continue</button>
-      </section>
-      <p class="ann">Estudio y “Getting started” quedan en una línea cada uno. El detalle del estudio vive en la pestaña Training.</p>
-    </div>
-  </div>
+  <!-- 4. GOOD TO KNOW -->
+  <section class="tier" aria-label="Good to know">
+    <div class="tier-head"><span class="tier-num">4</span><h2>Good to know</h2><p>Numbers and last night.</p></div>
+    <section class="kpis" aria-label="Today in numbers" style="margin-top:0">
+      <div class="kpi"><b>14</b><span>Working today</span><small>9 FOH · 5 BOH</small></div>
+      <div class="kpi"><b>86.5 h</b><span>Scheduled today</span><small><span class="up">−4%</span> vs last Thursday</small></div>
+      <div class="kpi"><b>212</b><span>Covers last night</span><small><span class="up">+8%</span> vs last Wednesday</small></div>
+      <div class="kpi"><b>$16,480</b><span>Sales last night</span><small><span class="down">−3%</span> vs last Wednesday</small></div>
+    </section>
+    <section class="card lastnight" aria-label="Last night" style="margin-top:14px">
+      <div class="card-head"><span class="label">Last night · Dinner · Busy</span><button class="btn">Full report</button></div>
+      <p class="note bad" style="margin-top:0"><b>Issue:</b> table 12 waited 25 min for mains (kitchen).</p>
+      <p class="note"><b>To order:</b> yuzu, sesame oil, 2 cases of prosecco.</p>
+      <p class="note"><b>For today:</b> check the walk-in temperature before lunch.</p>
+    </section>
+    <p class="ann">Los números y el reporte de anoche, para leer con calma. En la mañana, “To order” sube al grupo 1. Si no hubo reporte: “No report last night”, con un botón para llenarlo.</p>
+  </section>
 </main>
 <script>
   // Mockup only: preview the dashboard at three times of day.
