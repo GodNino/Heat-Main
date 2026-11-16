@@ -67,6 +67,18 @@ This local project is initialized on `codex/heat-v0.1`. If no commit exists yet,
 
 Vercel and Supabase account setup and a real cross-device test must be completed before calling the milestone live.
 
+### Who merges, while Vercel is on the Hobby plan
+
+The repository is private and the Vercel project is on the free Hobby plan. On that plan Vercel only builds
+commits made by the owner of the Vercel account (Diego). A merge done by anyone else, Gaby included, shows
+as **Blocked** in Vercel and the site keeps the previous version.
+
+Until the project moves to Vercel Pro with Gaby as a member:
+- Gaby pushes her branch and opens the Pull Request, but does not merge it.
+- Diego reviews and merges it (or asks his Claude to). That merge is his, so Vercel publishes it.
+- If something was merged by someone else, Diego opens Vercel → Deployments → the Blocked deployment →
+  ⋯ → Redeploy, or merges the next Pull Request, which publishes everything on `main`.
+
 ## Project map
 
 - `app/page.tsx`: login, restaurant setup, manager workspace, and employee menu.
