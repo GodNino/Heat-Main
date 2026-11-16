@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manager Today</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Mockup: the manager's dashboard rebuilt around today. Every number comes from data HEAT already has
+   (schedule, pre-shift, side work, events, shift reports, study, requests). Tokens from DESIGN_RULES.md. */
+:root { --lime:#C7F23A; --c-bg:#F1F1EC; --c-surface:#FBFBF8; --c-text:#1B1C1A; --c-muted:#62645D; --c-line-5:#DCDCD5; --c-pass:#17803F; --c-fail:#D42A1C; --c-raised:#E9E9E3; --on-lime:#1B1C1A; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --c-bg:#121311; --c-surface:#1C1D1B; --c-text:#EEF0E8; --c-muted:#A3A59D; --c-line-5:#30322E; --c-pass:#3FB96A; --c-fail:#FF6B5B; --c-raised:#262825; } }
+:root[data-theme="dark"] { --c-bg:#121311; --c-surface:#1C1D1B; --c-text:#EEF0E8; --c-muted:#A3A59D; --c-line-5:#30322E; --c-pass:#3FB96A; --c-fail:#FF6B5B; --c-raised:#262825; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--c-bg); color:var(--c-text); font:16px/1.45 "IBM Plex Sans", system-ui, sans-serif; }
+.page { max-width:1180px; margin:0 auto; padding:20px 16px 40px; }
+.mono { font-family:"IBM Plex Mono", monospace; }
+.muted { color:var(--c-muted); }
+/* Header */
+.eyebrow { font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--c-muted); margin:0; }
+h1 { font-size:24px; margin:4px 0 0; line-height:1.15; }
+.headline { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-end; gap:14px; }
+.service-line { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.pill { height:30px; display:inline-flex; align-items:center; gap:6px; padding:0 12px; border-radius:999px; border:1px solid var(--c-line-5); background:var(--c-surface); font-size:12px; font-weight:600; }
+.pill .dot { width:8px; height:8px; border-radius:50%; background:var(--c-pass); }
+.chips { display:flex; gap:8px; overflow-x:auto; }
+.chip { height:30px; display:inline-flex; align-items:center; padding:0 14px; border-radius:999px; border:1px solid var(--c-text); font-size:12px; font-weight:600; background:transparent; color:var(--c-text); white-space:nowrap; }
+.chip.on { background:var(--c-text); color:var(--c-surface); }
+/* Layout */
+.grid { display:grid; gap:14px; margin-top:20px; }
+@media (min-width:900px) { .grid { grid-template-columns:minmax(0, 1.15fr) minmax(0, .85fr); align-items:start; } }
+.col { display:grid; gap:14px; }
+.card { background:var(--c-surface); border:1px solid var(--c-line-5); border-radius:18px; padding:16px; }
+.card-head { display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:14px; }
+.label { font-size:13px; font-weight:700; }
+.section-chip { display:inline-flex; align-items:center; height:26px; padding:0 10px; border-radius:999px; background:var(--c-text); color:var(--c-surface); font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+.btn { height:30px; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:0 14px; border-radius:999px; border:1px solid var(--c-text); background:transparent; color:var(--c-text); font:600 12px "IBM Plex Sans", sans-serif; white-space:nowrap; cursor:pointer; }
+.btn.primary { background:var(--lime); color:var(--on-lime); border-color:var(--on-lime); }
+/* KPI strip */
+.kpis { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:1px; background:var(--c-line-5); border:1px solid var(--c-line-5); border-radius:18px; overflow:hidden; margin-top:20px; }
+@media (min-width:720px) { .kpis { grid-template-columns:repeat(4, minmax(0, 1fr)); } }
+.kpi { background:var(--c-surface); padding:16px; }
+.kpi b { display:block; font-size:28px; line-height:1.05; letter-spacing:-.01em; }
+.kpi span { display:block; font-size:13px; font-weight:600; margin-top:6px; }
+.kpi small { display:block; font-size:12px; color:var(--c-muted); margin-top:2px; }
+.up { color:var(--c-pass); font-weight:700; } .down { color:var(--c-fail); font-weight:700; }
+/* Needs you */
+.todo { display:grid; }
+.todo-row { display:grid; grid-template-columns:auto minmax(0, 1fr) auto; gap:12px; align-items:center; min-height:44px; padding:10px 0; border-top:1px solid var(--c-line-5); }
+.todo-row:first-child { border-top:0; padding-top:0; }
+.num { width:26px; height:26px; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:700; border:1.5px solid var(--c-text); }
+.num.hot { background:var(--c-fail); border-color:var(--c-fail); color:#fff; }
+.todo-row b { display:block; font-size:14px; }
+.todo-row small { display:block; font-size:12px; color:var(--c-muted); }
+/* Timeline */
+.timeline { display:grid; }
+.tl { display:grid; grid-template-columns:72px 14px minmax(0, 1fr); gap:10px; align-items:start; min-height:36px; }
+.tl .t { font-family:"IBM Plex Mono", monospace; font-size:12px; color:var(--c-muted); padding-top:2px; }
+.tl .rail { position:relative; height:100%; }
+.tl .rail::before { content:""; position:absolute; left:6px; top:0; bottom:0; width:1.5px; background:var(--c-line-5); }
+.tl .rail i { position:absolute; left:1px; top:5px; width:12px; height:12px; border-radius:50%; background:var(--c-surface); border:2px solid var(--c-text); }
+.tl.now .rail i { background:var(--lime); border-color:var(--c-text); }
+.tl.done .rail i { background:var(--c-text); }
+.tl:last-child .rail::before { bottom:auto; height:10px; }
+.tl p { margin:0 0 12px; font-size:13px; } .tl p b { font-size:14px; }
+.tag { display:inline-flex; align-items:center; height:22px; padding:0 8px; border-radius:999px; font-size:11px; font-weight:700; border:1px solid var(--c-line-5); margin-left:6px; vertical-align:1px; }
+.tag.ok { color:var(--c-pass); border-color:currentColor; } .tag.bad { color:var(--c-fail); border-color:currentColor; }
+/* Team tonight */
+.seg { display:flex; gap:6px; margin-bottom:14px; }
+.people { display:grid; }
+.person { display:grid; grid-template-columns:32px minmax(0, 1fr) auto; gap:10px; align-items:center; min-height:44px; border-top:1px solid var(--c-line-5); padding:6px 0; }
+.person:first-child { border-top:0; }
+.av { width:32px; height:32px; border-radius:50%; display:grid; place-items:center; background:var(--c-raised); font-size:12px; font-weight:700; }
+.person b { font-size:14px; display:block; } .person small { font-size:12px; color:var(--c-muted); }
+.person .when { font-family:"IBM Plex Mono", monospace; font-size:12px; text-align:right; }
+.bar-row { display:grid; grid-template-columns:90px minmax(0, 1fr) 46px; gap:10px; align-items:center; font-size:13px; min-height:28px; }
+.bar { height:8px; border-radius:999px; background:var(--c-raised); overflow:hidden; } .bar i { display:block; height:100%; background:var(--c-text); border-radius:999px; }
+.bar-row b { text-align:right; font-size:12px; }
+/* Board status */
+.status { display:grid; grid-template-columns:minmax(0, 1fr) auto; gap:10px; align-items:center; min-height:44px; padding:8px 0; border-top:1px solid var(--c-line-5); }
+.status:first-of-type { border-top:0; padding-top:0; }
+.status b { font-size:14px; display:block; } .status small { font-size:12px; color:var(--c-muted); }
+.out { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.out span { height:24px; display:inline-flex; align-items:center; padding:0 9px; border-radius:999px; border:1px solid var(--c-line-5); font-size:11px; font-weight:600; }
+.out span.x { text-decoration:line-through; color:var(--c-fail); border-color:currentColor; }
+/* Event */
+.facts { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-bottom:14px; }
+.facts span { display:block; font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--c-muted); }
+.facts b { font-size:14px; }
+.allergen { background:var(--lime); color:var(--on-lime); border-radius:14px; padding:12px; font-size:13px; }
+.allergen .codes { display:flex; gap:6px; margin:6px 0; flex-wrap:wrap; }
+.allergen .codes span { font-family:"IBM Plex Mono", monospace; font-size:11px; font-weight:700; border:1px solid var(--on-lime); border-radius:999px; padding:1px 8px; }
+/* Last night */
+.night { display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px; margin-bottom:14px; }
+.night b { display:block; font-size:20px; } .night span { font-size:12px; color:var(--c-muted); }
+.note { border-left:3px solid var(--c-text); padding:2px 0 2px 10px; font-size:13px; margin:10px 0 0; }
+.note.bad { border-color:var(--c-fail); }
+/* Getting started, folded */
+.fold { display:flex; justify-content:space-between; align-items:center; gap:14px; }
+/* Annotations (mockup only) */
+.ann { font-family:"IBM Plex Mono", monospace; font-size:11px; color:var(--c-muted); margin:8px 0 0; }
+.legend { background:var(--c-text); color:var(--c-surface); font-size:13px; padding:10px 16px; }
+.legend b { color:var(--lime); }
+</style>
+</head>
+<body>
+<div class="legend"><b>Mockup · Dashboard del manager, "Hoy"</b> · Todo sale de datos que HEAT ya tiene. Lo gris en letra de máquina son notas del mockup, no van en la app.</div>
+<main class="page">
+
+  <!-- 1. Header -->
+  <div class="headline">
+    <div>
+      <p class="eyebrow">Dashboard · Osaka - Miami</p>
+      <h1>Thursday, November 19</h1>
+    </div>
+    <div class="chips" role="group" aria-label="View"><span class="chip on">Today</span><span class="chip">This week</span><span class="chip">Training</span></div>
+  </div>
+  <div class="service-line">
+    <span class="pill"><span class="dot"></span>Dinner · doors 5:00 PM · in 2 h 10 min</span>
+    <span class="pill">Private event tonight · 45 guests</span>
+  </div>
+  <p class="ann">Una sola línea dice qué servicio viene y cuánto falta. Las pestañas pasan de 4 a 3: Hoy, Esta semana (labor y ventas) y Entrenamiento.</p>
+
+  <!-- 2. Numbers -->
+  <section class="kpis" aria-label="Today in numbers">
+    <div class="kpi"><b>14</b><span>Working today</span><small>9 FOH · 5 BOH</small></div>
+    <div class="kpi"><b>86.5 h</b><span>Scheduled today</span><small><span class="up">−4%</span> vs last Thursday</small></div>
+    <div class="kpi"><b>212</b><span>Covers last night</span><small><span class="up">+8%</span> vs last Wednesday</small></div>
+    <div class="kpi"><b>$16,480</b><span>Sales last night</span><small><span class="down">−3%</span> vs last Wednesday</small></div>
+  </section>
+  <p class="ann">Personas y horas salen del horario publicado. Cubiertos y ventas, del reporte de turno de anoche, comparados con el mismo día de la semana pasada.</p>
+
+  <div class="grid">
+    <div class="col">
+
+      <!-- 3. Needs you -->
+      <section class="card" aria-label="Needs you">
+        <div class="card-head"><span class="section-chip">Needs you · 4</span><span class="muted" style="font-size:12px">Most urgent first</span></div>
+        <div class="todo">
+          <div class="todo-row"><span class="num hot">1</span><span><b>Pre-shift not posted</b><small>Dinner starts in 2 h. 9 people will read it.</small></span><button class="btn primary">Post pre-shift</button></div>
+          <div class="todo-row"><span class="num">2</span><span><b>Shift swap: Ana → Luis</b><small>Fri 5–11 PM · Luis would reach 41 h</small></span><button class="btn">Review</button></div>
+          <div class="todo-row"><span class="num">3</span><span><b>Time off: Sofía, Nov 28</b><small>Asked 2 days ago</small></span><button class="btn">Review</button></div>
+          <div class="todo-row"><span class="num">4</span><span><b>2 people haven't read the BEO v3</b><small>Company dinner · Altamar</small></span><button class="btn">Remind</button></div>
+        </div>
+      </section>
+      <p class="ann">Lo que el manager tiene que hacer hoy, en orden. Solo la primera acción va en lima (una por pantalla). Si no hay nada, dice “You're all set for today”.</p>
+
+      <!-- 4. Today's timeline -->
+      <section class="card" aria-label="Today">
+        <div class="card-head"><span class="section-chip">Today</span><span class="muted" style="font-size:12px">From the schedule and events</span></div>
+        <div class="timeline">
+          <div class="tl done"><span class="t">10:30 AM</span><span class="rail"><i></i></span><p><b>Lunch opens</b> · 6 on the floor, 4 in the kitchen</p></div>
+          <div class="tl done"><span class="t">3:00 PM</span><span class="rail"><i></i></span><p><b>Event setup</b> · Private room + terrace</p></div>
+          <div class="tl now"><span class="t">4:30 PM</span><span class="rail"><i></i></span><p><b>Pre-shift</b><span class="tag bad">Not posted</span></p></div>
+          <div class="tl"><span class="t">5:00 PM</span><span class="rail"><i></i></span><p><b>Dinner</b> · 9 FOH, 5 BOH · side work <span class="tag ok">Sent</span></p></div>
+          <div class="tl"><span class="t">6:00 PM</span><span class="rail"><i></i></span><p><b>Company dinner · Altamar</b> · 45 guests · 3 allergies</p></div>
+          <div class="tl"><span class="t">11:00 PM</span><span class="rail"><i></i></span><p><b>Close</b> · end-of-shift report due</p></div>
+        </div>
+      </section>
+
+      <!-- 5. Team tonight -->
+      <section class="card" aria-label="Working today">
+        <div class="card-head"><span class="label">Working today</span><span class="muted" style="font-size:12px">14 people · 86.5 h</span></div>
+        <div class="seg"><span class="chip on">Floor · 9</span><span class="chip">Kitchen · 5</span></div>
+        <div class="people">
+          <div class="person"><span class="av">AR</span><span><b>Ana Ruiz</b><small>Server · section 3 · glassware</small></span><span class="when">5–11 PM</span></div>
+          <div class="person"><span class="av">LG</span><span><b>Luis García</b><small>Bartender · <span class="down">39.5 h this week</span></small></span><span class="when">4–12 AM</span></div>
+          <div class="person"><span class="av">SM</span><span><b>Sofía Méndez</b><small>Server · section 1 · coffee station</small></span><span class="when">5–11 PM</span></div>
+          <div class="person"><span class="av">JP</span><span><b>Jack Park</b><small>Server assistant · event</small></span><span class="when">3–11 PM</span></div>
+          <div class="person"><span class="av">+5</span><span><b>5 more on the floor</b><small>Open the schedule for everyone</small></span><span class="when"></span></div>
+        </div>
+      </section>
+      <p class="ann">Quién trabaja hoy, con su horario, su sección y su side work. Si alguien está por pasar las 40 horas, sale en rojo.</p>
+    </div>
+
+    <div class="col">
+
+      <!-- 6. Tonight's board -->
+      <section class="card" aria-label="Tonight's board">
+        <div class="card-head"><span class="label">Tonight's board</span></div>
+        <div class="status"><span><b>Pre-shift</b><small>Not posted yet</small></span><span class="tag bad">To do</span></div>
+        <div class="status"><span><b>Side work and sections</b><small>Sent at 2:40 PM · 9 of 9 have a job</small></span><span class="tag ok">Sent</span></div>
+        <div class="status"><span><b>86 and low</b><small>From yesterday's pre-shift. Update it when you post.</small>
+          <div class="out"><span class="x">Toro</span><span class="x">Uni</span><span>Wagyu · low</span></div></span><span></span></div>
+      </section>
+
+      <!-- 7. Event today -->
+      <section class="card" aria-label="Event today">
+        <div class="card-head"><span class="label">Event today</span><button class="btn">Open BEO</button></div>
+        <p style="margin:0 0 12px;font-weight:700">Company dinner · Grupo Altamar</p>
+        <div class="facts">
+          <div><span>Time</span><b>6–10:30 PM</b></div>
+          <div><span>Guests</span><b>45</b></div>
+          <div><span>Read v3</span><b>4 of 6</b></div>
+        </div>
+        <div class="allergen">
+          <b>3 guest allergies</b>
+          <div class="codes"><span>SHL</span><span>GLU</span><span>SES</span></div>
+          Confirm with the kitchen before serving.
+        </div>
+      </section>
+
+      <!-- 8. Last night -->
+      <section class="card" aria-label="Last night">
+        <div class="card-head"><span class="label">Last night · Dinner</span><button class="btn">Full report</button></div>
+        <div class="night">
+          <div><b>212</b><span>covers</span></div>
+          <div><b>$16.5k</b><span>sales</span></div>
+          <div><b>Busy</b><span>how it went</span></div>
+        </div>
+        <p class="note bad"><b>Issue:</b> table 12 waited 25 min for mains (kitchen).</p>
+        <p class="note"><b>To order:</b> yuzu, sesame oil, 2 cases of prosecco.</p>
+        <p class="note"><b>For today:</b> check the walk-in temperature before lunch.</p>
+      </section>
+      <p class="ann">Lo importante del reporte de anoche: números, problemas, qué pedir y qué dejaron para hoy.</p>
+
+      <!-- 9. Training -->
+      <section class="card" aria-label="Training">
+        <div class="card-head"><span class="label">Study this week</span><button class="btn">Assign study</button></div>
+        <div class="bar-row"><span>Food</span><span class="bar"><i style="width:82%"></i></span><b>82%</b></div>
+        <div class="bar-row"><span>Cocktails</span><span class="bar"><i style="width:64%"></i></span><b>64%</b></div>
+        <div class="bar-row"><span>Wine &amp; sake</span><span class="bar"><i style="width:45%"></i></span><b>45%</b></div>
+        <p class="muted" style="font-size:12px;margin:10px 0 0">Behind on what you assigned: <b style="color:var(--c-text)">Leo, Mia</b> · New this month: Jack</p>
+      </section>
+
+      <!-- 10. Getting started, folded -->
+      <section class="card fold" aria-label="Getting started">
+        <span><b style="font-size:14px">Getting started · 3 of 6</b><br><small class="muted">Next: draw your floor map</small></span>
+        <button class="btn">Continue</button>
+      </section>
+      <p class="ann">“Getting started” ya no ocupa media pantalla: queda en una línea al final y desaparece cuando se termina.</p>
+    </div>
+  </div>
+</main>
+</body>
+</html>
