@@ -79,7 +79,7 @@ import { MyShiftCard } from "./my-shift-card";
 import { Locations, setUpLibraries, type Organization } from "./locations";
 import { BrandDashboard, ManagerDashboard, MyActivity } from "./dashboards";
 import { Tour, tourSeen, tourSteps } from "./tour";
-import { LastShiftNote, ShiftReports } from "./shift-report";
+import { ShiftReports } from "./shift-report";
 import { LanguageSwitch, currentLang, setLang } from "./language";
 import { NotificationSwitch, notify } from "./notifications";
 import { GettingStarted } from "./getting-started";
@@ -90,9 +90,10 @@ import { PositionChips, samePosition } from "./position-chips";
 import { EmployeeOfMonth, EmployeeOfMonthCard } from "./employee-of-month";
 import { Events, NextEventCard } from "./events";
 import { TeamChat, useChatUnread } from "./team-chat";
-import { MyWeek, NextShift, Schedule, ShiftChangesWaiting, TodayRoster, type ScheduleTab } from "./schedule";
+import { MyWeek, Schedule, ShiftChangesWaiting, TodayRoster, type ScheduleTab } from "./schedule";
 import { FOH_POSITIONS, KITCHEN_POSITIONS, POSITIONS, positionRank } from "@/lib/schedule";
-import { ManagerAttention, type AttentionTarget } from "./home-cards";
+import { type AttentionTarget } from "./home-cards";
+import { NeedsYou, LastNightCard, EventTodayCard, type NeedTarget } from "./manager-today";
 
 // Every screen the workspace can show. Named once: it used to be spelled out in two places.
 type View = "tostudy" | "home" | "library" | "allergy" | "review" | "progress" | "team" | "preshift" | "words" | "standards" | "story" | "library-settings" | "checklists" | "locations" | "dashboard" | "reports" | "schedule" | "tutor" | "assistant" | "chat" | "recognition" | "events" | "files";
@@ -1775,18 +1776,25 @@ function Workspace({
     if (!restaurant) return null;
     const rid = restaurant.id;
     const canSchedule = can("team") || can("schedule_foh") || can("schedule_boh");
+    const canReports = can("preshift") || can("team");
+    // v2 (docs/mockups/manager-today.html): what needs you first, then your own shift, the day in numbers,
+    // and the day itself beside the event and last night. Getting started waits at the bottom.
     return <div className="today">
-      {/* A new restaurant's steps to get going; gone once done or hidden. */}
-      {(isOwner || can("team")) && !employeeView && !itemsLoading && <GettingStarted key={`start-${rid}`} restaurantId={rid} menuCount={items.length}
-        onGo={place => place === "library" ? navigate("library", "All", "food") : navigate(place)} />}
-      {(can("preshift") || can("team") || canSchedule) && <TodayFigures key={`figures-${rid}`} restaurantId={rid} canSchedule={canSchedule} />}
-      {(can("team") || can("preshift") || can("library") || canSchedule) && <ManagerAttention key={`attention-${rid}`} restaurantId={rid} canTeam={can("team")} canSchedule={canSchedule} canReports={can("preshift") || can("team")} onOpen={openAttention} />}
-      <TodayStatus key={`status-${rid}`} restaurantId={rid} canPreshift={can("preshift")} canReports={can("preshift") || can("team")} onPreshift={edit => {navigate("preshift"); setPreshiftEdit(edit);}} onSideWork={() => navigate("checklists")} onReport={openPastReports} />
-      {can("preshift") && <PostedPreShiftCard key={`posted-${rid}`} restaurantId={rid} items={items} restaurantName={restaurant.name} />}
+      {(can("team") || can("preshift") || can("library") || canSchedule) && <NeedsYou key={`needs-${rid}`} restaurantId={rid} canPreshift={can("preshift")} canSchedule={canSchedule} canTeam={can("team")} canReports={canReports} onOpen={openNeed} />}
+      <MyWeek key={`week-${rid}`} restaurantId={rid} userId={user.id} onOpen={() => openSchedule("mine")} />
+      {(can("preshift") || can("team") || canSchedule) && <TodayFigures key={`figures-${rid}`} restaurantId={rid} canReports={canReports} />}
+      <div className="today-columns">
+        <div className="today-col">
+          <TodayStatus key={`status-${rid}`} restaurantId={rid} canPreshift={can("preshift")} canReports={canReports} onPreshift={edit => {navigate("preshift"); setPreshiftEdit(edit);}} onSideWork={() => navigate("checklists")} onReport={openPastReports} doneOnly />
+          {can("preshift") && <PostedPreShiftCard key={`posted-${rid}`} restaurantId={rid} items={items} restaurantName={restaurant.name} />}
+          {(can("preshift") || can("team") || canSchedule) && <TodayRoster key={`roster-${rid}`} restaurantId={rid} onOpen={() => openSchedule("week")} />}
+        </div>
+        <div className="today-col">
+          <EventTodayCard key={`event-${rid}`} restaurantId={rid} onOpen={() => navigate("events")} />
+          {canReports && <LastNightCard key={`night-${rid}`} restaurantId={rid} onOpen={openPastReports} />}
+        </div>
+      </div>
       {itemsLoading ? <p role="status" className="muted py-10">Loading your library…</p> : <>
-        <NextShift key={`shift-${rid}`} restaurantId={rid} userId={user.id} onOpen={() => navigate("schedule")} />
-        {(can("preshift") || can("team")) && <LastShiftNote key={`last-${rid}`} restaurantId={rid} onOpen={() => navigate("reports")} />}
-        {(can("preshift") || can("team") || canSchedule) && <TodayRoster key={`roster-${rid}`} restaurantId={rid} onOpen={() => openSchedule("week")} />}
         <TodayActions canAssign={can("team")} onAssign={() => navigate("team")} onLibrary={() => navigate("library")} />
         {can("team") && <RecentCompletions key={`recent-${rid}`} restaurantId={rid} onOpenMember={id => {setTeamOpenId(id);navigate("team");}} />}
         {!can("preshift") && <>
@@ -1794,9 +1802,20 @@ function Workspace({
           <div className="grid grid-cols-2 gap-2 xl:grid-cols-3">{counts.filter(c => c.count > 0).map(c => <button key={c.name} className="panel category-card flex items-center gap-2 p-3 text-left" onClick={() => navigate("library", c.name, contentType)}><span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{c.name}</span><span className="muted mt-1 block text-xs">{c.count} {c.count === 1 ? wordsIn(taxonomy, contentType).item_one : wordsIn(taxonomy, contentType).item_many}</span></span><ArrowRight size={15} className="muted shrink-0" /></button>)}</div></>}
         {!items.length && <p className="panel muted p-6">{can("library") ? "Add your first dish to start building the library." : "Your manager hasn’t added content yet."}</p>}
         {can("library") && <div id="retake-requests"><RetakeRequests restaurantId={rid} /></div>}
+        {/* A new restaurant's steps to get going: at the bottom now, gone once done or hidden. */}
+        {(isOwner || can("team")) && !employeeView && <GettingStarted key={`start-${rid}`} restaurantId={rid} menuCount={items.length}
+          onGo={place => place === "library" ? navigate("library", "All", "food") : navigate(place)} />}
         {isManager && <AccountName user={user} />}
       </>}
     </div>;
+  }
+  function openNeed(target: NeedTarget) {
+    if (target === "urgent" || target === "order") openPastReports();
+    else if (target === "preshift") navigate("preshift");
+    else if (target === "sidework") navigate("checklists");
+    else if (target === "events") navigate("events");
+    else if (target === "write_report") navigate("reports");
+    else openAttention(target);
   }
   function openAttention(target: AttentionTarget) {
     if (target === "shift_changes" || target === "released") openSchedule("requests");

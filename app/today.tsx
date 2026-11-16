@@ -13,31 +13,55 @@ import type { ShiftBoardResponse } from "./employee-home";
 
 const localDay = (d = new Date()) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 
-// People on today's schedule, the hours they add up to, and the requests waiting on a manager.
-export function TodayFigures({restaurantId, canSchedule}: {restaurantId: string; canSchedule: boolean}) {
-  const [figures, setFigures] = useState<{people: number; hours: number; requests: number} | null>(null);
+// Today in four numbers: people and hours on today's schedule (hours against the same day last week),
+// and last night's covers and sales from the shift reports (against the same night the week before).
+// Requests now live in "Needs you". A night without a report says so instead of showing zero.
+type NightFigures = {covers: number | null; sales: number | null} | null;
+const percentVs = (now: number, before: number) => {
+  const p = Math.round((now - before) / before * 100);
+  return p === 0 ? "Same as" : `${p > 0 ? "+" : "−"}${Math.abs(p)}% vs`;
+};
+const weekdayName = (d: Date) => d.toLocaleDateString("en-US", {weekday: "long"});
+export function TodayFigures({restaurantId, canReports = false}: {restaurantId: string; canReports?: boolean}) {
+  const [figures, setFigures] = useState<{people: number; hours: number; hoursBefore: number; night: NightFigures; nightBefore: NightFigures} | null>(null);
   useEffect(() => {
     const db = supabase;
     if (!db) return;
     let alive = true;
     const from = new Date(); from.setHours(0, 0, 0, 0);
-    const to = new Date(from); to.setDate(to.getDate() + 1);
+    const day = (offset: number) => { const d = new Date(from); d.setDate(d.getDate() + offset); return d; };
     const quiet = async <T,>(work: () => PromiseLike<T>, fallback: T) => { try { return await work(); } catch { return fallback; } };
-    void Promise.all([
-      quiet(async () => { const {data, error} = await db.from("schedule_shifts").select("user_id,starts_at,ends_at").eq("restaurant_id", restaurantId).gte("starts_at", from.toISOString()).lt("starts_at", to.toISOString()); return error ? [] : (data ?? []) as {user_id: string; starts_at: string; ends_at: string}[]; }, [] as {user_id: string; starts_at: string; ends_at: string}[]),
-      canSchedule ? quiet(async () => { const {data, error} = await db.rpc("shift_change_list", {rid: restaurantId}); return error ? 0 : ((data ?? []) as {status: string}[]).filter(c => c.status === "pending").length; }, 0) : 0,
-      canSchedule ? quiet(async () => { const {count, error} = await db.from("time_off_requests").select("id", {count: "exact", head: true}).eq("restaurant_id", restaurantId).eq("status", "pending"); return error ? 0 : count ?? 0; }, 0) : 0,
-    ]).then(([shifts, changes, timeOff]) => {
-      if (alive) setFigures({people: new Set(shifts.map(s => s.user_id)).size, hours: shifts.reduce((sum, s) => sum + shiftHours(s), 0), requests: changes + timeOff});
+    type Row = {user_id: string; starts_at: string; ends_at: string};
+    const shifts = (a: Date, b: Date) => quiet(async () => { const {data, error} = await db.from("schedule_shifts").select("user_id,starts_at,ends_at").eq("restaurant_id", restaurantId).gte("starts_at", a.toISOString()).lt("starts_at", b.toISOString()); return error ? [] : (data ?? []) as Row[]; }, [] as Row[]);
+    // One night can have a lunch and a dinner report: they add up. No report at all is null, not zero.
+    const night = (d: Date): Promise<NightFigures> => canReports ? quiet(async () => {
+      const {data, error} = await db.from("shift_reports").select("covers,sales").eq("restaurant_id", restaurantId).eq("service_date", localDay(d));
+      const rows = (data ?? []) as {covers: number | null; sales: number | string | null}[];
+      if (error || !rows.length) return null;
+      const covers = rows.some(r => r.covers != null) ? rows.reduce((sum, r) => sum + (r.covers ?? 0), 0) : null;
+      const sales = rows.some(r => r.sales != null && r.sales !== "") ? rows.reduce((sum, r) => sum + Number(r.sales ?? 0), 0) : null;
+      return {covers, sales};
+    }, null as NightFigures) : Promise.resolve(null);
+    void Promise.all([shifts(from, day(1)), shifts(day(-7), day(-6)), night(day(-1)), night(day(-8))]).then(([today, before, last, lastBefore]) => {
+      if (alive) setFigures({people: new Set(today.map(s => s.user_id)).size, hours: today.reduce((sum, s) => sum + shiftHours(s), 0),
+        hoursBefore: before.reduce((sum, s) => sum + shiftHours(s), 0), night: last, nightBefore: lastBefore});
     });
     return () => {alive = false;};
-  }, [restaurantId, canSchedule]);
+  }, [restaurantId, canReports]);
   if (!figures) return null;
-  return <Stats items={[
-    {value: String(figures.people), label: "People today"},
-    {value: formatHours(figures.hours), label: "Scheduled"},
-    {value: String(figures.requests), label: "Requests", alert: figures.requests > 0},
-  ]} />;
+  const now = new Date(), lastNight = new Date(now.getTime() - 86_400_000);
+  const compare = (value: number | null | undefined, before: number | null | undefined, when: Date) =>
+    value != null && before ? `${percentVs(value, before)} last ${weekdayName(when)}` : undefined;
+  const dollars = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
+  const items: {value: string; label: string; note?: string}[] = [
+    {value: String(figures.people), label: "Working today"},
+    {value: formatHours(figures.hours), label: "Scheduled today", note: compare(figures.hours, figures.hoursBefore, now)},
+  ];
+  if (canReports) items.push(
+    {value: figures.night?.covers != null ? String(figures.night.covers) : "—", label: "Covers last night", note: figures.night ? compare(figures.night.covers, figures.nightBefore?.covers, lastNight) : "No report last night"},
+    {value: figures.night?.sales != null ? dollars(figures.night.sales) : "—", label: "Sales last night", note: figures.night ? compare(figures.night.sales, figures.nightBefore?.sales, lastNight) : "No report last night"},
+  );
+  return <Stats items={items} />;
 }
 
 type SideWork = {total: number; done: number};
@@ -51,8 +75,10 @@ function Row({title, sub, dot, right, onClick}: {title: string; sub: string; dot
   </button></li>;
 }
 
-export function TodayStatus({restaurantId, canPreshift, canReports, onPreshift, onSideWork, onReport}: {
+export function TodayStatus({restaurantId, canPreshift, canReports, onPreshift, onSideWork, onReport, doneOnly = false}: {
   restaurantId: string; canPreshift: boolean; canReports: boolean; onPreshift: (edit: boolean) => void; onSideWork: () => void; onReport: () => void;
+  // On the v2 Today, "Needs you" already asks for what is missing: show only what is posted or under way.
+  doneOnly?: boolean;
 }) {
   const [board, setBoard] = useState<ShiftBoardResponse["board"] | undefined>(undefined);
   const [side, setSide] = useState<SideWork | undefined>(undefined);
@@ -100,11 +126,11 @@ export function TodayStatus({restaurantId, canPreshift, canReports, onPreshift, 
   const arrow = <ChevronRight size={14} aria-hidden="true" />;
   const sideSub = !side || !side.total ? "No jobs handed out yet" : side.done >= side.total ? `${side.total} ${side.total === 1 ? "job" : "jobs"} · all finished` : `${side.total} ${side.total === 1 ? "job" : "jobs"} · ${side.done} done`;
   const rows: ReactNode[] = [];
-  if (canPreshift && board !== undefined) rows.push(<Row key="pre" title="Pre-shift" sub={preSub} dot={posted} onClick={() => onPreshift(posted)}
+  if (canPreshift && board !== undefined && (posted || !doneOnly)) rows.push(<Row key="pre" title="Pre-shift" sub={preSub} dot={posted} onClick={() => onPreshift(posted)}
     right={posted ? <span className="icon-chip" aria-label="Edit today’s pre-shift"><Pencil size={14} aria-hidden="true" /></span> : <span className="today-pill fail">Not posted{arrow}</span>} />);
-  if (canPreshift && side) rows.push(<Row key="side" title="Side work" sub={sideSub} dot={!!side.total && side.done >= side.total} onClick={onSideWork}
+  if (canPreshift && side && (side.total > 0 || !doneOnly)) rows.push(<Row key="side" title="Side work" sub={sideSub} dot={!!side.total && side.done >= side.total} onClick={onSideWork}
     right={!side.total ? <span className="today-pill fail">Not posted{arrow}</span> : side.done < side.total ? <span className="today-pill warn">In progress{arrow}</span> : undefined} />);
-  if (canReports && report) rows.push(<Row key="report" title="Last shift report" sub={`${serviceDay(report.service_date)} ${report.label}${writer ? ` · Filed by ${writer}` : ""}`} onClick={onReport}
+  if (canReports && report && !doneOnly) rows.push(<Row key="report" title="Last shift report" sub={`${serviceDay(report.service_date)} ${report.label}${writer ? ` · Filed by ${writer}` : ""}`} onClick={onReport}
     right={<span className="today-more">{arrow}</span>} />);
   if (!rows.length) return null;
   return <section className="panel today-card today-status" aria-label="Today"><ul>{rows}</ul></section>;
