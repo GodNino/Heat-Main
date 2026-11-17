@@ -1617,6 +1617,10 @@ function TeamMemberDetail({restaurantId, restaurantName, member, needsPosition =
   </section>;
 }
 
+// Hides the Dashboard's "All <brand> locations" button. Only one location is in use for now. To bring it back,
+// set this to true (or revert the commit that added it): the button, BrandDashboard and Locations are untouched.
+const SHOW_ALL_LOCATIONS = false;
+
 function Workspace({
   user,
   invitation,
@@ -2472,7 +2476,7 @@ function Workspace({
               <p className="eyebrow muted">Dashboard</p>
               <h1 className="mt-3 mb-5 text-2xl font-semibold">{dashboardScope === "brand" && brand ? brand.name : restaurant.name}</h1>
               {/* The brand's owner can step back from one location to all of them. */}
-              {ownsBrand && brand && <div className="library-switch mb-5" aria-label="Dashboard scope">
+              {SHOW_ALL_LOCATIONS && ownsBrand && brand && <div className="library-switch mb-5" aria-label="Dashboard scope">
                 <button type="button" aria-pressed={dashboardScope === "location"} onClick={() => setDashboardScope("location")}>{restaurant.name}</button>
                 <button type="button" aria-pressed={dashboardScope === "brand"} onClick={() => setDashboardScope("brand")}>All {brand.name} locations</button>
               </div>}
